@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+android
+ios
+.git
+.vscode
+.gemini

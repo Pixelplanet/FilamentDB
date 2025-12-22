@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FilamentDB</string>
+    <string name="title_activity_main">FilamentDB</string>
+    <string name="package_name">com.example.filamentdb</string>
+    <string name="custom_url_scheme">com.example.filamentdb</string>
+</resources>
