@@ -58,7 +58,7 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/FilamentDB.git
+   git clone https://github.com/Pixelplanet/FilamentDB.git
    cd FilamentDB/web-app
    ```
 
@@ -260,8 +260,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/FilamentDB/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/FilamentDB/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Pixelplanet/FilamentDB/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Pixelplanet/FilamentDB/discussions)
 
 ---
 
