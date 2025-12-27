@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  web-app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./public/downloads:/app/public/downloads
+      - ./data:/app/data
+    restart: unless-stopped

@@ -191,7 +191,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-500">Get the APK for your device.</p>
                 </div>
                 <a
-                    href="/downloads/filament-db-android.apk"
+                    href="/downloads/filamentdb.apk"
                     download
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm"
                 >
@@ -201,7 +201,7 @@ export default function SettingsPage() {
 
             <div className="text-center text-gray-400 text-sm">
                 <p>Local DB Items: {spoolCount}</p>
-                <p>Version: 1.0.0 (Hybrid)</p>
+                <p>Version: {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0'} (Hybrid)</p>
             </div>
         </div>
     );

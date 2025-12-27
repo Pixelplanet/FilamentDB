@@ -17,14 +17,12 @@ export const useNFC = () => {
 
     const isNative = Capacitor.isNativePlatform();
 
-    // Check support on mount
     useEffect(() => {
         if (!isNative) {
             if (typeof window !== 'undefined' && !('NDEFReader' in window)) {
                 setState('unsupported');
             }
         }
-        // Native support is assumed/checked at runtime via plugin
     }, [isNative]);
 
     const scan = useCallback(async () => {
@@ -35,81 +33,65 @@ export const useNFC = () => {
             setError(null);
 
             if (isNative) {
-                // --- NATIVE IMPLEMENTATION ---
-                // Simplification for Take 3:
-                // Manual permission/status checks often fail with "undefined" on various plugin versions/devices.
-                // startScanning() typically triggers the native prompts or gives a clear error if disabled.
+                // await CapacitorNfc.removeAllListeners();
 
-                // 1. Define listener
-                const listener = await CapacitorNfc.addListener('ndefDiscovered', async (event) => {
+                const onTag = async (event: any) => {
+                    console.log("NFC Event Detected:", JSON.stringify(event));
                     const tag = event.tag;
-                    // Safe access to ID
+                    if (!tag) return;
+
                     let tagId = 'unknown';
                     if (tag.id && Array.isArray(tag.id)) {
                         tagId = tag.id.map((b: number) => b.toString(16).padStart(2, '0')).join(':');
                     }
+                    console.log("Tag ID:", tagId);
 
                     const parsedRecords: any[] = [];
-
                     if (tag.ndefMessage && Array.isArray(tag.ndefMessage)) {
                         for (const record of tag.ndefMessage) {
-                            // record.type is number[]
-                            const typeStr = String.fromCharCode(...record.type);
-
-                            if (typeStr === 'application/vnd.openprinttag') {
-                                const payloadBytes = new Uint8Array(record.payload);
-                                const decoded = decode(payloadBytes);
-                                parsedRecords.push({
-                                    mediaType: typeStr,
-                                    data: decoded
-                                });
+                            try {
+                                if (record.type) {
+                                    const typeStr = String.fromCharCode(...record.type);
+                                    if (typeStr === 'application/vnd.openprinttag' || typeStr.includes('openprinttag')) {
+                                        const payloadBytes = new Uint8Array(record.payload);
+                                        const decoded = decode(payloadBytes);
+                                        parsedRecords.push({ mediaType: typeStr, data: decoded });
+                                    }
+                                }
+                            } catch (e) {
+                                console.warn("Failed to parse record", e);
                             }
                         }
                     }
 
                     setReading({ serialNumber: tagId, records: parsedRecords });
                     setState('success');
-
-                    // Stop scanning and remove listener
+                    // await CapacitorNfc.removeAllListeners();
                     await CapacitorNfc.stopScanning();
-                    await listener.remove();
-                });
+                };
 
-                // Start scanning
+                await CapacitorNfc.addListener('ndefDiscovered', onTag);
+                await CapacitorNfc.addListener('tagDiscovered', onTag);
                 await CapacitorNfc.startScanning();
 
             } else {
-                // --- WEB IMPLEMENTATION ---
                 // @ts-ignore
                 const ndef = new NDEFReader();
                 await ndef.scan();
-
                 ndef.onreading = (event: any) => {
                     const { message, serialNumber } = event;
                     const parsedRecords = [];
-
                     for (const record of message.records) {
                         try {
                             if (record.recordType === "mime") {
                                 const data = new Uint8Array(record.data.buffer);
                                 const decoded = decode(data);
-                                parsedRecords.push({
-                                    mediaType: record.mediaType,
-                                    data: decoded
-                                });
+                                parsedRecords.push({ mediaType: record.mediaType, data: decoded });
                             }
-                        } catch (e) {
-                            console.warn("Failed to decode record", e);
-                        }
+                        } catch (e) { }
                     }
-
                     setReading({ serialNumber, records: parsedRecords });
                     setState('success');
-                };
-
-                ndef.onreadingerror = () => {
-                    setError("Error reading NFC tag.");
-                    setState('error');
                 };
             }
 
@@ -118,46 +100,27 @@ export const useNFC = () => {
             setError(err.message || "Failed to start NFC scan");
             setState('error');
         }
-    }, [isNative]); // Removed state from dependencies to prevent re-creation during scan
+    }, [isNative]);
 
     const write = useCallback(async (data: any) => {
         if (state === 'unsupported') throw new Error('NFC not supported');
-
         try {
             setState('writing');
-            setError(null);
-
-            // Encode data to CBOR
             const encoded = encode(data);
 
             if (isNative) {
-                // --- NATIVE WRITE ---
-                // CapacitorNfc expects records as array of number arrays or similar depending on version.
-                // Checking docs for @capgo/capacitor-nfc: typically write(message: NdefMessage)
-                // where record payload is number[] or string (base64)
-
-                // We need to convert Uint8Array (encoded) to number[]
-                const payloadArray = Array.from(encoded);
+                const payloadArray = Array.from(new Uint8Array(encoded));
                 const typeArray = Array.from(new TextEncoder().encode('application/vnd.openprinttag'));
-
-                // Construct NDEF Message
-                // Type 2 = MIME
-                // payload = our CBOR data
-                // type = mime type string bytes
-
+                // @ts-ignore
                 await CapacitorNfc.write({
-                    records: [
-                        {
-                            tnf: 2, // MIME Media
-                            type: typeArray,
-                            id: [],
-                            payload: payloadArray,
-                        }
-                    ]
+                    records: [{
+                        tnf: 2,
+                        type: typeArray as any,
+                        id: [],
+                        payload: payloadArray as any,
+                    }]
                 });
-
             } else {
-                // --- WEB WRITE ---
                 // @ts-ignore
                 const ndef = new NDEFReader();
                 await ndef.write({
@@ -168,23 +131,14 @@ export const useNFC = () => {
                     }]
                 });
             }
-
             setState('success');
             setTimeout(() => setState('idle'), 2000);
-
         } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Failed to write NFC tag");
+            setError(err.message);
             setState('error');
             throw err;
         }
     }, [state, isNative]);
 
-    return {
-        state,
-        error,
-        reading,
-        scan,
-        write
-    };
+    return { state, error, reading, scan, write };
 };

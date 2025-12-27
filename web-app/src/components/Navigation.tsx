@@ -1,15 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Database, ScanLine, Menu, X, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
+
 
 export function Navigation({ children }: { children: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!Capacitor.isNativePlatform()) return;
+
+        CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+            if (pathname !== '/' || canGoBack) {
+                // If we are not on root, try to go back
+                // Or if webview thinks we can go back (might cover history stack within same route if handled)
+                if (pathname !== '/') {
+                    router.back();
+                } else {
+                    // If at root and no history, exit
+                    CapacitorApp.exitApp();
+                }
+            } else {
+                CapacitorApp.exitApp();
+            }
+        });
+
+        return () => {
+            CapacitorApp.removeAllListeners();
+        };
+    }, [pathname, router]);
 
     const links = [
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },

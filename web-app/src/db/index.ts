@@ -31,6 +31,7 @@ export interface Spool {
 
     // Metadata
     lastScanned?: number;
+    detailUrl?: string; // Original URL if scanned via QR
 }
 
 export class FilamentDatabase extends Dexie {

@@ -1,58 +1,168 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNFC } from '@/hooks/useNFC';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { db, Spool } from '@/db';
 import { Check, Loader2, AlertTriangle, RefreshCw, Camera as CameraIcon } from 'lucide-react';
-import { useRef } from 'react';
 import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
+import { useRouter } from 'next/navigation';
 
 type Mode = 'nfc' | 'qr';
 
+const SUPPORTED_DOMAINS = [
+    'prusa.io',
+    'prusament.com',
+    'bambulab.com',
+    'amazon.',
+    'amzn.to',
+    '3djake.',
+    'matterhackers.',
+    'polymaker.',
+    'esun',
+    'sunlu',
+    'eryone',
+    'filament-pm',
+    'colorfabb'
+];
+
 export default function ScanPage() {
+    const router = useRouter();
     const [mode, setMode] = useState<Mode>('nfc');
     const { scan, state: nfcState, reading: nfcReading, error: nfcError } = useNFC();
+
+    // Auto-switch to QR if NFC is not supported (e.g. on Desktop)
+    useEffect(() => {
+        if (nfcState === 'unsupported') {
+            setMode('qr');
+        }
+    }, [nfcState]);
+
     const [qrResult, setQrResult] = useState<string | null>(null);
 
     // DB Interaction State
     const [saving, setSaving] = useState(false);
     const [savedSpool, setSavedSpool] = useState<Spool | null>(null);
     const [scanError, setScanError] = useState<string | null>(null);
+
+    // Camera & Security State
+    const [isSecure, setIsSecure] = useState(true);
+    const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+    const [logs, setLogs] = useState<string[]>([]);
+
     const isProcessing = useRef(false);
 
-    // Effect: Handle NFC Reading Success
+    // Effect: Console Logging Capture
     useEffect(() => {
-        if (nfcState === 'success' && nfcReading) {
-            handleScanData(nfcReading.serialNumber, nfcReading.records);
-        }
-    }, [nfcState, nfcReading]);
+        // Capture console logs for mobile debugging
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
 
-    // Effect: Handle QR Reading Success
+        const addLog = (type: string, args: any[]) => {
+            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+            setLogs(prev => [`[${type}] ${msg}`, ...prev].slice(0, 50));
+        };
+
+        console.log = (...args) => { addLog('LOG', args); originalLog(...args); };
+        console.error = (...args) => { addLog('ERR', args); originalError(...args); };
+        console.warn = (...args) => { addLog('WRN', args); originalWarn(...args); };
+
+        return () => {
+            console.log = originalLog;
+            console.error = originalError;
+            console.warn = originalWarn;
+        };
+    }, []);
+
+    // Effect: Check Secure Context
     useEffect(() => {
-        if (qrResult) {
-            // Mocking structure for QR - usually QR contains a JSON or URL with ID
-            // For now, treat the string as the ID
-            handleScanData(qrResult, []);
+        if (typeof window !== 'undefined') {
+            const isNative = (window as any).Capacitor?.isNativePlatform?.();
+            if (!isNative && !window.isSecureContext) {
+                setIsSecure(false);
+            }
         }
-    }, [qrResult]);
+    }, []);
 
-    async function handleScanData(serial: string, records: any[]) {
-        if (!serial || isProcessing.current) return;
+    const requestCameraPermission = async () => {
+        // Web: Skip explicit check, assume browser will prompt via Scanner component
+        if (!Capacitor.isNativePlatform()) {
+            setHasCameraPermission(true);
+            return;
+        }
+
+        try {
+            console.log("Requesting Camera Permission...");
+            const status = await Camera.requestPermissions();
+            console.log("Camera Permission Status:", status.camera);
+            setHasCameraPermission(status.camera === 'granted');
+            if (status.camera !== 'granted') {
+                setScanError("Camera permission denied. Please enable it in Android settings.");
+            }
+        } catch (e: any) {
+            console.error("Camera Permission Error:", e);
+            setScanError("Failed to request camera permission: " + e.message);
+            setHasCameraPermission(false);
+        }
+    };
+
+    async function handleScanData(serialRaw: string, records: any[]) {
+        if (!serialRaw || isProcessing.current) return;
+
+        const serial = serialRaw.trim();
+        // alert(`SCANNED: ${serial}`); // Uncomment if needed for extreme debugging
 
         isProcessing.current = true;
         setSaving(true);
         setScanError(null);
 
+        // Check if Serial is a URL (QR Code) - REDIRECT TO IMPORT
+        const lower = serial.toLowerCase();
+        // Broader check for URLs (http, www, or specific domains like prusa.io)
+        const isUrl = lower.startsWith('http') ||
+            lower.startsWith('www.') ||
+            lower.startsWith('prusa.io') ||
+            lower.includes('.com/') ||
+            lower.includes('.org/') ||
+            lower.includes('.net/');
+
+        if (isUrl) {
+            console.log("URL detected checking support...");
+
+            // Check Whitelist
+            const isSupported = SUPPORTED_DOMAINS.some(d => lower.includes(d));
+            if (!isSupported) {
+                console.warn("Unsupported URL:", serial);
+                setScanError(`Unsupported Vendor URL.\n\nWe currently support: Prusa, Bambu, Amazon, 3DJake, and more.\n\nScanned: ${serial}`);
+                setSaving(false);
+                isProcessing.current = false;
+                return;
+            }
+
+            console.log("URL supported, redirecting to import...");
+
+            let targetUrl = serial;
+            if (!lower.startsWith('http')) {
+                targetUrl = 'https://' + serial;
+            }
+
+            router.push(`/inventory/add?importUrl=${encodeURIComponent(targetUrl)}`);
+            isProcessing.current = false;
+            return;
+        }
+
         try {
             console.log("Handle Scan:", serial);
+
             // Check if exists
             const existing = await db.spools.where('serial').equals(serial).first();
 
             if (existing) {
                 setSavedSpool(existing);
             } else {
-                // Create New Spool
+                // Create New Spool (NFC or Barcode)
                 let spoolData: Partial<Spool> = {
                     serial,
                     brand: 'Unknown Brand',
@@ -64,28 +174,73 @@ export default function ScanPage() {
                     lastScanned: Date.now()
                 };
 
-                // Parse records for OpenPrintTag JSON/CBOR
+                // Apply NFC Records (from OpenPrintTag)
                 const optRecord = records.find(r => r.mediaType === 'application/vnd.openprinttag');
                 if (optRecord && optRecord.data) {
                     const d = optRecord.data;
-                    if (d.brand) spoolData.brand = d.brand;
-                    if (d.type) spoolData.type = d.type;
-                    if (d.color) spoolData.color = d.color;
-                    if (d.weight) spoolData.weightRemaining = d.weight;
+                    console.log("[NFC] Raw Decoded Data:", JSON.stringify(d, null, 2));
+
+                    // Heuristic: OpenPrintTag might be an array [Meta, Main, Aux]
+                    // or a flat object depending on the version/generator.
+                    // We try to find the "Main" section which contains the static info.
+                    let mainSection: any = d;
+
+                    if (Array.isArray(d) && d.length > 1) {
+                        // If array, index 1 is usually the Main section
+                        mainSection = d[1];
+                        console.log("[NFC] Using Array Index 1 as Main Section:", JSON.stringify(mainSection));
+                    }
+
+                    if (mainSection) {
+                        // Flexible Key Mapping
+                        spoolData.brand = mainSection.brand || mainSection['Brand Name'] || mainSection['Brand'] || spoolData.brand;
+                        spoolData.type = mainSection.type || mainSection['Material Name'] || mainSection['Material Type'] || mainSection['Material'] || spoolData.type;
+                        spoolData.color = mainSection.color || mainSection['Primary Color'] || mainSection['Color'] || spoolData.color;
+                        spoolData.diameter = mainSection.diameter || mainSection['Filament Diameter (mm)'] || spoolData.diameter;
+
+                        const w = mainSection.weight || mainSection['Nominal Weight (g)'] || mainSection['net_weight'];
+                        if (w) {
+                            spoolData.weightRemaining = typeof w === 'number' ? w : parseFloat(w);
+                            spoolData.weightTotal = spoolData.weightRemaining;
+                        }
+                    }
                 }
 
-                const id = await db.spools.add(spoolData as Spool);
-                setSavedSpool({ ...spoolData, id } as Spool);
+                // Redirect to Add Page with Draft Data
+                console.log("New Spool Detected via NFC, redirecting to Add...");
+                localStorage.setItem('scan_result_draft', JSON.stringify(spoolData));
+                router.push('/inventory/add');
             }
         } catch (e: any) {
             console.error("DB Error", e);
-            setScanError(e.message || "Failed to save spool to database.");
+            setScanError(e.message || "Failed to process scan.");
         } finally {
             setSaving(false);
             // DO NOT release isProcessing immediately, wait a bit or until reset
             setTimeout(() => { isProcessing.current = false; }, 2000);
         }
     }
+
+    // Effect: Handle NFC Reading Success
+    useEffect(() => {
+        if (nfcState === 'success' && nfcReading) {
+            handleScanData(nfcReading.serialNumber, nfcReading.records);
+        }
+    }, [nfcState, nfcReading]);
+
+    // Effect: Handle QR Reading Success
+    useEffect(() => {
+        if (qrResult) {
+            handleScanData(qrResult, []);
+        }
+    }, [qrResult]);
+
+    // Effect: Request Camera if needed
+    useEffect(() => {
+        if (mode === 'qr' && !savedSpool && hasCameraPermission === null) {
+            requestCameraPermission();
+        }
+    }, [mode, savedSpool, hasCameraPermission]);
 
     const reset = () => {
         setQrResult(null);
@@ -128,64 +283,6 @@ export default function ScanPage() {
         );
     }
 
-    const [isSecure, setIsSecure] = useState(true);
-    const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-    const [logs, setLogs] = useState<string[]>([]);
-
-    useEffect(() => {
-        // Capture console logs for mobile debugging
-        const originalLog = console.log;
-        const originalError = console.error;
-        const originalWarn = console.warn;
-
-        const addLog = (type: string, args: any[]) => {
-            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
-            setLogs(prev => [`[${type}] ${msg}`, ...prev].slice(0, 50));
-        };
-
-        console.log = (...args) => { addLog('LOG', args); originalLog(...args); };
-        console.error = (...args) => { addLog('ERR', args); originalError(...args); };
-        console.warn = (...args) => { addLog('WRN', args); originalWarn(...args); };
-
-        return () => {
-            console.log = originalLog;
-            console.error = originalError;
-            console.warn = originalWarn;
-        };
-    }, []);
-
-    useEffect(() => {
-        // Check for secure context (HTTPS or Localhost)
-        if (typeof window !== 'undefined') {
-            const isNative = (window as any).Capacitor?.isNativePlatform?.();
-            if (!isNative && !window.isSecureContext) {
-                setIsSecure(false);
-            }
-        }
-    }, []);
-
-    const requestCameraPermission = async () => {
-        try {
-            console.log("Requesting Camera Permission...");
-            const status = await Camera.requestPermissions();
-            console.log("Camera Permission Status:", status.camera);
-            setHasCameraPermission(status.camera === 'granted');
-            if (status.camera !== 'granted') {
-                setScanError("Camera permission denied. Please enable it in Android settings.");
-            }
-        } catch (e: any) {
-            console.error("Camera Permission Error:", e);
-            setScanError("Failed to request camera permission: " + e.message);
-            setHasCameraPermission(false);
-        }
-    };
-
-    useEffect(() => {
-        if (mode === 'qr' && !savedSpool && hasCameraPermission === null) {
-            requestCameraPermission();
-        }
-    }, [mode, savedSpool, hasCameraPermission]);
-
     if (!isSecure) {
         return (
             <div className="flex flex-col items-center justify-center p-8 max-w-md mx-auto min-h-[50vh] text-center">
@@ -213,7 +310,7 @@ export default function ScanPage() {
 
             {/* Header / Mode Switcher */}
             <div className="w-full flex flex-col gap-4 text-center">
-                <h1 className="text-2xl font-bold">Scanner</h1>
+                <h1 className="text-2xl font-bold">Scanner v2.0</h1>
                 <div className="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                     <button
                         onClick={() => { setMode('nfc'); reset(); }}

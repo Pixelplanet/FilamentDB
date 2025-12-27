@@ -7,8 +7,8 @@ android {
         applicationId "com.example.filamentdb"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "0.1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -21,8 +21,48 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    // Rename output APK and copy to public downloads
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "filamentdb.apk"
+        }
+
+        variant.assembleProvider.configure {
+            doLast {
+                // Construct source and destination paths
+                // "this.outputs" refers to the variant outputs
+                def apkPath = variant.outputs.first().outputFile
+                // relative to 'android/app/'
+                def destDir = file("../../../public/downloads") 
+                
+                if (!destDir.exists()) {
+                    destDir.mkdirs()
+                }
+                
+                copy {
+                    from apkPath
+                    into destDir
+                    rename { "filamentdb.apk" }
+                }
+                println "Copied APK to ${destDir}/filamentdb.apk"
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
+
+// Removed explicit java toolchain block to rely on compileOptions
+
 
 repositories {
     flatDir{

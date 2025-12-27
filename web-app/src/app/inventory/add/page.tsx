@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { db, Spool } from '@/db';
 import { ArrowLeft, Save, Globe, Type, Loader2, Sparkles, Terminal, Thermometer, Ruler, Scale, Tag, Hash } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function AddSpoolPage() {
+function AddSpoolForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState<'manual' | 'url'>('manual');
 
     // Expanded Form State matching Schema
@@ -28,6 +29,25 @@ export default function AddSpoolPage() {
         batchNumber: '',
         productionDate: ''
     });
+
+    // Check for draft from Scanner
+    useEffect(() => {
+        const draftStr = localStorage.getItem('scan_result_draft');
+        if (draftStr) {
+            try {
+                const draft = JSON.parse(draftStr);
+                setFormData(prev => ({
+                    ...prev,
+                    ...draft
+                }));
+                // Clear draft so it doesn't persist forever
+                localStorage.removeItem('scan_result_draft');
+            } catch (e) {
+                console.error("Failed to parse draft", e);
+            }
+        }
+    }, []);
+
 
     // URL State
     const [url, setUrl] = useState('');
@@ -54,85 +74,41 @@ export default function AddSpoolPage() {
         }
     };
 
-    const analyzeUrl = async () => {
+    const analyzeUrl = async (urlOverride?: string) => {
+        const target = urlOverride || url;
+        if (!target) return;
+
         setAnalyzing(true);
         setAnalysisError('');
         setDebugLogs([]);
-        addLog(`Analyzing: ${url}`);
-
-        const lowerUrl = url.toLowerCase();
 
         try {
-            // Mock fetch delay
-            await new Promise(r => setTimeout(r, 600));
+            const res = await fetch(`/api/scrape?url=${encodeURIComponent(target)}`);
+            if (!res.ok) throw new Error('Failed to analyze URL');
 
-            // 1. Material Detection
-            const materials = ['pla', 'petg', 'asa', 'tpu', 'abs', 'pc', 'pvb', 'nylon', 'flex'];
-            let material = 'PLA';
-            for (const m of materials) {
-                if (lowerUrl.includes(m)) {
-                    material = m.toUpperCase();
-                    break;
-                }
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            // Display logs from server
+            if (data.logs) {
+                setDebugLogs(data.logs);
             }
-            addLog(`Detected Material: ${material}`);
 
-            // 2. Brand Detection
-            let brand = '';
-            if (lowerUrl.includes('prusament') || lowerUrl.includes('prusa')) brand = 'Prusament';
-            else if (lowerUrl.includes('polymaker')) brand = 'Polymaker';
-            else if (lowerUrl.includes('bambu')) brand = 'Bambu Lab';
-            else if (lowerUrl.includes('sunlu')) brand = 'Sunlu';
-            else if (lowerUrl.includes('esun')) brand = 'eSun';
-            else brand = 'Generic'; // Default to Generic instead of failing
-            addLog(`Detected Brand: ${brand}`);
-
-            // 3. Smart Defaults based on Material (Heuristics)
-            let temps = { nMin: 200, nMax: 220, bMin: 60, bMax: 60, density: 1.24 };
-            if (material === 'PETG') temps = { nMin: 230, nMax: 250, bMin: 80, bMax: 90, density: 1.27 };
-            if (material === 'ASA') temps = { nMin: 250, nMax: 270, bMin: 100, bMax: 110, density: 1.07 };
-            if (material === 'ABS') temps = { nMin: 240, nMax: 260, bMin: 100, bMax: 110, density: 1.04 };
-            if (material === 'TPU') temps = { nMin: 210, nMax: 230, bMin: 50, bMax: 60, density: 1.21 };
-            if (material === 'PC') temps = { nMin: 260, nMax: 290, bMin: 110, bMax: 120, density: 1.20 };
-
-            addLog(`Applied Smart Defaults for ${material}`);
-
-            // 4. Color Parsing
-            let color = 'Unknown';
-            let colorHex = '#888888';
-            const slug = lowerUrl.split('?')[0].split('/').filter(s => s).pop() || '';
-
-            if (slug) {
-                // Heuristic: Remove material/brand words, capitalise remaining
-                const stopWords = ['product', 'filament', '1kg', 'nfc', 'g', 'kg', 'mm', 'diameter', 'spool', material.toLowerCase(), brand.toLowerCase().split(' ')[0].toLowerCase()];
-                const parts = slug.split(/[-_]/);
-                const colorParts = parts.filter(p => !stopWords.includes(p) && isNaN(Number(p)));
-                if (colorParts.length > 0) {
-                    color = colorParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
-                }
-            }
-            // Simple Hex guessing
-            if (color.toLowerCase().includes('black')) colorHex = '#1a1a1a';
-            if (color.toLowerCase().includes('orange')) colorHex = '#ff8800';
-            if (color.toLowerCase().includes('green')) colorHex = '#22c55e';
-            if (color.toLowerCase().includes('blue')) colorHex = '#3b82f6';
-            if (color.toLowerCase().includes('red')) colorHex = '#ef4444';
-            if (color.toLowerCase().includes('white')) colorHex = '#ffffff';
-
+            // Update form with extracted data
             setFormData(prev => ({
                 ...prev,
-                brand,
-                type: material,
-                color,
-                colorHex,
-                temperatureNozzleMin: temps.nMin,
-                temperatureNozzleMax: temps.nMax,
-                temperatureBedMin: temps.bMin,
-                temperatureBedMax: temps.bMax,
-                density: temps.density
+                brand: data.brand || prev.brand,
+                type: data.type || prev.type,
+                color: data.color || prev.color,
+                colorHex: data.colorHex || prev.colorHex,
+                weightTotal: data.weightTotal || prev.weightTotal,
+                weightRemaining: data.weightTotal || prev.weightRemaining, // Assume full spool on first import
+                temperatureNozzleMin: data.temperatureNozzleMin || prev.temperatureNozzleMin,
+                temperatureNozzleMax: data.temperatureNozzleMax || prev.temperatureNozzleMax,
+                temperatureBedMin: data.temperatureBedMin || prev.temperatureBedMin,
+                temperatureBedMax: data.temperatureBedMax || prev.temperatureBedMax,
+                density: data.density || prev.density
             }));
-
-            addLog(`Ready for Review.`);
 
         } catch (e: any) {
             setAnalysisError(e.message);
@@ -140,6 +116,16 @@ export default function AddSpoolPage() {
             setAnalyzing(false);
         }
     };
+
+    // Auto-analyze if URL param exists
+    useEffect(() => {
+        const importUrl = searchParams.get('importUrl');
+        if (importUrl) {
+            setUrl(importUrl);
+            setActiveTab('url');
+            analyzeUrl(importUrl);
+        }
+    }, [searchParams]);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6 pb-20">
@@ -181,7 +167,7 @@ export default function AddSpoolPage() {
                                 onChange={e => setUrl(e.target.value)}
                             />
                             <button
-                                onClick={analyzeUrl}
+                                onClick={() => analyzeUrl()}
                                 disabled={analyzing || !url}
                                 className="px-4 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
                             >
@@ -206,11 +192,6 @@ export default function AddSpoolPage() {
                     )}
                 </div>
             )}
-
-            {/* Editor Form (Always rendered but hidden if tab is valid? No, user wants to see it to edit) 
-           Actually, the user flow is: URL -> Analyze -> Auto-fills Form -> User switches to Manual to edit -> Save.
-           So let's show the form if ActiveTab is Manual OR if we just analyzed.
-       */}
 
             {activeTab === 'manual' && (
                 <div className="space-y-6">
@@ -343,5 +324,13 @@ export default function AddSpoolPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function AddSpoolPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>}>
+            <AddSpoolForm />
+        </Suspense>
     );
 }

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
+// For static export builds (Capacitor), these routes are stubs.
+// The actual API is served by the Docker container.
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 

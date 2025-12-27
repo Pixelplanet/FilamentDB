@@ -1,16 +1,25 @@
 {
   "name": "web-app",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:server": "set BUILD_MODE=server&& next build",
+    "build:mobile": "node scripts/build-mobile.js",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cap:sync": "npx cap sync android",
+    "cap:build": "npm run build:mobile && npx cap sync android",
+    "copy:apk": "node scripts/copy-apk.js",
+    "test": "vitest"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
     "@capacitor/camera": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
     "@capgo/capacitor-nfc": "^8.0.5",
     "@yudiel/react-qr-scanner": "^2.5.0",
     "cbor-x": "^1.6.0",
@@ -26,12 +35,18 @@
   "devDependencies": {
     "@capacitor/cli": "^8.0.0",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.1",
     "@types/node": "^20",
+    "@types/phonegap-nfc": "^1.2.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
+    "jsdom": "^27.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.16"
   }
 }
