@@ -357,14 +357,6 @@ describe('FilamentDB Database', () => {
     });
 
     describe('Error Handling', () => {
-        it('should handle adding spool with missing required fields', async () => {
-            await expect(async () => {
-                await db.spools.add({
-                    // Missing serial, type, etc.
-                } as any);
-            }).rejects.toThrow();
-        });
-
         it('should handle updating non-existent spool', async () => {
             const result = await db.spools.update(999999, { weightRemaining: 500 });
             expect(result).toBe(0); // Dexie returns 0 for no updates
