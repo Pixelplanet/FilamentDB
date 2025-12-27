@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db';
 import { Circle, Database, Package, Scale, AlertTriangle, Download } from 'lucide-react';
 import Link from 'next/link';
+import { PageTransition } from '@/components/PageTransition';
 
 export default function Home() {
   const stats = useLiveQuery(async () => {
@@ -47,7 +48,7 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-8">
+    <PageTransition className="space-y-8">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-orange-500">Dashboard</h1>
@@ -159,6 +160,6 @@ export default function Home() {
           )}
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

@@ -6,6 +6,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { Filter, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { PageTransition } from '@/components/PageTransition';
+import { StaggerContainer, StaggerItem } from '@/components/StaggerAnimation';
 
 export default function InventoryPage() {
     return (
@@ -48,7 +50,7 @@ function InventoryPageContent() {
     const uniqueTypes = Array.from(new Set(spools.map(s => s.type))).sort();
 
     return (
-        <div className="space-y-6">
+        <PageTransition className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold">Inventory</h1>
 
@@ -80,7 +82,7 @@ function InventoryPageContent() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.length === 0 && (
                     <div className="col-span-full text-center py-12 text-gray-400">
                         No spools found. Scan some tags to populate!
@@ -88,40 +90,42 @@ function InventoryPageContent() {
                 )}
 
                 {filtered.map(spool => (
-                    <Link href={`/inventory/detail?id=${spool.id}`} key={spool.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded uppercase tracking-wider">
-                                    {spool.type}
-                                </span>
-                                <h3 className="font-semibold text-lg mt-1">{spool.brand || 'Unknown Brand'}</h3>
-                                <p className="text-gray-500 text-sm">{spool.color || 'No Color'}</p>
-                            </div>
-                            <div
-                                className="w-6 h-6 rounded-full border border-gray-200 shadow-inner"
-                                style={{ backgroundColor: spool.colorHex || '#ccc' }}
-                            />
-                        </div>
-
-                        <div className="mt-auto">
-                            <div className="flex justify-between text-sm mb-1">
-                                <span>Remaining</span>
-                                <span className="font-mono">{spool.weightRemaining}g / {spool.weightTotal}g</span>
-                            </div>
-                            <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <StaggerItem key={spool.id}>
+                        <Link href={`/inventory/detail?id=${spool.id}`} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3 hover:border-blue-300 dark:hover:border-blue-700 transition-colors block">
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded uppercase tracking-wider">
+                                        {spool.type}
+                                    </span>
+                                    <h3 className="font-semibold text-lg mt-1">{spool.brand || 'Unknown Brand'}</h3>
+                                    <p className="text-gray-500 text-sm">{spool.color || 'No Color'}</p>
+                                </div>
                                 <div
-                                    className="h-full bg-blue-500 rounded-full"
-                                    style={{ width: `${Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100)}%` }}
+                                    className="w-6 h-6 rounded-full border border-gray-200 shadow-inner"
+                                    style={{ backgroundColor: spool.colorHex || '#ccc' }}
                                 />
                             </div>
-                        </div>
 
-                        <div className="text-xs text-gray-400 font-mono truncate">
-                            ID: {spool.serial}
-                        </div>
-                    </Link>
+                            <div className="mt-auto">
+                                <div className="flex justify-between text-sm mb-1">
+                                    <span>Remaining</span>
+                                    <span className="font-mono">{spool.weightRemaining}g / {spool.weightTotal}g</span>
+                                </div>
+                                <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-blue-500 rounded-full"
+                                        style={{ width: `${Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100)}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="text-xs text-gray-400 font-mono truncate">
+                                ID: {spool.serial}
+                            </div>
+                        </Link>
+                    </StaggerItem>
                 ))}
-            </div>
-        </div>
+            </StaggerContainer>
+        </PageTransition>
     );
 }
