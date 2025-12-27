@@ -241,6 +241,10 @@ Contributions are welcome! Please follow these guidelines:
 - Update documentation as needed
 - Ensure the app builds without errors
 
+### For Maintainers
+- See [RELEASE_GUIDE.md](RELEASE_GUIDE.md) for detailed release procedures
+- Includes critical file naming constraints and version management
+
 ---
 
 ## 📄 License
