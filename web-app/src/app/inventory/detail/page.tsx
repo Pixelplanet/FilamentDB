@@ -109,13 +109,13 @@ function SpoolDetailContent() {
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold">{spool.brand} {spool.type}</h1>
+                        <h1 className="text-2xl font-bold">{spool.brand || 'Unknown Brand'} {spool.type}</h1>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                             <div
                                 className="w-3 h-3 rounded-full border border-gray-300"
                                 style={{ backgroundColor: spool.colorHex || '#ccc' }}
                             />
-                            {spool.color}
+                            {spool.color || 'No Color'}
                         </div>
                     </div>
                 </div>

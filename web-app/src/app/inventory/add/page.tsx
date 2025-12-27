@@ -162,16 +162,27 @@ function AddSpoolForm() {
                             <input
                                 type="url"
                                 placeholder="Paste URL here..."
-                                className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent"
+                                className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 value={url}
                                 onChange={e => setUrl(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && !analyzing && url && analyzeUrl()}
                             />
                             <button
                                 onClick={() => analyzeUrl()}
                                 disabled={analyzing || !url}
-                                className="px-4 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
                             >
-                                {analyzing ? <Loader2 className="animate-spin" /> : 'Analyze'}
+                                {analyzing ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <span>Analyzing...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles className="w-4 h-4" />
+                                        <span>Analyze</span>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

@@ -38,9 +38,9 @@ function InventoryPageContent() {
 
     // Client-side filtering (Dexie is fast enough for small DBs, or use .where() for large)
     const filtered = spools.filter(s => {
-        const matchSearch = s.brand.toLowerCase().includes(search.toLowerCase()) ||
-            s.type.toLowerCase().includes(search.toLowerCase()) ||
-            s.color.toLowerCase().includes(search.toLowerCase());
+        const matchSearch = (s.brand || '').toLowerCase().includes(search.toLowerCase()) ||
+            (s.type || '').toLowerCase().includes(search.toLowerCase()) ||
+            (s.color || '').toLowerCase().includes(search.toLowerCase());
         const matchType = filterType === 'All' || s.type === filterType;
         return matchSearch && matchType;
     });
@@ -94,8 +94,8 @@ function InventoryPageContent() {
                                 <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded uppercase tracking-wider">
                                     {spool.type}
                                 </span>
-                                <h3 className="font-semibold text-lg mt-1">{spool.brand}</h3>
-                                <p className="text-gray-500 text-sm">{spool.color}</p>
+                                <h3 className="font-semibold text-lg mt-1">{spool.brand || 'Unknown Brand'}</h3>
+                                <p className="text-gray-500 text-sm">{spool.color || 'No Color'}</p>
                             </div>
                             <div
                                 className="w-6 h-6 rounded-full border border-gray-200 shadow-inner"
