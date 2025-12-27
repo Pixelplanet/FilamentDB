@@ -205,7 +205,11 @@ Current test coverage includes:
 
 ## 📋 Roadmap
 
-See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical roadmap. Key upcoming features:
+See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical roadmap. 
+
+**→ For developers**: See [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) for step-by-step instructions on implementing these features.
+
+Key upcoming features:
 
 ### Phase 1: Stability & Safety
 - [ ] Expand test coverage (E2E with Playwright)
