@@ -44,6 +44,7 @@ android/local.properties
 ios/App/build/
 ios/App/Pods/
 
-# APK downloads (keep the directory but not the files)
+# APK downloads (use GitHub Releases instead)
+*.apk
 web-app/public/downloads/*.apk
-!web-app/public/downloads/.gitkeep
+public/downloads/*.apk

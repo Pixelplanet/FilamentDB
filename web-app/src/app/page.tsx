@@ -56,8 +56,9 @@ export default function Home() {
         <div className="flex items-center gap-2">
           {!((typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform())) && (
             <Link
-              href="/downloads/filamentdb.apk"
-              download
+              href="https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full text-xs font-semibold hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors"
             >
               <Download className="w-3 h-3" />
