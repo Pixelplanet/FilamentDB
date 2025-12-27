@@ -113,6 +113,7 @@ export const useNFC = () => {
 
                 // Remove any existing listeners before adding new ones
                 if (listenersRegistered.current) {
+                    // @ts-ignore - removeAllListeners exists but may not be in types
                     await CapacitorNfc.removeAllListeners();
                     listenersRegistered.current = false;
                 }
