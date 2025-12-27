@@ -34,6 +34,7 @@ export const useNFC = () => {
     const cleanup = useCallback(async () => {
         if (isNative && listenersRegistered.current) {
             try {
+                // @ts-ignore - removeAllListeners exists but may not be in types
                 await CapacitorNfc.removeAllListeners();
                 await CapacitorNfc.stopScanning();
                 listenersRegistered.current = false;
