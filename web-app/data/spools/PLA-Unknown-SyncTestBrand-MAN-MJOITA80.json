@@ -1,0 +1,22 @@
+{
+  "brand": "",
+  "type": "PLA",
+  "color": "Sync Test Brand",
+  "colorHex": "#000000",
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "weightSpool": 0,
+  "diameter": 1.75,
+  "density": 1.24,
+  "temperatureNozzleMin": 200,
+  "temperatureNozzleMax": 220,
+  "temperatureBedMin": 60,
+  "temperatureBedMax": 60,
+  "batchNumber": "",
+  "productionDate": "",
+  "serial": "MAN-MJOITA80",
+  "lastScanned": 1766853262080,
+  "id": 3,
+  "lastUpdated": 1766934140928,
+  "createdAt": 1766934140928
+}

@@ -1,0 +1,22 @@
+{
+  "brand": "",
+  "type": "PLA",
+  "color": "",
+  "colorHex": "#000000",
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "weightSpool": 0,
+  "diameter": 1.75,
+  "density": 1.24,
+  "temperatureNozzleMin": 200,
+  "temperatureNozzleMax": 220,
+  "temperatureBedMin": 60,
+  "temperatureBedMax": 60,
+  "batchNumber": "",
+  "productionDate": "",
+  "serial": "MAN-MJPMEYHM",
+  "lastScanned": 1766919778330,
+  "id": 4,
+  "lastUpdated": 1766934140947,
+  "createdAt": 1766934140947
+}

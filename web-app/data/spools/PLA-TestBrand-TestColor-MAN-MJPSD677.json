@@ -1,0 +1,22 @@
+{
+  "brand": "TestBrand",
+  "type": "PLA",
+  "color": "TestColor",
+  "colorHex": "#000000",
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "weightSpool": 0,
+  "diameter": 1.75,
+  "density": 1.24,
+  "temperatureNozzleMin": 200,
+  "temperatureNozzleMax": 220,
+  "temperatureBedMin": 60,
+  "temperatureBedMax": 60,
+  "batchNumber": "",
+  "productionDate": "",
+  "serial": "MAN-MJPSD677",
+  "lastScanned": 1766929772707,
+  "id": 8,
+  "lastUpdated": 1766934141015,
+  "createdAt": 1766934141015
+}
