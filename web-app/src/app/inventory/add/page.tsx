@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { db, Spool } from '@/db';
+import { Spool } from '@/db';
 import { ArrowLeft, Save, Globe, Type, Loader2, Sparkles, Terminal, Thermometer, Ruler, Scale, Tag, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSpoolMutations } from '@/hooks/useFileStorage';
 
 function AddSpoolForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { createSpool } = useSpoolMutations();
     const [activeTab, setActiveTab] = useState<'manual' | 'url'>('manual');
 
     // Expanded Form State matching Schema
@@ -61,13 +63,17 @@ function AddSpoolForm() {
             // Generate semi-random serial if not present
             const serial = `MAN-${Date.now().toString(36).toUpperCase()}`;
 
-            await db.spools.add({
+            const success = await createSpool({
                 ...formData,
                 serial,
                 lastScanned: Date.now()
             } as Spool);
 
-            router.push('/inventory');
+            if (success) {
+                router.push('/inventory');
+            } else {
+                alert('Failed to save spool');
+            }
         } catch (e) {
             console.error(e);
             alert('Failed to save spool');

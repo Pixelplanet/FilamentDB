@@ -1,13 +1,12 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/db';
 import { useState, useEffect, Suspense } from 'react';
 import { Filter, Search, Eye, EyeOff, List, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PageTransition } from '@/components/PageTransition';
 import { StaggerContainer, StaggerItem } from '@/components/StaggerAnimation';
+import { useSpools } from '@/hooks/useFileStorage';
 
 export default function InventoryPage() {
     return (
@@ -24,6 +23,9 @@ function InventoryPageContent() {
     const [showEmpty, setShowEmpty] = useState(true); // Show empty spools by default
     const [viewMode, setViewMode] = useState<'spools' | 'grouped'>('spools'); // New view mode state
 
+    // Use file storage hook instead of Dexie
+    const { spools, loading, error } = useSpools();
+
     useEffect(() => {
         const typeParam = searchParams.get('type');
         if (typeParam) {
@@ -31,14 +33,9 @@ function InventoryPageContent() {
         }
     }, [searchParams]);
 
-    const spools = useLiveQuery(async () => {
-        let collection = db.spools.toCollection();
-
-        // Sort by newest scan (reverse id roughly)
-        return await collection.reverse().sortBy('id');
-    });
-
-    if (!spools) return <div className="p-8 text-center">Loading Inventory...</div>;
+    if (loading) return <div className="p-8 text-center">Loading Inventory...</div>;
+    if (error) return <div className="p-8 text-center text-red-600">Error loading spools: {error.message}</div>;
+    if (!spools) return <div className="p-8 text-center">No spools found</div>;
 
     // Client-side filtering (Dexie is fast enough for small DBs, or use .where() for large)
     const filtered = spools.filter(s => {
