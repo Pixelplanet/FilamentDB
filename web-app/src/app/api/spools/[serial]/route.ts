@@ -47,9 +47,10 @@ async function findSpoolFile(serial: string): Promise<string | null> {
  */
 export async function GET(
     req: NextRequest,
-    { params }: { params: { serial: string } }
+    context: { params: Promise<{ serial: string }> }
 ) {
     try {
+        const params = await context.params;
         const serial = params.serial;
 
         // Find the file
@@ -90,9 +91,10 @@ export async function GET(
  */
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { serial: string } }
+    context: { params: Promise<{ serial: string }> }
 ) {
     try {
+        const params = await context.params;
         const serial = params.serial;
 
         // Find the existing file
@@ -161,9 +163,10 @@ export async function PUT(
  */
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { serial: string } }
+    context: { params: Promise<{ serial: string }> }
 ) {
     try {
+        const params = await context.params;
         const serial = params.serial;
 
         // Find the file
