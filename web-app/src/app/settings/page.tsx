@@ -83,13 +83,13 @@ export default function SettingsPage() {
         setSyncStatus('Testing connection...');
 
         try {
-            const response = await fetch(`${serverUrl}/api/sync`, {
+            const response = await fetch(`${serverUrl}/api/spools`, {
                 method: 'GET'
             });
 
             if (response.ok) {
                 const data = await response.json();
-                setSyncStatus(`✅ Server found! Total spools on server: ${data.totalSpools || 0}`);
+                setSyncStatus(`✅ Server found! Total spools on server: ${data.length || 0}`);
             } else {
                 setSyncStatus(`❌ Server responded with error: ${response.status}`);
             }
@@ -100,7 +100,9 @@ export default function SettingsPage() {
 
     const clearSyncData = () => {
         if (confirm('Clear sync configuration? This will not delete your local data.')) {
-            syncManager.clearConfig();
+            localStorage.removeItem('sync_server_url');
+            localStorage.removeItem('sync_api_key');
+            localStorage.removeItem('sync_last_sync');
             setServerUrl('');
             setApiKey('');
             setLastSync(null);
