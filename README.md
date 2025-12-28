@@ -11,8 +11,9 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 ### 📱 **Cross-Platform**
 - **Progressive Web App (PWA)**: Works seamlessly in any modern browser
 - **Android App**: Native mobile experience via Capacitor
-- **Offline-First**: All data stored locally using IndexedDB (Dexie.js)
-- **Multi-Device Sync**: Sync your inventory across unlimited devices with delta sync
+- **Offline-First**: All data stored locally in human-readable JSON files
+- **File-Based Storage**: Each spool stored as an individual JSON file for easy backup and git tracking
+- **Multi-Device Sync**: Simplified timestamp-based sync across unlimited devices
 
 ### 🏷️ **Smart Data Entry**
 - **NFC Tag Scanning**: Tap compatible NFC tags (e.g., OpenPrintTag) to instantly read filament data
@@ -25,6 +26,8 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 - **Weight Tracking**: Monitor total and remaining filament weight with visual indicators
 - **Color-Coded Cards**: Instantly identify spools by their actual filament color
 - **Filtering & Search**: Quickly find spools by material type, brand, or color
+- **Grouped View**: View spools grouped by brand, type, and color with aggregated statistics
+- **Empty Spool Management**: Toggle visibility of empty spools with visual distinction
 - **Edit & Delete**: Update spool information or remove consumed filaments
 
 ### 🎯 **Additional Capabilities**
@@ -33,6 +36,8 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 - **Purchase History**: Record purchase dates and organize inventory chronologically
 - **Light/Dark Mode**: Toggle between themes with persistent preference
 - **Micro-Animations**: Smooth transitions and professional UI polish
+- **Easy Backup**: Simple folder copy for complete backup
+- **Git-Friendly**: Track individual spool changes in version control
 - **Comprehensive Testing**: 30+ unit tests ensuring reliability
 
 ---
@@ -202,11 +207,12 @@ FilamentDB includes a complete sync implementation using delta synchronization:
    - Click **Save** then **Sync Now**
 
 4. **Features**:
-   - ✅ Delta sync (only changed data)
-   - ✅ Conflict resolution (Last-Write-Wins)
+   - ✅ Simplified timestamp sync (compares file modification times)
+   - ✅ Last-Write-Wins conflict resolution
    - ✅ Works across unlimited devices
    - ✅ File-based storage (your data, your server)
    - ✅ API key authentication
+   - ✅ Push/pull capabilities for manual control
 
 See [ENV_VARIABLES.md](ENV_VARIABLES.md) for detailed setup instructions.
 
@@ -256,12 +262,24 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 - [x] **Theme toggle** - Light/dark mode with localStorage persistence
 - [x] **Improved metadata display** - Null safety and fallback values
 - [x] **Enhanced URL analyzer** - Better visual feedback and loading states
+- [x] **Grouped filament view** - View spools grouped by brand, type, and color
+- [x] **Empty spool management** - Toggle visibility with visual distinction
+
+#### Phase 4: File-Based Storage Migration (Complete!)
+- [x] **Storage abstraction layer** - Platform-agnostic storage interface
+- [x] **File-based backend** - Individual JSON files per spool
+- [x] **Complete API implementation** - RESTful endpoints for all operations
+- [x] **Migration tools** - UI and scripts to convert from IndexedDB
+- [x] **Simplified sync** - Timestamp-based file sync (replaces complex delta sync)
+- [x] **Human-readable format** - Pretty-printed JSON for easy inspection
+- [x] **Docker deployment** - Updated image with new storage system
 
 ### 🔄 In Progress
 
 - [ ] End-to-end tests with Playwright
 - [ ] PWA manifest optimization
 - [ ] Service worker for offline functionality
+- [ ] Mobile file storage implementation (Capacitor File System API)
 
 ### 🎯 Future Improvements
 
@@ -269,13 +287,8 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 - [ ] Advanced filtering (by date, purchase history, location)
 - [ ] Print history integration (track which spools were used for which prints)
 - [ ] Support for resin/powder materials
-- [ ] Batch operations (export/import, bulk edits)
-
-#### Sync & Collaboration
-- [ ] Real-time sync with WebSockets
-- [ ] Shared inventories (multi-user)
-- [ ] Sync history and audit log
-- [ ] End-to-end encryption
+- [ ] Batch operations (bulk edits)
+- [ ] Search indexing for faster queries with large datasets
 
 #### Analytics & Insights
 - [ ] Usage statistics and trends
