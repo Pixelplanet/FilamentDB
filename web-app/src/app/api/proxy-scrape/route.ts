@@ -1,6 +1,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+// For static export builds (Capacitor), these routes are stubs.
+// For server builds, force dynamic to ensure fresh data
+export const dynamic = process.env.BUILD_MODE === 'mobile' ? 'force-static' : 'force-dynamic';
+export const revalidate = false;
+
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const targetUrl = searchParams.get('url');
