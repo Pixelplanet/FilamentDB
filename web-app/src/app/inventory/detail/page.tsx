@@ -68,7 +68,7 @@ function SpoolDetailContent() {
                 "5": spool.temperatureNozzleMax, // max temp
                 "6": spool.color, // color
                 "7": spool.weightSpool, // weight
-                "8": spool.uuid || "", // uuid
+                "8": spool.serial || "", // serial
             };
 
             await write(tagData);
