@@ -1,38 +1,35 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/db';
 import { Circle, Database, Package, Scale, AlertTriangle, Download } from 'lucide-react';
 import Link from 'next/link';
 import { PageTransition } from '@/components/PageTransition';
+import { useSpools, useSpoolMutations } from '@/hooks/useFileStorage';
 
 export default function Home() {
-  const stats = useLiveQuery(async () => {
-    const allSpools = await db.spools.toArray();
+  const { spools, loading } = useSpools();
+  const { createSpool } = useSpoolMutations();
 
-    // Total count
-    const totalCount = allSpools.length;
+  if (loading) return <div className="p-8">Loading Dashboard...</div>;
+  if (!spools) return <div className="p-8">No data available</div>;
 
-    // Total weight (g to kg)
-    const totalWeight = allSpools.reduce((sum, s) => sum + s.weightRemaining, 0) / 1000;
+  // Calculate stats from spools
+  const totalCount = spools.length;
+  const totalWeight = spools.reduce((sum, s) => sum + s.weightRemaining, 0) / 1000;
 
-    // Breakdown by type
-    const byType = allSpools.reduce((acc, spool) => {
-      if (!acc[spool.type]) {
-        acc[spool.type] = { count: 0, weight: 0 };
-      }
-      acc[spool.type].count++;
-      acc[spool.type].weight += spool.weightRemaining;
-      return acc;
-    }, {} as Record<string, { count: number, weight: number }>);
+  // Breakdown by type
+  const byType = spools.reduce((acc, spool) => {
+    if (!acc[spool.type]) {
+      acc[spool.type] = { count: 0, weight: 0 };
+    }
+    acc[spool.type].count++;
+    acc[spool.type].weight += spool.weightRemaining;
+    return acc;
+  }, {} as Record<string, { count: number, weight: number }>);
 
-    // Low stock (<200g)
-    const lowStock = allSpools.filter(s => s.weightRemaining < 200);
+  // Low stock (<200g)
+  const lowStock = spools.filter(s => s.weightRemaining < 200);
 
-    return { totalCount, totalWeight, byType, lowStock };
-  });
-
-  if (!stats) return <div className="p-8">Loading Dashboard...</div>;
+  const stats = { totalCount, totalWeight, byType, lowStock };
 
   const seedDatabase = async () => {
     const dummyData = [
@@ -43,7 +40,9 @@ export default function Home() {
       { serial: 'PRU-PVB-TRN', brand: 'Prusament', type: 'PVB', color: 'Transparent', colorHex: '#e0e0e0', weightRemaining: 500, weightTotal: 500, lastScanned: Date.now() },
     ];
 
-    await db.spools.bulkAdd(dummyData as any);
+    for (const spool of dummyData) {
+      await createSpool(spool as any);
+    }
     window.location.reload();
   };
 
