@@ -120,7 +120,7 @@ function SpoolDetailContent() {
                         <Tag className="w-5 h-5" />
                     </button>
                     <Link
-                        href={`/inventory/edit?id=${id}`}
+                        href={`/inventory/edit?serial=${serial}`}
                         className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
                     >
                         <Edit2 className="w-5 h-5" />
