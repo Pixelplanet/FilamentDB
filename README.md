@@ -186,6 +186,8 @@ FilamentDB includes a complete sync implementation using delta synchronization:
    cd web-app
    docker-compose up -d
    ```
+   
+   > **Note**: See [DOCKER_GUIDE.md](DOCKER_GUIDE.md) for detailed Docker workflows and best practices.
 
 2. **Configure environment variables** on the server:
    ```env
