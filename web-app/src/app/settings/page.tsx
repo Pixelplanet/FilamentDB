@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { db } from '@/db';
 import { Save, RefreshCw, Server, Download, Check, AlertTriangle, Search, Loader2, Cloud, Lock } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { syncManager } from '@/lib/SyncManager';
 import { PageTransition } from '@/components/PageTransition';
+import { syncSpools } from '@/lib/storage/simpleSync';
+import { useSpools } from '@/hooks/useFileStorage';
 
 export default function SettingsPage() {
     const [serverUrl, setServerUrl] = useState('');
@@ -15,20 +14,19 @@ export default function SettingsPage() {
     const [syncStatus, setSyncStatus] = useState('');
     const [showApiKey, setShowApiKey] = useState(false);
 
-    const spoolCount = useLiveQuery(() => db.spools.count());
+    const { spools } = useSpools();
+    const spoolCount = spools?.length || 0;
 
     useEffect(() => {
-        // Load sync configuration
-        const config = syncManager.getConfig();
-        if (config) {
-            setServerUrl(config.serverUrl);
-            setApiKey(config.apiKey);
-        }
+        // Load sync configuration from localStorage
+        const savedUrl = localStorage.getItem('sync_server_url');
+        const savedKey = localStorage.getItem('sync_api_key');
+        const savedLastSync = localStorage.getItem('sync_last_sync');
 
-        // Load last sync time
-        const lastSyncTime = syncManager.getLastSyncTime();
-        if (lastSyncTime > 0) {
-            setLastSync(new Date(lastSyncTime).toLocaleString());
+        if (savedUrl) setServerUrl(savedUrl);
+        if (savedKey) setApiKey(savedKey);
+        if (savedLastSync) {
+            setLastSync(new Date(parseInt(savedLastSync)).toLocaleString());
         }
     }, []);
 
@@ -38,7 +36,9 @@ export default function SettingsPage() {
             return;
         }
 
-        syncManager.saveConfig({ serverUrl, apiKey });
+        localStorage.setItem('sync_server_url', serverUrl);
+        localStorage.setItem('sync_api_key', apiKey);
+
         setSyncStatus('✅ Settings Saved');
         setTimeout(() => setSyncStatus(''), 2000);
     };
@@ -53,18 +53,18 @@ export default function SettingsPage() {
         setSyncStatus('🔄 Syncing...');
 
         try {
-            const result = await syncManager.sync({ serverUrl, apiKey });
+            const result = await syncSpools({ serverUrl, apiKey });
 
-            if (result.success) {
-                const now = new Date().toLocaleString();
-                setLastSync(now);
-                setSyncStatus(`✅ Sync Complete! ↑${result.stats.uploaded} ↓${result.stats.downloaded} 🔀${result.stats.conflictsResolved}`);
+            const now = Date.now();
+            localStorage.setItem('sync_last_sync', now.toString());
+            setLastSync(new Date(now).toLocaleString());
 
-                // Auto-hide success message after 5 seconds
-                setTimeout(() => setSyncStatus(''), 5000);
-            } else {
-                setSyncStatus(`❌ ${result.error}`);
-            }
+            setSyncStatus(
+                `✅ Sync Complete! ⬆️  ${result.summary.uploadCount} uploaded, ⬇️  ${result.summary.downloadCount} downloaded${result.summary.errorCount > 0 ? `, ❌ ${result.summary.errorCount} errors` : ''}`
+            );
+
+            // Auto-hide success message after 5 seconds
+            setTimeout(() => setSyncStatus(''), 5000);
 
         } catch (e: any) {
             console.error(e);
@@ -192,8 +192,8 @@ export default function SettingsPage() {
                     {/* Status Message */}
                     {syncStatus && (
                         <div className={`text-sm text-center font-mono p-3 rounded-lg ${syncStatus.includes('❌') || syncStatus.includes('Error')
-                                ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                                : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                            ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                            : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
                             }`}>
                             {syncStatus}
                         </div>
