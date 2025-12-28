@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// For static export builds (Capacitor), these routes are stubs.
-// The actual API is served by the Docker container.
-// For server builds, force dynamic to ensure fresh data
-export const dynamic = process.env.BUILD_MODE === 'mobile' ? 'force-static' : 'force-dynamic';
+// Must be static for Next.js to parse at build time
+// Docker builds use force-dynamic (server mode)
+export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 export async function GET(req: NextRequest) {

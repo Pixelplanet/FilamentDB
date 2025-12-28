@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// For static export builds (Capacitor), these routes are stubs.
-// For server builds, force dynamic to ensure fresh data
-export const dynamic = process.env.BUILD_MODE === 'mobile' ? 'force-static' : 'force-dynamic';
+// Must be static for Next.js to parse at build time
+// Docker builds use force-dynamic (server mode)
+// Mobile builds handled separately with build:mobile script
+export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 // Types matching client
