@@ -35,6 +35,7 @@ export interface Spool {
 
     // Sync fields
     lastUpdated: number; // Timestamp of last modification (for sync)
+    createdAt?: number;  // Timestamp of creation
     deleted?: boolean;   // Soft delete flag for sync
 }
 
