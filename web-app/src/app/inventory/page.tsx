@@ -147,9 +147,9 @@ function InventoryPageContent() {
                     filtered.map(spool => {
                         const isEmpty = spool.weightRemaining <= 0;
                         return (
-                            <StaggerItem key={spool.id}>
+                            <StaggerItem key={spool.serial}>
                                 <Link
-                                    href={`/inventory/detail?id=${spool.id}`}
+                                    href={`/inventory/detail?serial=${spool.serial}`}
                                     className={`rounded-xl p-4 shadow-sm border flex flex-col gap-3 transition-all block ${isEmpty
                                         ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800 opacity-60 hover:opacity-80'
                                         : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700'
@@ -287,7 +287,7 @@ function InventoryPageContent() {
                                         {group.spools.map((spool: any) => (
                                             <Link
                                                 key={spool.id}
-                                                href={`/inventory/detail?id=${spool.id}`}
+                                                href={`/inventory/detail?serial=${spool.serial}`}
                                                 className={`text-xs px-2 py-1 rounded transition-colors ${spool.weightRemaining <= 0
                                                     ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                                                     : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40'

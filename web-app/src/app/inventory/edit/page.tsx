@@ -2,9 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { db } from '@/db';
 import { ArrowLeft, Save, Trash2, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useSpool, useSpoolMutations } from '@/hooks/useFileStorage';
 
 export default function EditSpoolPage() {
     return (
@@ -19,32 +19,31 @@ export default function EditSpoolPage() {
 function EditSpoolContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const idParam = searchParams.get('id');
-    const id = idParam ? Number(idParam) : null;
+    const serial = searchParams.get('serial');
 
-    const [spool, setSpool] = useState<any>(null);
+    const { spool, loading } = useSpool(serial);
+    const { updateSpool, deleteSpool } = useSpoolMutations();
+
+    const [formData, setFormData] = useState<any>(null);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            db.spools.get(id).then(s => {
-                if (s) setSpool(s);
-                else router.push('/inventory');
-            });
+        if (spool) {
+            setFormData(spool);
         }
-    }, [id, router]);
+    }, [spool]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!id || !spool) return;
+        if (!serial || !formData) return;
         setSaving(true);
         try {
-            await db.spools.update(id, {
-                ...spool,
+            await updateSpool(serial, {
+                ...formData,
                 lastScanned: Date.now() // Treat edit as interaction
             });
-            router.push(`/inventory/detail?id=${id}`);
+            router.push(`/inventory/detail?serial=${serial}`);
         } catch (error) {
             console.error("Save failed", error);
             alert("Failed to save changes.");
@@ -54,10 +53,10 @@ function EditSpoolContent() {
     };
 
     const handleDelete = async () => {
-        if (!id || !confirm("Are you sure you want to delete this filament? This cannot be undone.")) return;
+        if (!serial || !confirm("Are you sure you want to delete this filament? This cannot be undone.")) return;
         setDeleting(true);
         try {
-            await db.spools.delete(id);
+            await deleteSpool(serial);
             router.push('/inventory');
         } catch (error) {
             console.error("Delete failed", error);
@@ -67,13 +66,14 @@ function EditSpoolContent() {
         }
     };
 
-    if (!spool) return <div className="p-8 text-center flex items-center justify-center gap-2"><Loader2 className="animate-spin w-4 h-4 text-primary" />Initialising...</div>;
+    if (!serial) return <div className="p-8 text-center text-red-500">Invalid Spool Serial.</div>;
+    if (loading || !formData) return <div className="p-8 text-center flex items-center justify-center gap-2"><Loader2 className="animate-spin w-4 h-4 text-primary" />Initialising...</div>;
 
     return (
         <>
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                    <Link href={`/inventory/detail?id=${id}`} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                    <Link href={`/inventory/detail?serial=${serial}`} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <h1 className="text-2xl font-bold">Edit Filament</h1>
@@ -94,8 +94,8 @@ function EditSpoolContent() {
                         <input
                             type="text"
                             required
-                            value={spool.brand}
-                            onChange={e => setSpool({ ...spool, brand: e.target.value })}
+                            value={formData.brand}
+                            onChange={e => setFormData({ ...formData, brand: e.target.value })}
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                         />
                     </div>
@@ -104,8 +104,8 @@ function EditSpoolContent() {
                         <input
                             type="text"
                             required
-                            value={spool.type}
-                            onChange={e => setSpool({ ...spool, type: e.target.value })}
+                            value={formData.type}
+                            onChange={e => setFormData({ ...formData, type: e.target.value })}
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                         />
                     </div>
@@ -115,8 +115,8 @@ function EditSpoolContent() {
                             <input
                                 type="text"
                                 required
-                                value={spool.color}
-                                onChange={e => setSpool({ ...spool, color: e.target.value })}
+                                value={formData.color}
+                                onChange={e => setFormData({ ...formData, color: e.target.value })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -125,14 +125,14 @@ function EditSpoolContent() {
                             <div className="flex gap-2">
                                 <input
                                     type="color"
-                                    value={spool.colorHex || '#000000'}
-                                    onChange={e => setSpool({ ...spool, colorHex: e.target.value })}
+                                    value={formData.colorHex || '#000000'}
+                                    onChange={e => setFormData({ ...formData, colorHex: e.target.value })}
                                     className="h-10 w-12 rounded border p-1 bg-white dark:bg-gray-900"
                                 />
                                 <input
                                     type="text"
-                                    value={spool.colorHex || ''}
-                                    onChange={e => setSpool({ ...spool, colorHex: e.target.value })}
+                                    value={formData.colorHex || ''}
+                                    onChange={e => setFormData({ ...formData, colorHex: e.target.value })}
                                     placeholder="#000000"
                                     className="flex-grow px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 font-mono text-sm"
                                 />
@@ -149,8 +149,8 @@ function EditSpoolContent() {
                             <input
                                 type="number"
                                 required
-                                value={spool.weightTotal}
-                                onChange={e => setSpool({ ...spool, weightTotal: Number(e.target.value) })}
+                                value={formData.weightTotal}
+                                onChange={e => setFormData({ ...formData, weightTotal: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -159,8 +159,8 @@ function EditSpoolContent() {
                             <input
                                 type="number"
                                 required
-                                value={spool.weightRemaining}
-                                onChange={e => setSpool({ ...spool, weightRemaining: Number(e.target.value) })}
+                                value={formData.weightRemaining}
+                                onChange={e => setFormData({ ...formData, weightRemaining: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -169,8 +169,8 @@ function EditSpoolContent() {
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Empty Spool Weight (Tare)</label>
                         <input
                             type="number"
-                            value={spool.weightSpool || ''}
-                            onChange={e => setSpool({ ...spool, weightSpool: Number(e.target.value) })}
+                            value={formData.weightSpool || ''}
+                            onChange={e => setFormData({ ...formData, weightSpool: Number(e.target.value) })}
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                         />
                     </div>
@@ -183,8 +183,8 @@ function EditSpoolContent() {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Nozzle (°C)</label>
                             <input
                                 type="number"
-                                value={spool.temperatureNozzleMin || ''}
-                                onChange={e => setSpool({ ...spool, temperatureNozzleMin: Number(e.target.value) })}
+                                value={formData.temperatureNozzleMin || ''}
+                                onChange={e => setFormData({ ...formData, temperatureNozzleMin: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -192,8 +192,8 @@ function EditSpoolContent() {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Nozzle (°C)</label>
                             <input
                                 type="number"
-                                value={spool.temperatureNozzleMax || ''}
-                                onChange={e => setSpool({ ...spool, temperatureNozzleMax: Number(e.target.value) })}
+                                value={formData.temperatureNozzleMax || ''}
+                                onChange={e => setFormData({ ...formData, temperatureNozzleMax: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -204,8 +204,8 @@ function EditSpoolContent() {
                             <input
                                 type="number"
                                 step="0.01"
-                                value={spool.diameter || 1.75}
-                                onChange={e => setSpool({ ...spool, diameter: Number(e.target.value) })}
+                                value={formData.diameter || 1.75}
+                                onChange={e => setFormData({ ...formData, diameter: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -214,8 +214,8 @@ function EditSpoolContent() {
                             <input
                                 type="number"
                                 step="0.01"
-                                value={spool.density || 1.24}
-                                onChange={e => setSpool({ ...spool, density: Number(e.target.value) })}
+                                value={formData.density || 1.24}
+                                onChange={e => setFormData({ ...formData, density: Number(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900"
                             />
                         </div>
@@ -232,7 +232,7 @@ function EditSpoolContent() {
                         Save Changes
                     </button>
                     <Link
-                        href={`/inventory/detail?id=${id}`}
+                        href={`/inventory/detail?serial=${serial}`}
                         className="px-6 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold transition-colors"
                     >
                         Cancel
