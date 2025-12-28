@@ -3,7 +3,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db';
 import { useState, useEffect, Suspense } from 'react';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PageTransition } from '@/components/PageTransition';
@@ -21,6 +21,7 @@ function InventoryPageContent() {
     const searchParams = useSearchParams();
     const [search, setSearch] = useState('');
     const [filterType, setFilterType] = useState('All');
+    const [showEmpty, setShowEmpty] = useState(true); // Show empty spools by default
 
     useEffect(() => {
         const typeParam = searchParams.get('type');
@@ -44,17 +45,19 @@ function InventoryPageContent() {
             (s.type || '').toLowerCase().includes(search.toLowerCase()) ||
             (s.color || '').toLowerCase().includes(search.toLowerCase());
         const matchType = filterType === 'All' || s.type === filterType;
-        return matchSearch && matchType;
+        const matchEmpty = showEmpty || s.weightRemaining > 0; // Hide empty if showEmpty is false
+        return matchSearch && matchType && matchEmpty;
     });
 
     const uniqueTypes = Array.from(new Set(spools.map(s => s.type))).sort();
+    const emptyCount = spools.filter(s => s.weightRemaining <= 0).length;
 
     return (
         <PageTransition className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold">Inventory</h1>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                     <Link href="/inventory/add" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-1 transition-colors whitespace-nowrap">
                         + Add Spool
                     </Link>
@@ -79,52 +82,98 @@ function InventoryPageContent() {
                         </select>
                         <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
+                    <button
+                        onClick={() => setShowEmpty(!showEmpty)}
+                        className={`px-3 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors ${showEmpty
+                                ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                : 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50'
+                            }`}
+                        title={showEmpty ? 'Hide empty spools' : 'Show empty spools'}
+                    >
+                        {showEmpty ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        <span className="hidden sm:inline">
+                            {showEmpty ? 'Empty' : `Hidden (${emptyCount})`}
+                        </span>
+                    </button>
                 </div>
             </div>
 
             <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.length === 0 && (
                     <div className="col-span-full text-center py-12 text-gray-400">
-                        No spools found. Scan some tags to populate!
+                        {showEmpty ? 'No spools found. Scan some tags to populate!' : 'No active spools found. Toggle "Empty" to show all.'}
                     </div>
                 )}
 
-                {filtered.map(spool => (
-                    <StaggerItem key={spool.id}>
-                        <Link href={`/inventory/detail?id=${spool.id}`} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3 hover:border-blue-300 dark:hover:border-blue-700 transition-colors block">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded uppercase tracking-wider">
-                                        {spool.type}
-                                    </span>
-                                    <h3 className="font-semibold text-lg mt-1">{spool.brand || 'Unknown Brand'}</h3>
-                                    <p className="text-gray-500 text-sm">{spool.color || 'No Color'}</p>
-                                </div>
-                                <div
-                                    className="w-6 h-6 rounded-full border border-gray-200 shadow-inner"
-                                    style={{ backgroundColor: spool.colorHex || '#ccc' }}
-                                />
-                            </div>
-
-                            <div className="mt-auto">
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span>Remaining</span>
-                                    <span className="font-mono">{spool.weightRemaining}g / {spool.weightTotal}g</span>
-                                </div>
-                                <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                {filtered.map(spool => {
+                    const isEmpty = spool.weightRemaining <= 0;
+                    return (
+                        <StaggerItem key={spool.id}>
+                            <Link
+                                href={`/inventory/detail?id=${spool.id}`}
+                                className={`rounded-xl p-4 shadow-sm border flex flex-col gap-3 transition-all block ${isEmpty
+                                        ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800 opacity-60 hover:opacity-80'
+                                        : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700'
+                                    }`}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${isEmpty
+                                                    ? 'text-gray-500 dark:text-gray-600 bg-gray-200 dark:bg-gray-800'
+                                                    : 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
+                                                }`}>
+                                                {spool.type}
+                                            </span>
+                                            {isEmpty && (
+                                                <span className="text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
+                                                    EMPTY
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : ''}`}>
+                                            {spool.brand || 'Unknown Brand'}
+                                        </h3>
+                                        <p className={`text-sm ${isEmpty ? 'text-gray-400 dark:text-gray-700' : 'text-gray-500'}`}>
+                                            {spool.color || 'No Color'}
+                                        </p>
+                                    </div>
                                     <div
-                                        className="h-full bg-blue-500 rounded-full"
-                                        style={{ width: `${Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100)}%` }}
+                                        className={`w-6 h-6 rounded-full border shadow-inner ${isEmpty ? 'opacity-50' : ''}`}
+                                        style={{
+                                            backgroundColor: spool.colorHex || '#ccc',
+                                            borderColor: isEmpty ? '#d1d5db' : '#e5e7eb'
+                                        }}
                                     />
                                 </div>
-                            </div>
 
-                            <div className="text-xs text-gray-400 font-mono truncate">
-                                ID: {spool.serial}
-                            </div>
-                        </Link>
-                    </StaggerItem>
-                ))}
+                                <div className="mt-auto">
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className={isEmpty ? 'text-gray-400' : ''}>Remaining</span>
+                                        <span className={`font-mono ${isEmpty ? 'text-gray-400' : ''}`}>
+                                            {spool.weightRemaining}g / {spool.weightTotal}g
+                                        </span>
+                                    </div>
+                                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all ${isEmpty
+                                                    ? 'bg-gray-300 dark:bg-gray-600'
+                                                    : spool.weightRemaining < 200
+                                                        ? 'bg-orange-500'
+                                                        : 'bg-blue-500'
+                                                }`}
+                                            style={{ width: `${Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={`text-xs font-mono truncate ${isEmpty ? 'text-gray-400' : 'text-gray-400'}`}>
+                                    ID: {spool.serial}
+                                </div>
+                            </Link>
+                        </StaggerItem>
+                    );
+                })}
             </StaggerContainer>
         </PageTransition>
     );
