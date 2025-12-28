@@ -33,11 +33,11 @@ export default function Home() {
 
   const seedDatabase = async () => {
     const dummyData = [
-      { serial: 'PRU-PLA-BLK', brand: 'Prusament', type: 'PLA', color: 'Galaxy Black', colorHex: '#1a1a1a', weightRemaining: 850, weightTotal: 1000, lastScanned: Date.now() },
-      { serial: 'PRU-PETG-ORG', brand: 'Prusament', type: 'PETG', color: 'Prusa Orange', colorHex: '#ff8800', weightRemaining: 120, weightTotal: 1000, lastScanned: Date.now() },
-      { serial: 'PRU-ASA-GRY', brand: 'Prusament', type: 'ASA', color: 'Galaxy Silver', colorHex: '#cccccc', weightRemaining: 980, weightTotal: 1000, lastScanned: Date.now() },
-      { serial: 'PRU-PC-CLR', brand: 'Prusament', type: 'PC', color: 'Clear', colorHex: '#ffffff', weightRemaining: 400, weightTotal: 1000, lastScanned: Date.now() },
-      { serial: 'PRU-PVB-TRN', brand: 'Prusament', type: 'PVB', color: 'Transparent', colorHex: '#e0e0e0', weightRemaining: 500, weightTotal: 500, lastScanned: Date.now() },
+      { serial: 'PRU-PLA-BLK', brand: 'Prusament', type: 'PLA', color: 'Galaxy Black', colorHex: '#1a1a1a', weightRemaining: 850, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
+      { serial: 'PRU-PETG-ORG', brand: 'Prusament', type: 'PETG', color: 'Prusa Orange', colorHex: '#ff8800', weightRemaining: 120, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
+      { serial: 'PRU-ASA-GRY', brand: 'Prusament', type: 'ASA', color: 'Galaxy Silver', colorHex: '#cccccc', weightRemaining: 980, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
+      { serial: 'PRU-PC-CLR', brand: 'Prusament', type: 'PC', color: 'Clear', colorHex: '#ffffff', weightRemaining: 400, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
+      { serial: 'PRU-PVB-TRN', brand: 'Prusament', type: 'PVB', color: 'Transparent', colorHex: '#e0e0e0', weightRemaining: 500, weightTotal: 500, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
     ];
 
     for (const spool of dummyData) {

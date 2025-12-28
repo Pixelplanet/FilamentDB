@@ -3,10 +3,9 @@
 import { useNFC } from '@/hooks/useNFC';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/db';
 import { ArrowLeft, Thermometer, Ruler, Scale, Calendar, Hash, Tag, Edit2 } from 'lucide-react';
 import Link from 'next/link';
+import { useSpool } from '@/hooks/useFileStorage';
 
 export default function SpoolDetailPage() {
     return (
@@ -20,18 +19,9 @@ export default function SpoolDetailPage() {
 
 function SpoolDetailContent() {
     const searchParams = useSearchParams();
-    const idParam = searchParams.get('id');
-    const id = idParam ? Number(idParam) : null;
+    const serial = searchParams.get('serial');
 
-    const [spool, setSpool] = useState<any>(null);
-
-    useEffect(() => {
-        if (id) {
-            db.spools.get(id).then(s => setSpool(s || null));
-        } else {
-            setSpool(null);
-        }
-    }, [id]);
+    const { spool, loading } = useSpool(serial);
 
     // NFC Hook
     const { write, scan, reading: nfcReading, state: nfcState, error: nfcError } = useNFC();
@@ -95,8 +85,8 @@ function SpoolDetailContent() {
         setWriteStage('idle');
     };
 
-    if (!id) return <div className="p-8 text-center text-red-500">Invalid Spool ID.</div>;
-    if (!spool) return <div className="p-8 text-center flex items-center justify-center gap-2"><div className="animate-spin w-4 h-4 border-2 border-primary rounded-full border-t-transparent" />Loading...</div>;
+    if (!serial) return <div className="p-8 text-center text-red-500">Invalid Spool Serial.</div>;
+    if (loading || !spool) return <div className="p-8 text-center flex items-center justify-center gap-2"><div className="animate-spin w-4 h-4 border-2 border-primary rounded-full border-t-transparent" />Loading...</div>;
 
     // Helpers
     const percent = Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100);

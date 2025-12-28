@@ -3,11 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNFC } from '@/hooks/useNFC';
 import { Scanner } from '@yudiel/react-qr-scanner';
-import { db, Spool } from '@/db';
+import { Spool } from '@/db';
 import { Check, Loader2, AlertTriangle, RefreshCw, Camera as CameraIcon } from 'lucide-react';
 import { Camera } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { useRouter } from 'next/navigation';
+import { getStorage } from '@/lib/storage';
 
 type Mode = 'nfc' | 'qr';
 
@@ -156,8 +157,9 @@ export default function ScanPage() {
         try {
             console.log("Handle Scan:", serial);
 
-            // Check if exists
-            const existing = await db.spools.where('serial').equals(serial).first();
+            // Check if exists using file storage
+            const storage = getStorage();
+            const existing = await storage.getSpool(serial);
 
             if (existing) {
                 setSavedSpool(existing);
