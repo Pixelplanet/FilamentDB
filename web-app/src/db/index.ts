@@ -32,6 +32,7 @@ export interface Spool {
     // Metadata
     lastScanned?: number;
     detailUrl?: string; // Original URL if scanned via QR
+    notes?: string;     // User notes
 
     // Sync fields
     lastUpdated: number; // Timestamp of last modification (for sync)
