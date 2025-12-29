@@ -5,9 +5,9 @@
  * View the interactive docs at /api-docs
  */
 
-import { OpenAPIV3 } from 'openapi3-ts/oas31';
+import type { OpenAPIObject } from 'openapi3-ts/oas31';
 
-export const openApiSpec: OpenAPIV3.Document = {
+export const openApiSpec: OpenAPIObject = {
     openapi: '3.1.0',
     info: {
         title: 'FilamentDB API',
