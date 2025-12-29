@@ -16,8 +16,8 @@ test.describe('Inventory Management', () => {
     });
 
     test('should display dashboard and navigate to inventory', async ({ page }) => {
-        // Check dashboard is loaded
-        await expect(page.getByText('FilamentDB')).toBeVisible();
+        // Check dashboard is loaded - use specific selector to avoid strict mode violation
+        await expect(page.locator('header, aside').getByText('FilamentDB').first()).toBeVisible();
 
         // Navigate to inventory
         await page.getByRole('link', { name: 'Inventory' }).click();
