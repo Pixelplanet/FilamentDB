@@ -6,6 +6,7 @@ import { ArrowLeft, Save, Globe, Type, Loader2, Sparkles, Terminal, Thermometer,
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSpoolMutations } from '@/hooks/useFileStorage';
+import { getApiUrl } from '@/lib/apiConfig';
 
 function AddSpoolForm() {
     const router = useRouter();
@@ -89,7 +90,7 @@ function AddSpoolForm() {
         setDebugLogs([]);
 
         try {
-            const res = await fetch(`/api/scrape?url=${encodeURIComponent(target)}`);
+            const res = await fetch(getApiUrl(`/api/scrape?url=${encodeURIComponent(target)}`));
             if (!res.ok) throw new Error('Failed to analyze URL');
 
             const data = await res.json();
