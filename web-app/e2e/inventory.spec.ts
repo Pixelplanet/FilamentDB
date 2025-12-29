@@ -103,8 +103,8 @@ test.describe('Inventory Management', () => {
         // Wait for redirect
         await page.waitForURL('/inventory');
 
-        // Find and click the spool
-        await page.getByText('To Delete').click();
+        // Find and click the spool - use first() to avoid strict mode
+        await page.getByText('To Delete').first().click();
 
         // Delete it (note: this might need confirmation dialog handling)
         page.on('dialog', dialog => dialog.accept());

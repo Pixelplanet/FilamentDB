@@ -70,8 +70,8 @@ test.describe('Navigation and App Structure', () => {
     test('should load settings page with all sections', async ({ page }) => {
         await page.goto('/settings');
 
-        // Check for main sections
-        await expect(page.getByText('Sync Configuration')).toBeVisible();
+        // Check for main sections - use first() to avoid strict mode
+        await expect(page.getByText('Sync Configuration').first()).toBeVisible();
         await expect(page.getByText('API Documentation')).toBeVisible();
         await expect(page.getByText('Download Android App')).toBeVisible();
     });
@@ -119,7 +119,8 @@ test.describe('Navigation and App Structure', () => {
     test('should display APK download link', async ({ page }) => {
         await page.goto('/settings');
 
-        const apkLink = page.getByRole('link', { name: 'Download' }).filter({ has: page.getByText('Android App') });
+        // Find any link containing 'filamentdb.apk'
+        const apkLink = page.locator('a[href*="filamentdb.apk"]');
         await expect(apkLink).toBeVisible();
 
         // Check it has the correct href
