@@ -21,6 +21,7 @@
     "@capacitor/core": "^8.0.0",
     "@capacitor/ios": "^8.0.0",
     "@capgo/capacitor-nfc": "^8.0.5",
+    "@scalar/nextjs-api-reference": "^0.9.7",
     "@types/adm-zip": "^0.5.7",
     "@types/archiver": "^7.0.0",
     "@yudiel/react-qr-scanner": "^2.5.0",
@@ -31,6 +32,7 @@
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
     "next": "16.1.0",
+    "openapi3-ts": "^4.5.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.4.0"
