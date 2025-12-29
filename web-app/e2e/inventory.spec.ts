@@ -32,12 +32,13 @@ test.describe('Inventory Management', () => {
         // Navigate to add spool page
         await page.goto('/inventory/add');
 
-        // Wait for form to fully load
-        await page.waitForLoadState('networkidle');
+        // Wait for form element to be visible
+        await page.getByPlaceholder('e.g. Prusament').waitFor({ state: 'visible', timeout: 10000 });
 
         // Fill out the form
         await page.getByPlaceholder('e.g. Prusament').fill('Test Brand');
         await page.getByRole('combobox').selectOption('PETG');
+        await page.getByLabel('Color Name').waitFor({ state: 'visible', timeout: 10000 });
         await page.getByLabel('Color Name').fill('Test Blue');
         await page.getByLabel('Color Hex').last().fill('#0066cc');
 

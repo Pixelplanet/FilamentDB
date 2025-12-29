@@ -29,8 +29,9 @@ async function findSpoolFile(serial: string): Promise<string | null> {
         const files = await fs.readdir(SPOOLS_DIR);
 
         // Look for file ending with -{serial}.json
+        // Changed regex to match serials containing hyphens
         const found = files.find(file => {
-            const match = file.match(/-([^-]+)\.json$/);
+            const match = file.match(/-([^\.]+)\.json$/);
             return match && match[1] === serial;
         });
 
