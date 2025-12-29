@@ -53,6 +53,9 @@ test.describe('API Endpoints', () => {
             },
         });
 
+        // Wait for file system to write (file-based storage delay)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         // Now fetch it
         const response = await request.get(`${baseURL}/api/spools/${encodeURIComponent(serial)}`);
         expect(response.ok()).toBeTruthy();
@@ -75,6 +78,9 @@ test.describe('API Endpoints', () => {
                 diameter: 1.75,
             },
         });
+
+        // Wait for file system to write
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Delete it
         const deleteResponse = await request.delete(`${baseURL}/api/spools/${encodeURIComponent(serial)}`);
@@ -100,6 +106,9 @@ test.describe('API Endpoints', () => {
             },
         });
 
+        // Wait for file system
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         // Update
         await request.post(`${baseURL}/api/spools`, {
             data: {
@@ -111,6 +120,9 @@ test.describe('API Endpoints', () => {
                 diameter: 1.75,
             },
         });
+
+        // Wait for file system
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Verify update
         const response = await request.get(`${baseURL}/api/spools/${encodeURIComponent(serial)}`);

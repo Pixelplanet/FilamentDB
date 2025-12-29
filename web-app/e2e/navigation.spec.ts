@@ -10,8 +10,8 @@ test.describe('Navigation and App Structure', () => {
     test('should load homepage', async ({ page }) => {
         await page.goto('/');
 
-        // Check for main branding
-        await expect(page.getByText('FilamentDB')).toBeVisible();
+        // Check for main branding - use first() to avoid strict mode violation (3 elements match)
+        await expect(page.getByText('FilamentDB').first()).toBeVisible();
 
         // Check for navigation links
         await expect(page.getByRole('link', { name: 'Dashboard' })).toBeVisible();
@@ -48,11 +48,8 @@ test.describe('Navigation and App Structure', () => {
         await page.setViewportSize({ width: 375, height: 667 });
         await page.goto('/');
 
-        // Menu should be hidden initially
-        const mobileMenu = page.locator('[class*="fixed"][class*="inset-0"]').first();
-
-        // Click hamburger to open
-        await page.locator('button:has-text("FilamentDB")').first().click();
+        // Click hamburger to open (button has no text/aria-label, use icon class)
+        await page.locator('button').filter({ has: page.locator('svg.lucide-menu') }).click();
 
         // Menu should be visible
         await page.waitForTimeout(500);
@@ -67,7 +64,7 @@ test.describe('Navigation and App Structure', () => {
 
         // Check for stat cards
         await expect(page.getByText(/Total Spools/i)).toBeVisible();
-        await expect(page.getByText(/Material Types/i)).toBeVisible();
+        await expect(page.getByText(/Filament Types/i)).toBeVisible(); // Corrected from "Material Types"
     });
 
     test('should load settings page with all sections', async ({ page }) => {

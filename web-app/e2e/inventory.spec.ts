@@ -32,6 +32,9 @@ test.describe('Inventory Management', () => {
         // Navigate to add spool page
         await page.goto('/inventory/add');
 
+        // Wait for form to fully load
+        await page.waitForLoadState('networkidle');
+
         // Fill out the form
         await page.getByPlaceholder('e.g. Prusament').fill('Test Brand');
         await page.getByRole('combobox').selectOption('PETG');
@@ -75,6 +78,9 @@ test.describe('Inventory Management', () => {
 
         // Click edit
         await page.getByRole('link', { name: 'Edit' }).click();
+
+        // Wait for edit form to load
+        await page.waitForLoadState('networkidle');
 
         // Modify the color
         await page.getByLabel('Color Name').fill('Modified Color');

@@ -1,0 +1,116 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e6]
+          - generic [ref=e11]: FilamentDB
+        - button "Toggle theme" [ref=e12]:
+          - img [ref=e13]
+      - navigation [ref=e15]:
+        - link "Dashboard" [ref=e16] [cursor=pointer]:
+          - /url: /
+          - img [ref=e17]
+          - text: Dashboard
+        - link "Inventory" [ref=e22] [cursor=pointer]:
+          - /url: /inventory
+          - img [ref=e23]
+          - text: Inventory
+        - link "Scanner" [ref=e27] [cursor=pointer]:
+          - /url: /scan
+          - img [ref=e28]
+          - text: Scanner
+        - link "Settings" [ref=e33] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e34]
+          - text: Settings
+    - main [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - link [ref=e42] [cursor=pointer]:
+              - /url: /inventory
+              - img [ref=e43]
+            - heading "Add New Spool" [level=1] [ref=e45]
+          - generic [ref=e46]:
+            - button "Manual" [ref=e47]
+            - button "URL Import" [ref=e48]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - img [ref=e52]
+              - generic [ref=e55]: Basic Information
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]: Brand
+                - textbox "e.g. Prusament" [active] [ref=e59]: Test Brand
+              - generic [ref=e60]:
+                - generic [ref=e61]: Material
+                - combobox [ref=e62]:
+                  - option "PLA"
+                  - option "PETG" [selected]
+                  - option "ASA"
+                  - option "PC"
+                  - option "TPU"
+                  - option "ABS"
+              - generic [ref=e63]:
+                - generic [ref=e64]: Color Name
+                - textbox [ref=e65]
+              - generic [ref=e66]:
+                - generic [ref=e67]: Color Hex
+                - generic [ref=e68]:
+                  - textbox [ref=e69] [cursor=pointer]: "#000000"
+                  - textbox [ref=e70]: "#000000"
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - img [ref=e73]
+              - generic [ref=e77]: Weight & Dimensions
+            - generic [ref=e78]:
+              - generic [ref=e79]:
+                - generic [ref=e80]: Total (g)
+                - spinbutton [ref=e81]: "1000"
+              - generic [ref=e82]:
+                - generic [ref=e83]: Remaining (g)
+                - spinbutton [ref=e84]: "1000"
+              - generic [ref=e85]:
+                - generic [ref=e86]: Spool Tare (g)
+                - spinbutton [ref=e87]: "0"
+              - generic [ref=e88]:
+                - generic [ref=e89]: Diameter (mm)
+                - spinbutton [ref=e90]: "1.75"
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - img [ref=e93]
+              - generic [ref=e95]: Temperatures (°C)
+            - generic [ref=e96]:
+              - generic [ref=e97]:
+                - text: Nozzle Range
+                - generic [ref=e98]:
+                  - spinbutton [ref=e99]: "200"
+                  - generic [ref=e100]: "-"
+                  - spinbutton [ref=e101]: "220"
+              - generic [ref=e102]:
+                - text: Bed Range
+                - generic [ref=e103]:
+                  - spinbutton [ref=e104]: "60"
+                  - generic [ref=e105]: "-"
+                  - spinbutton [ref=e106]: "60"
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - img [ref=e109]
+              - generic [ref=e112]: Traceability
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - generic [ref=e115]: Batch Number
+                - textbox [ref=e116]
+              - generic [ref=e117]:
+                - generic [ref=e118]: Production Date
+                - textbox [ref=e119]
+          - button "Save to Inventory" [ref=e121]:
+            - img [ref=e122]
+            - text: Save to Inventory
+  - alert [ref=e126]
+```

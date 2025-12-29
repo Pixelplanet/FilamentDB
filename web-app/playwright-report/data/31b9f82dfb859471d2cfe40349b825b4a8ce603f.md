@@ -1,0 +1,264 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e6]
+          - generic [ref=e11]: FilamentDB
+        - button "Toggle theme" [ref=e12]:
+          - img [ref=e13]
+      - navigation [ref=e15]:
+        - link "Dashboard" [ref=e16] [cursor=pointer]:
+          - /url: /
+          - img [ref=e17]
+          - text: Dashboard
+        - link "Inventory" [ref=e22] [cursor=pointer]:
+          - /url: /inventory
+          - img [ref=e23]
+          - text: Inventory
+        - link "Scanner" [ref=e27] [cursor=pointer]:
+          - /url: /scan
+          - img [ref=e28]
+          - text: Scanner
+        - link "Settings" [ref=e33] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e34]
+          - text: Settings
+    - main [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - heading "Inventory" [level=1] [ref=e41]
+          - generic [ref=e42]:
+            - link "+ Add Spool" [ref=e43] [cursor=pointer]:
+              - /url: /inventory/add
+            - generic [ref=e44]:
+              - img [ref=e45]
+              - textbox "Search brand, color..." [ref=e48]
+            - generic [ref=e49]:
+              - combobox [ref=e50]:
+                - option "All Types" [selected]
+                - option "PETG"
+                - option "PLA"
+              - img
+            - button "Empty" [ref=e51]:
+              - img [ref=e52]
+              - generic [ref=e55]: Empty
+            - button "Group" [ref=e56]:
+              - img [ref=e57]
+              - generic [ref=e61]: Group
+        - generic [ref=e62]:
+          - 'link "PLA To Delete No Color Remaining 1000g / 1000g ID: MAN-MJREVBBT" [ref=e64] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJREVBBT
+            - generic [ref=e66]:
+              - generic [ref=e68]: PLA
+              - heading "To Delete" [level=3] [ref=e69]
+              - paragraph [ref=e70]: No Color
+            - generic [ref=e73]:
+              - generic [ref=e74]: Remaining
+              - generic [ref=e75]: 1000g / 1000g
+            - generic [ref=e78]: "ID: MAN-MJREVBBT"
+          - 'link "PETG Updated Brand No Color Remaining 800g / 1000g ID: TEST-UPD-1767028035580" [ref=e80] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-UPD-1767028035580
+            - generic [ref=e82]:
+              - generic [ref=e84]: PETG
+              - heading "Updated Brand" [level=3] [ref=e85]
+              - paragraph [ref=e86]: No Color
+            - generic [ref=e89]:
+              - generic [ref=e90]: Remaining
+              - generic [ref=e91]: 800g / 1000g
+            - generic [ref=e94]: "ID: TEST-UPD-1767028035580"
+          - 'link "PLA Original Brand No Color Remaining 1000g / 1000g ID: TEST-UPD-1767028035580" [ref=e96] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-UPD-1767028035580
+            - generic [ref=e98]:
+              - generic [ref=e100]: PLA
+              - heading "Original Brand" [level=3] [ref=e101]
+              - paragraph [ref=e102]: No Color
+            - generic [ref=e105]:
+              - generic [ref=e106]: Remaining
+              - generic [ref=e107]: 1000g / 1000g
+            - generic [ref=e110]: "ID: TEST-UPD-1767028035580"
+          - 'link "PLA To Delete No Color Remaining 1000g / 1000g ID: TEST-DEL-1767028035552" [ref=e112] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-DEL-1767028035552
+            - generic [ref=e114]:
+              - generic [ref=e116]: PLA
+              - heading "To Delete" [level=3] [ref=e117]
+              - paragraph [ref=e118]: No Color
+            - generic [ref=e121]:
+              - generic [ref=e122]: Remaining
+              - generic [ref=e123]: 1000g / 1000g
+            - generic [ref=e126]: "ID: TEST-DEL-1767028035552"
+          - 'link "PLA Test No Color Remaining 500g / 1000g ID: TEST-GET-1767028035550" [ref=e128] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-GET-1767028035550
+            - generic [ref=e130]:
+              - generic [ref=e132]: PLA
+              - heading "Test" [level=3] [ref=e133]
+              - paragraph [ref=e134]: No Color
+            - generic [ref=e137]:
+              - generic [ref=e138]: Remaining
+              - generic [ref=e139]: 500g / 1000g
+            - generic [ref=e142]: "ID: TEST-GET-1767028035550"
+          - 'link "PLA Test Brand Test Color Remaining 1000g / 1000g ID: TEST-1767028035543" [ref=e144] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-1767028035543
+            - generic [ref=e146]:
+              - generic [ref=e148]: PLA
+              - heading "Test Brand" [level=3] [ref=e149]
+              - paragraph [ref=e150]: Test Color
+            - generic [ref=e153]:
+              - generic [ref=e154]: Remaining
+              - generic [ref=e155]: 1000g / 1000g
+            - generic [ref=e158]: "ID: TEST-1767028035543"
+          - 'link "PLA To Delete No Color Remaining 1000g / 1000g ID: MAN-MJREAVLV" [ref=e160] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJREAVLV
+            - generic [ref=e162]:
+              - generic [ref=e164]: PLA
+              - heading "To Delete" [level=3] [ref=e165]
+              - paragraph [ref=e166]: No Color
+            - generic [ref=e169]:
+              - generic [ref=e170]: Remaining
+              - generic [ref=e171]: 1000g / 1000g
+            - generic [ref=e174]: "ID: MAN-MJREAVLV"
+          - 'link "PETG Updated Brand No Color Remaining 800g / 1000g ID: TEST-UPD-1767027081755" [ref=e176] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-UPD-1767027081755
+            - generic [ref=e178]:
+              - generic [ref=e180]: PETG
+              - heading "Updated Brand" [level=3] [ref=e181]
+              - paragraph [ref=e182]: No Color
+            - generic [ref=e185]:
+              - generic [ref=e186]: Remaining
+              - generic [ref=e187]: 800g / 1000g
+            - generic [ref=e190]: "ID: TEST-UPD-1767027081755"
+          - 'link "PLA Test Brand Test Color Remaining 1000g / 1000g ID: TEST-1767027081796" [ref=e192] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-1767027081796
+            - generic [ref=e194]:
+              - generic [ref=e196]: PLA
+              - heading "Test Brand" [level=3] [ref=e197]
+              - paragraph [ref=e198]: Test Color
+            - generic [ref=e201]:
+              - generic [ref=e202]: Remaining
+              - generic [ref=e203]: 1000g / 1000g
+            - generic [ref=e206]: "ID: TEST-1767027081796"
+          - 'link "PLA To Delete No Color Remaining 1000g / 1000g ID: TEST-DEL-1767027081765" [ref=e208] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-DEL-1767027081765
+            - generic [ref=e210]:
+              - generic [ref=e212]: PLA
+              - heading "To Delete" [level=3] [ref=e213]
+              - paragraph [ref=e214]: No Color
+            - generic [ref=e217]:
+              - generic [ref=e218]: Remaining
+              - generic [ref=e219]: 1000g / 1000g
+            - generic [ref=e222]: "ID: TEST-DEL-1767027081765"
+          - 'link "PLA Original Brand No Color Remaining 1000g / 1000g ID: TEST-UPD-1767027081755" [ref=e224] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-UPD-1767027081755
+            - generic [ref=e226]:
+              - generic [ref=e228]: PLA
+              - heading "Original Brand" [level=3] [ref=e229]
+              - paragraph [ref=e230]: No Color
+            - generic [ref=e233]:
+              - generic [ref=e234]: Remaining
+              - generic [ref=e235]: 1000g / 1000g
+            - generic [ref=e238]: "ID: TEST-UPD-1767027081755"
+          - 'link "PLA Test No Color Remaining 500g / 1000g ID: TEST-GET-1767027081739" [ref=e240] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-GET-1767027081739
+            - generic [ref=e242]:
+              - generic [ref=e244]: PLA
+              - heading "Test" [level=3] [ref=e245]
+              - paragraph [ref=e246]: No Color
+            - generic [ref=e249]:
+              - generic [ref=e250]: Remaining
+              - generic [ref=e251]: 500g / 1000g
+            - generic [ref=e254]: "ID: TEST-GET-1767027081739"
+          - 'link "PLA TestBrand TestColor Remaining 1000g / 1000g ID: MAN-MJPSD677" [ref=e256] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJPSD677
+            - generic [ref=e258]:
+              - generic [ref=e260]: PLA
+              - heading "TestBrand" [level=3] [ref=e261]
+              - paragraph [ref=e262]: TestColor
+            - generic [ref=e265]:
+              - generic [ref=e266]: Remaining
+              - generic [ref=e267]: 1000g / 1000g
+            - generic [ref=e270]: "ID: MAN-MJPSD677"
+          - 'link "PLA Unknown Brand No Color Remaining 1000g / 1000g ID: MAN-MJPN5HCQ" [ref=e272] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJPN5HCQ
+            - generic [ref=e274]:
+              - generic [ref=e276]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e277]
+              - paragraph [ref=e278]: No Color
+            - generic [ref=e281]:
+              - generic [ref=e282]: Remaining
+              - generic [ref=e283]: 1000g / 1000g
+            - generic [ref=e286]: "ID: MAN-MJPN5HCQ"
+          - 'link "PLA Unknown Brand No Color Remaining 1000g / 1000g ID: MAN-MJPMJUHZ" [ref=e288] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJPMJUHZ
+            - generic [ref=e290]:
+              - generic [ref=e292]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e293]
+              - paragraph [ref=e294]: No Color
+            - generic [ref=e297]:
+              - generic [ref=e298]: Remaining
+              - generic [ref=e299]: 1000g / 1000g
+            - generic [ref=e302]: "ID: MAN-MJPMJUHZ"
+          - 'link "PLA Unknown Brand No Color Remaining 1000g / 1000g ID: MAN-MJPMGKBE" [ref=e304] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJPMGKBE
+            - generic [ref=e306]:
+              - generic [ref=e308]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e309]
+              - paragraph [ref=e310]: No Color
+            - generic [ref=e313]:
+              - generic [ref=e314]: Remaining
+              - generic [ref=e315]: 1000g / 1000g
+            - generic [ref=e318]: "ID: MAN-MJPMGKBE"
+          - 'link "PLA Unknown Brand No Color Remaining 1000g / 1000g ID: MAN-MJPMEYHM" [ref=e320] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJPMEYHM
+            - generic [ref=e322]:
+              - generic [ref=e324]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e325]
+              - paragraph [ref=e326]: No Color
+            - generic [ref=e329]:
+              - generic [ref=e330]: Remaining
+              - generic [ref=e331]: 1000g / 1000g
+            - generic [ref=e334]: "ID: MAN-MJPMEYHM"
+          - 'link "PLA Unknown Brand Sync Test Brand Remaining 1000g / 1000g ID: MAN-MJOITA80" [ref=e336] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJOITA80
+            - generic [ref=e338]:
+              - generic [ref=e340]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e341]
+              - paragraph [ref=e342]: Sync Test Brand
+            - generic [ref=e345]:
+              - generic [ref=e346]: Remaining
+              - generic [ref=e347]: 1000g / 1000g
+            - generic [ref=e350]: "ID: MAN-MJOITA80"
+          - 'link "PLA Hatchbox Green Remaining 1000g / 1000g ID: MAN-MJOI5QSC" [ref=e352] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJOI5QSC
+            - generic [ref=e354]:
+              - generic [ref=e356]: PLA
+              - heading "Hatchbox" [level=3] [ref=e357]
+              - paragraph [ref=e358]: Green
+            - generic [ref=e361]:
+              - generic [ref=e362]: Remaining
+              - generic [ref=e363]: 1000g / 1000g
+            - generic [ref=e366]: "ID: MAN-MJOI5QSC"
+          - 'link "PLA Unknown Brand No Color Remaining 1000g / 1000g ID: MAN-MJOHORUP" [ref=e368] [cursor=pointer]':
+            - /url: /inventory/detail?serial=MAN-MJOHORUP
+            - generic [ref=e370]:
+              - generic [ref=e372]: PLA
+              - heading "Unknown Brand" [level=3] [ref=e373]
+              - paragraph [ref=e374]: No Color
+            - generic [ref=e377]:
+              - generic [ref=e378]: Remaining
+              - generic [ref=e379]: 1000g / 1000g
+            - generic [ref=e382]: "ID: MAN-MJOHORUP"
+          - 'link "PLA TestBrand2025 No Color Remaining g / g ID: TEST-3AIX1H" [ref=e384] [cursor=pointer]':
+            - /url: /inventory/detail?serial=TEST-3AIX1H
+            - generic [ref=e386]:
+              - generic [ref=e388]: PLA
+              - heading "TestBrand2025" [level=3] [ref=e389]
+              - paragraph [ref=e390]: No Color
+            - generic [ref=e393]:
+              - generic [ref=e394]: Remaining
+              - generic [ref=e395]: g / g
+            - generic [ref=e398]: "ID: TEST-3AIX1H"
+  - alert [ref=e399]
+```
