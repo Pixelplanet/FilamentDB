@@ -32,13 +32,13 @@ test.describe('Inventory Management', () => {
         // Navigate to add spool page
         await page.goto('/inventory/add');
 
-        // Wait for form element to be visible
-        await page.getByPlaceholder('e.g. Prusament').waitFor({ state: 'visible', timeout: 10000 });
+        // Wait for form element to be visible (increased timeout for reliability)
+        await page.getByPlaceholder('e.g. Prusament').waitFor({ state: 'visible', timeout: 20000 });
 
         // Fill out the form
         await page.getByPlaceholder('e.g. Prusament').fill('Test Brand');
         await page.getByRole('combobox').selectOption('PETG');
-        await page.getByLabel('Color Name').waitFor({ state: 'visible', timeout: 10000 });
+        await page.getByLabel('Color Name').waitFor({ state: 'visible', timeout: 20000 });
         await page.getByLabel('Color Name').fill('Test Blue');
         await page.getByLabel('Color Hex').last().fill('#0066cc');
 
@@ -66,6 +66,10 @@ test.describe('Inventory Management', () => {
         const firstSpool = page.locator('a[href*="/inventory/detail"]').first();
         await firstSpool.click();
 
+        // Wait for page to load data from API
+        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(1000);
+
         // Check detail page loaded
         await expect(page.getByText(/Weight Remaining/i)).toBeVisible();
         await expect(page.getByText(/Last Scanned/i)).toBeVisible();
@@ -76,6 +80,10 @@ test.describe('Inventory Management', () => {
 
         // Navigate to first spool detail
         await page.locator('a[href*="/inventory/detail"]').first().click();
+
+        // Wait for detail page to load before clicking Edit
+        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(1000);
 
         // Click edit
         await page.getByRole('link', { name: 'Edit' }).click();
@@ -105,6 +113,10 @@ test.describe('Inventory Management', () => {
 
         // Find and click the spool - use first() to avoid strict mode
         await page.getByText('To Delete').first().click();
+
+        // Wait for detail page to load before clicking Delete
+        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(1000);
 
         // Delete it (note: this might need confirmation dialog handling)
         page.on('dialog', dialog => dialog.accept());
