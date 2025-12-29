@@ -13,16 +13,20 @@ import { FileStorageWeb } from './FileStorageWeb';
  */
 function detectPlatform(): StoragePlatform {
     // Check if we're actually in a native Capacitor app
-    // Don't just check for window.Capacitor (could be injected by browser extensions)
     if (typeof window !== 'undefined' && (window as any).Capacitor) {
-        // Check if it's actually running as a native app
         const capacitor = (window as any).Capacitor;
-        if (capacitor.isNativePlatform && capacitor.isNativePlatform()) {
+
+        // Get the actual platform - it returns 'web', 'ios', or 'android'
+        const platform = capacitor.getPlatform ? capacitor.getPlatform() : 'web';
+
+        // Only use mobile storage for actual native platforms (iOS/Android)
+        // When accessed as a website (even on mobile devices), platform will be 'web'
+        if (platform === 'ios' || platform === 'android') {
             return StoragePlatform.MOBILE;
         }
     }
 
-    // Default to web (including when Capacitor is present but not native)
+    // Default to web (including mobile browsers)
     return StoragePlatform.WEB;
 }
 
