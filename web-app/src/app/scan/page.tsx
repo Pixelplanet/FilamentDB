@@ -54,6 +54,9 @@ export default function ScanPage() {
 
     const isProcessing = useRef(false);
 
+    // Rapid scan prevention
+    const lastScannedTag = useRef<{ serial: string; timestamp: number } | null>(null);
+
     // Effect: Console Logging Capture
     useEffect(() => {
         // Capture console logs for mobile debugging
@@ -109,10 +112,41 @@ export default function ScanPage() {
         }
     };
 
+    // Helper: Add tag history entry
+    const addTagHistory = (spool: Partial<Spool>, action: 'assigned' | 'reassigned' | 'removed', tagSerial: string, previousTag?: string): Partial<Spool> => {
+        const history = spool.nfcTagHistory || [];
+        return {
+            ...spool,
+            nfcTagHistory: [
+                ...history,
+                {
+                    timestamp: Date.now(),
+                    action,
+                    tagSerial,
+                    previousTagSerial: previousTag,
+                }
+            ]
+        };
+    };
+
     async function handleScanData(serialRaw: string, records: any[]) {
         if (!serialRaw || isProcessing.current) return;
 
         const serial = serialRaw.trim();
+
+        // Rapid scan prevention: Check if same tag scanned within 3 seconds
+        const now = Date.now();
+        if (lastScannedTag.current &&
+            lastScannedTag.current.serial === serial &&
+            (now - lastScannedTag.current.timestamp) < 3000) {
+            console.log("[DEBOUNCE] Ignoring rapid re-scan of same tag");
+            setScanError("Tag already scanned. Please wait a moment before scanning again.");
+            setTimeout(() => setScanError(null), 2000);
+            return;
+        }
+
+        // Update last scanned tag
+        lastScannedTag.current = { serial, timestamp: now };
         // alert(`SCANNED: ${serial}`); // Uncomment if needed for extreme debugging
 
         isProcessing.current = true;
@@ -162,8 +196,64 @@ export default function ScanPage() {
             const existing = await storage.getSpool(serial);
 
             if (existing) {
+                // Update NFC tag serial if this is an NFC scan and not already set
+                if (records && records.length > 0 && !existing.nfcTagSerial) {
+                    console.log("[NFC] Updating existing spool with tag serial:", serial);
+                    const updatedSpool = addTagHistory(existing, 'assigned', serial) as Spool;
+                    await storage.saveSpool({
+                        ...updatedSpool,
+                        nfcTagSerial: serial,
+                        lastScanned: Date.now(),
+                        lastUpdated: Date.now()
+                    });
+                }
                 setSavedSpool(existing);
             } else {
+                // NEW: Check if this is an NFC scan and if the tag serial is already in use
+                if (records && records.length > 0) {
+                    const allSpools = await storage.listSpools();
+                    const spoolWithSameTag = allSpools.find(s =>
+                        s.nfcTagSerial === serial &&
+                        s.serial !== serial && // Not the same spool
+                        s.weightRemaining > 0 // Not empty
+                    );
+
+                    if (spoolWithSameTag) {
+                        // Tag is already in use by another non-empty spool
+                        console.log("[NFC] Tag conflict detected:", spoolWithSameTag);
+
+                        const confirmed = window.confirm(
+                            `⚠️ Tag Already in Use!\n\n` +
+                            `This NFC tag is currently associated with:\n` +
+                            `• ${spoolWithSameTag.brand} ${spoolWithSameTag.type}\n` +
+                            `• Color: ${spoolWithSameTag.color}\n` +
+                            `• Remaining: ${spoolWithSameTag.weightRemaining}g\n\n` +
+                            `Do you want to:\n` +
+                            `1. Mark the old spool as EMPTY (0g remaining)\n` +
+                            `2. Reuse this tag for the new spool?\n\n` +
+                            `Click OK to proceed, or Cancel to abort.`
+                        );
+
+                        if (!confirmed) {
+                            console.log("[NFC] User cancelled tag reuse");
+                            setScanError("Scan cancelled - tag is already in use");
+                            setSaving(false);
+                            isProcessing.current = false;
+                            return;
+                        }
+
+                        // Mark the old spool as empty and record tag removal
+                        console.log("[NFC] Marking old spool as empty:", spoolWithSameTag.serial);
+                        const updatedOldSpool = addTagHistory(spoolWithSameTag, 'removed', serial) as Spool;
+                        await storage.saveSpool({
+                            ...updatedOldSpool,
+                            weightRemaining: 0,
+                            nfcTagSerial: undefined, // Remove tag association
+                            lastUpdated: Date.now()
+                        });
+                    }
+                }
+
                 // Create New Spool (NFC or Barcode)
                 let spoolData: Partial<Spool> = {
                     serial,
@@ -175,6 +265,17 @@ export default function ScanPage() {
                     weightTotal: 1000,
                     lastScanned: Date.now()
                 };
+
+                // Store NFC Tag Serial if this is an NFC scan
+                if (records && records.length > 0) {
+                    spoolData.nfcTagSerial = serial;
+                    spoolData.nfcTagHistory = [{
+                        timestamp: Date.now(),
+                        action: 'assigned',
+                        tagSerial: serial
+                    }];
+                    console.log("[NFC] Storing tag serial:", serial);
+                }
 
                 // Apply NFC Records (from OpenPrintTag)
                 const optRecord = records.find(r => r.mediaType === 'application/vnd.openprinttag');

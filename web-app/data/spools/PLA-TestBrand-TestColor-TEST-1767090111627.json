@@ -1,0 +1,12 @@
+{
+  "serial": "TEST-1767090111627",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "colorHex": "#ff0000",
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "diameter": 1.75,
+  "lastUpdated": 1767090111721,
+  "createdAt": 1767090111721
+}

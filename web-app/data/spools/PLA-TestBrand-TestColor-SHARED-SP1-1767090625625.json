@@ -1,0 +1,19 @@
+{
+  "serial": "SHARED-SP1-1767090625625",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "nfcTagSerial": "SHARED-TAG-1767090625625",
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090625625,
+      "action": "assigned",
+      "tagSerial": "SHARED-TAG-1767090625625"
+    }
+  ],
+  "lastUpdated": 1767090625646,
+  "createdAt": 1767090625646
+}

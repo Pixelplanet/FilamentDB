@@ -176,4 +176,26 @@ test.describe('API Endpoints', () => {
             expect(response.status()).toBeGreaterThanOrEqual(400);
         }
     });
+
+    test('GET /api/tag-stats should return statistics', async ({ request }) => {
+        const response = await request.get(`${baseURL}/api/tag-stats`);
+        expect(response.ok()).toBeTruthy();
+
+        const stats = await response.json();
+        expect(stats.summary).toBeDefined();
+        expect(stats.summary.totalTags).toBeGreaterThanOrEqual(0);
+        expect(Array.isArray(stats.allTags)).toBeTruthy();
+    });
+
+    test('GET /api/tag-history/[serial] should return tag history', async ({ request }) => {
+        // Use a test tag serial
+        const tagSerial = 'test-tag-history';
+        const response = await request.get(`${baseURL}/api/tag-history/${encodeURIComponent(tagSerial)}`);
+        expect(response.ok()).toBeTruthy();
+
+        const data = await response.json();
+        expect(data.tagSerial).toBe(tagSerial);
+        expect(data.timeline).toBeDefined();
+        expect(Array.isArray(data.associatedSpools)).toBeTruthy();
+    });
 });

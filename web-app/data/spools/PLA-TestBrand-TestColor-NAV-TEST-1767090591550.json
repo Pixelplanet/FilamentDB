@@ -1,0 +1,19 @@
+{
+  "serial": "NAV-TEST-1767090591550",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "nfcTagSerial": "NAV-TAG-1767090591550",
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090591550,
+      "action": "assigned",
+      "tagSerial": "NAV-TAG-1767090591550"
+    }
+  ],
+  "lastUpdated": 1767090591566,
+  "createdAt": 1767090591566
+}

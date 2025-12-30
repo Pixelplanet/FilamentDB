@@ -1,0 +1,19 @@
+{
+  "serial": "STAT-SP2-1767090625163",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "nfcTagSerial": "STAT-TAG2-1767090624795",
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090625163,
+      "action": "assigned",
+      "tagSerial": "STAT-TAG2-1767090624795"
+    }
+  ],
+  "lastUpdated": 1767090625185,
+  "createdAt": 1767090625185
+}

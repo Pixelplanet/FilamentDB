@@ -252,6 +252,24 @@ export default function SettingsPage() {
                 </a>
             </div>
 
+            {/* NFC Tag Statistics */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+                <div className="p-3 bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-full">
+                    <Search className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                    <h3 className="font-bold">NFC Tag Statistics</h3>
+                    <p className="text-sm text-gray-500">Track tag usage, reuse frequency, and history</p>
+                </div>
+                <a
+                    href="/tag-stats"
+                    className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center gap-2"
+                >
+                    <Search className="w-4 h-4" />
+                    View Stats
+                </a>
+            </div>
+
             {/* APK Download */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
                 <div className="p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full">

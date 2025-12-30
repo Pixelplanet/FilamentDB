@@ -1,0 +1,19 @@
+{
+  "serial": "SPOOL1-1767090624786",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 0,
+  "weightTotal": 1000,
+  "nfcTagSerial": "TAG-API-1767090624786",
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090624786,
+      "action": "assigned",
+      "tagSerial": "TAG-API-1767090624786"
+    }
+  ],
+  "lastUpdated": 1767090624826,
+  "createdAt": 1767090624826
+}

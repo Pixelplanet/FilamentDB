@@ -1,0 +1,23 @@
+{
+  "serial": "TEST-REM-1767090588866",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 0,
+  "weightTotal": 1000,
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090588485,
+      "action": "assigned",
+      "tagSerial": "TAG-REM-1767090588866"
+    },
+    {
+      "timestamp": 1767090589485,
+      "action": "removed",
+      "tagSerial": "TAG-REM-1767090588866"
+    }
+  ],
+  "lastUpdated": 1767090589492,
+  "createdAt": 1767090589492
+}

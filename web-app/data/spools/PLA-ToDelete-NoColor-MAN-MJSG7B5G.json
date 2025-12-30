@@ -1,0 +1,21 @@
+{
+  "brand": "To Delete",
+  "type": "PLA",
+  "color": "",
+  "colorHex": "#000000",
+  "weightRemaining": 1000,
+  "weightTotal": 1000,
+  "weightSpool": 0,
+  "diameter": 1.75,
+  "density": 1.24,
+  "temperatureNozzleMin": 200,
+  "temperatureNozzleMax": 220,
+  "temperatureBedMin": 60,
+  "temperatureBedMax": 60,
+  "batchNumber": "",
+  "productionDate": "",
+  "serial": "MAN-MJSG7B5G",
+  "lastScanned": 1767090742324,
+  "lastUpdated": 1767090742421,
+  "createdAt": 1767090742421
+}

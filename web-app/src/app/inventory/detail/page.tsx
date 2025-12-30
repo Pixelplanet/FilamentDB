@@ -72,6 +72,19 @@ function SpoolDetailContent() {
             };
 
             await write(tagData);
+
+            // Store the NFC tag serial number if we have it from the scan
+            if (scannedData?.serialNumber && !spool.nfcTagSerial) {
+                console.log("[NFC] Storing tag serial after write:", scannedData.serialNumber);
+                const { getStorage } = await import('@/lib/storage');
+                const storage = getStorage();
+                await storage.saveSpool({
+                    ...spool,
+                    nfcTagSerial: scannedData.serialNumber,
+                    lastUpdated: Date.now()
+                });
+            }
+
             alert("Write Successful!");
             setWriteStage('idle');
         } catch (e) {
@@ -261,6 +274,21 @@ function SpoolDetailContent() {
                             {spool.lastScanned ? new Date(spool.lastScanned).toLocaleDateString() : 'Never'}
                         </div>
                     </div>
+
+                    {spool.nfcTagSerial && (
+                        <div>
+                            <label className="block text-gray-500 text-xs uppercase tracking-wide mb-1">NFC Tag Serial</label>
+                            <div className="font-mono bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-100 dark:border-gray-700 break-all text-xs">
+                                {spool.nfcTagSerial}
+                            </div>
+                            <Link
+                                href={`/tag-history?serial=${spool.nfcTagSerial}`}
+                                className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block"
+                            >
+                                View Tag History →
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         </>

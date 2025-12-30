@@ -1,0 +1,29 @@
+{
+  "serial": "TEST-MULTI-1767090744182",
+  "brand": "Test Brand",
+  "type": "PLA",
+  "color": "Test Color",
+  "diameter": 1.75,
+  "weightRemaining": 800,
+  "weightTotal": 1000,
+  "nfcTagSerial": "TAG2-1767090744182",
+  "nfcTagHistory": [
+    {
+      "timestamp": 1767090742749,
+      "action": "assigned",
+      "tagSerial": "TAG1-1767090744182"
+    },
+    {
+      "timestamp": 1767090743749,
+      "action": "removed",
+      "tagSerial": "TAG1-1767090744182"
+    },
+    {
+      "timestamp": 1767090744749,
+      "action": "assigned",
+      "tagSerial": "TAG2-1767090744182"
+    }
+  ],
+  "lastUpdated": 1767090744755,
+  "createdAt": 1767090744755
+}

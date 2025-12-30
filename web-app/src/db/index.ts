@@ -33,6 +33,14 @@ export interface Spool {
     // Traceability
     batchNumber?: string;
     productionDate?: string; // ISO Date
+    nfcTagSerial?: string;   // NFC Tag hardware serial number
+    nfcTagHistory?: Array<{  // Complete history of tag associations
+        timestamp: number;
+        action: 'assigned' | 'reassigned' | 'removed';
+        tagSerial: string;
+        previousTagSerial?: string; // For reassignment
+        notes?: string;
+    }>;
 
     // Metadata
     lastScanned?: number;
