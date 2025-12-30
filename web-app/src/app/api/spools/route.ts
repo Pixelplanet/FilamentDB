@@ -43,23 +43,22 @@ export async function GET(req: NextRequest) {
         // Filter for .json files only
         const jsonFiles = files.filter(file => file.endsWith('.json'));
 
-        // Read and parse each file
-        const spools: Spool[] = [];
-        for (const file of jsonFiles) {
+        // Read and parse files in parallel
+        const tasks = jsonFiles.map(async (file) => {
             try {
                 const filePath = path.join(SPOOLS_DIR, file);
                 const content = await fs.readFile(filePath, 'utf-8');
-                const spool = safeJSONParse<Spool>(content);
-
-                if (spool) {
-                    spools.push(spool);
-                } else {
-                    console.warn(`Failed to parse spool file: ${file}`);
-                }
+                return safeJSONParse<Spool>(content);
             } catch (error) {
                 console.error(`Error reading spool file ${file}:`, error);
+                return null;
             }
-        }
+        });
+
+        const results = await Promise.all(tasks);
+
+        // Filter out nulls (failed reads or parses)
+        const spools = results.filter((s): s is Spool => s !== null);
 
         // Sort by lastUpdated (newest first) or id
         spools.sort((a, b) => {
