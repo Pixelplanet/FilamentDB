@@ -29,23 +29,31 @@ function SpoolDetailContent() {
     const router = useRouter();
 
     // Write Workflow State
-    const [writeStage, setWriteStage] = useState<'idle' | 'checking' | 'confirming' | 'writing'>('idle');
+    const [writeStage, setWriteStage] = useState<'idle' | 'scanning' | 'confirming' | 'writing'>('idle');
     const [scannedData, setScannedData] = useState<any>(null);
 
     // Effect for capturing scan result
     const [hasScanned, setHasScanned] = useState(false);
     useEffect(() => {
-        if (writeStage === 'checking' && nfcState === 'success' && nfcReading && !hasScanned) {
+        if (writeStage === 'scanning' && nfcState === 'success' && nfcReading && !hasScanned) {
             console.log("Read existing tag data:", nfcReading);
-            setScannedData(nfcReading);
-            setHasScanned(true);
+            const reading = nfcReading as any;
+            const record = reading.records?.find((r: any) => r.mediaType?.includes('openprinttag'));
+            const tagPayload = record ? record.data : {};
+
+            setScannedData({
+                ...tagPayload,
+                serialNumber: reading.serialNumber
+            });
             setWriteStage('confirming');
+            setHasScanned(true);
         }
     }, [writeStage, nfcState, nfcReading, hasScanned]);
 
-    const handleWriteStart = async () => {
-        setWriteStage('checking');
-        setHasScanned(false);
+    const handleInitiateWrite = async () => {
+        if (!spool) return;
+        setWriteStage('scanning');
+        setHasScanned(false); // Reset for new scan
         try {
             await scan(); // Start scanning to READ first
         } catch (e) {
@@ -58,7 +66,7 @@ function SpoolDetailContent() {
         if (!spool) return;
         setWriteStage('writing');
         try {
-            // Create OpenPrintTag Data
+            // Create OpenPrintTag Data - preserving tag serial number
             const tagData = {
                 "0": "1.0", // version
                 "1": spool.brand, // brand
@@ -68,19 +76,34 @@ function SpoolDetailContent() {
                 "5": spool.temperatureNozzleMax, // max temp
                 "6": spool.color, // color
                 "7": spool.weightSpool, // weight
-                "8": spool.serial || "", // serial
+                "8": spool.serial || "", // spool serial (not tag serial)
             };
 
             await write(tagData);
 
-            // Store the NFC tag serial number if we have it from the scan
-            if (scannedData?.serialNumber && !spool.nfcTagSerial) {
-                console.log("[NFC] Storing tag serial after write:", scannedData.serialNumber);
+            // Always update the NFC tag serial number association
+            if (scannedData?.serialNumber) {
+                console.log("[NFC] Updating/storing tag serial after write:", scannedData.serialNumber);
                 const { getStorage } = await import('@/lib/storage');
                 const storage = getStorage();
+
+                // Add history entry for tag assignment/reassignment
+                const history = spool.nfcTagHistory || [];
+                const action = spool.nfcTagSerial ? 'reassigned' : 'assigned';
+                const previousTag = spool.nfcTagSerial;
+
                 await storage.saveSpool({
                     ...spool,
                     nfcTagSerial: scannedData.serialNumber,
+                    nfcTagHistory: [
+                        ...history,
+                        {
+                            timestamp: Date.now(),
+                            action,
+                            tagSerial: scannedData.serialNumber,
+                            previousTagSerial: previousTag
+                        }
+                    ],
                     lastUpdated: Date.now()
                 });
             }
@@ -145,13 +168,78 @@ function SpoolDetailContent() {
             {writeStage !== 'idle' && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
                     <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">NFC Write Mode</h3>
-                    {writeStage === 'checking' && <p>Scanning tag to check existing data... Hold tag near device.</p>}
+                    {writeStage === 'scanning' && <p>Scanning tag to check existing data... Hold tag near device.</p>}
                     {writeStage === 'confirming' && (
                         <div>
-                            <p className="mb-2">Tag Scanned. Existing Data:</p>
-                            <pre className="bg-gray-100 dark:bg-black p-2 rounded text-xs overflow-auto max-h-32 mb-4">
-                                {scannedData ? JSON.stringify(scannedData, null, 2) : 'Empty / Unknown Format'}
-                            </pre>
+                            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                                <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
+                                    <h4 className="font-bold text-gray-500 mb-3 text-xs uppercase tracking-wide">Existing on Tag</h4>
+                                    {scannedData ? (
+                                        <div className="space-y-2">
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Brand</span>
+                                                <span className="col-span-2 font-medium">{scannedData.brand || scannedData['1'] || '-'}</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Type</span>
+                                                <span className="col-span-2 font-medium">{scannedData.type || scannedData['2'] || '-'}</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Color</span>
+                                                <span className="col-span-2 font-medium">{scannedData.color || scannedData['6'] || '-'}</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Weight</span>
+                                                <span className="col-span-2 font-medium">{scannedData.weight || scannedData['7'] || '-'}g</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Serial</span>
+                                                <span className="col-span-2 font-mono text-xs break-all">{scannedData.serial || scannedData['8'] || '-'}</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-1">
+                                                <span className="text-gray-500 text-xs">Tag UID</span>
+                                                <span className="col-span-2 font-mono text-xs text-orange-600 dark:text-orange-400 break-all">
+                                                    {scannedData.serialNumber || 'Unknown'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-gray-400 italic">Empty / Unknown Format</div>
+                                    )}
+                                </div>
+
+                                <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                                    <h4 className="font-bold text-blue-500 mb-3 text-xs uppercase tracking-wide">Writing New Data</h4>
+                                    <div className="space-y-2">
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Brand</span>
+                                            <span className="col-span-2 font-bold">{spool.brand}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Type</span>
+                                            <span className="col-span-2 font-bold">{spool.type}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Color</span>
+                                            <span className="col-span-2 font-bold">{spool.color}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Weight</span>
+                                            <span className="col-span-2 font-bold">{spool.weightSpool}g</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Serial</span>
+                                            <span className="col-span-2 font-mono text-xs break-all">{spool.serial}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1">
+                                            <span className="text-gray-500 text-xs">Target</span>
+                                            <span className="col-span-2 font-mono text-xs text-orange-600 dark:text-orange-400 break-all">
+                                                {scannedData?.serialNumber || 'Unknown Device'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="flex gap-4">
                                 <button
                                     onClick={handleConfirmWrite}

@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { Filter, Search, Eye, EyeOff, List, Layers } from 'lucide-react';
+import { Filter, Search, Eye, EyeOff, List, Layers, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PageTransition } from '@/components/PageTransition';
 import { StaggerContainer, StaggerItem } from '@/components/StaggerAnimation';
 import { useSpools } from '@/hooks/useFileStorage';
+import { getStorage } from '@/lib/storage';
+import { parseOpenPrintTagBin } from '@/lib/openPrintTagImporter';
 
 export default function InventoryPage() {
     return (
@@ -22,9 +24,10 @@ function InventoryPageContent() {
     const [filterType, setFilterType] = useState('All');
     const [showEmpty, setShowEmpty] = useState(true); // Show empty spools by default
     const [viewMode, setViewMode] = useState<'spools' | 'grouped'>('spools'); // New view mode state
+    const [importing, setImporting] = useState(false);
 
     // Use file storage hook instead of Dexie
-    const { spools, loading, error } = useSpools();
+    const { spools, loading, error, refresh } = useSpools();
 
     useEffect(() => {
         const typeParam = searchParams.get('type');
@@ -33,12 +36,51 @@ function InventoryPageContent() {
         }
     }, [searchParams]);
 
+    const handleImportBin = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setImporting(true);
+        try {
+            const data = await parseOpenPrintTagBin(file);
+
+            const storage = getStorage();
+            await storage.saveSpool({
+                serial: data.uuid || `OPT-${Date.now()}`, // Use bin UUID or generate one
+                brand: data.brand,
+                type: data.type,
+                color: data.color,
+                diameter: data.diameter,
+                weightRemaining: data.weight, // Assume full if from generator? Or is 'weight' capacity? Usually capacity.
+                // OpenPrintTag 'weight' usually refers to initial weight or formatted weight.
+                // Let's assume it's the total weight.
+                weightTotal: data.weight,
+                temperatureNozzleMin: data.tempMin,
+                temperatureNozzleMax: data.tempMax,
+                lastScanned: Date.now(),
+                lastUpdated: Date.now(),
+                notes: `Imported from OpenPrintTag .bin file (${data.version || 'v1.0'})`
+            });
+
+            alert(`Successfully imported ${data.brand} ${data.type}`);
+            if (refresh) refresh();
+
+            // Clear input
+            e.target.value = '';
+        } catch (error: any) {
+            console.error('Import failed:', error);
+            alert(`Import failed: ${error.message}`);
+        } finally {
+            setImporting(false);
+        }
+    };
+
     if (loading) return <div className="p-8 text-center">Loading Inventory...</div>;
     if (error) return <div className="p-8 text-center text-red-600">Error loading spools: {error.message}</div>;
-    if (!spools) return <div className="p-8 text-center">No spools found</div>;
+    // if (!spools) return <div className="p-8 text-center">No spools found</div>; // Allow rendering header even if empty
 
     // Client-side filtering (Dexie is fast enough for small DBs, or use .where() for large)
-    const filtered = spools.filter(s => {
+    const filtered = (spools || []).filter(s => {
         const matchSearch = (s.brand || '').toLowerCase().includes(search.toLowerCase()) ||
             (s.type || '').toLowerCase().includes(search.toLowerCase()) ||
             (s.color || '').toLowerCase().includes(search.toLowerCase());
@@ -73,8 +115,8 @@ function InventoryPageContent() {
 
     const groupedArray = Object.values(groupedFilaments);
 
-    const uniqueTypes = Array.from(new Set(spools.map(s => s.type))).sort();
-    const emptyCount = spools.filter(s => s.weightRemaining <= 0).length;
+    const uniqueTypes = Array.from(new Set((spools || []).map(s => s.type))).sort();
+    const emptyCount = (spools || []).filter(s => s.weightRemaining <= 0).length;
 
     return (
         <PageTransition className="space-y-6">
@@ -85,6 +127,19 @@ function InventoryPageContent() {
                     <Link href="/inventory/add" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-1 transition-colors whitespace-nowrap">
                         + Add Spool
                     </Link>
+
+                    <label className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg font-medium text-sm flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap">
+                        <Upload className="w-4 h-4" />
+                        <span className="hidden sm:inline">Import .bin</span>
+                        <input
+                            type="file"
+                            accept=".bin"
+                            className="hidden"
+                            onChange={handleImportBin}
+                            disabled={importing}
+                        />
+                    </label>
+
                     <div className="relative flex-1 sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <input
