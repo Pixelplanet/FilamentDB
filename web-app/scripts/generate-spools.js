@@ -75,4 +75,7 @@ async function generateSpools(count) {
     console.log(`\nDone! Generated ${count} spools in ${duration}ms.`);
 }
 
-generateSpools(300);
+const args = process.argv.slice(2);
+const count = args[0] ? parseInt(args[0]) : 300;
+
+generateSpools(count);

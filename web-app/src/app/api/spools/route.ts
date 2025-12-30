@@ -43,22 +43,27 @@ export async function GET(req: NextRequest) {
         // Filter for .json files only
         const jsonFiles = files.filter(file => file.endsWith('.json'));
 
-        // Read and parse files in parallel
-        const tasks = jsonFiles.map(async (file) => {
-            try {
-                const filePath = path.join(SPOOLS_DIR, file);
-                const content = await fs.readFile(filePath, 'utf-8');
-                return safeJSONParse<Spool>(content);
-            } catch (error) {
-                console.error(`Error reading spool file ${file}:`, error);
-                return null;
-            }
-        });
+        // Read and parse files in parallel batches
+        const spools: Spool[] = [];
+        const BATCH_SIZE = 200;
 
-        const results = await Promise.all(tasks);
+        for (let i = 0; i < jsonFiles.length; i += BATCH_SIZE) {
+            const chunk = jsonFiles.slice(i, i + BATCH_SIZE);
+            const chunkTasks = chunk.map(async (file) => {
+                try {
+                    const filePath = path.join(SPOOLS_DIR, file);
+                    const content = await fs.readFile(filePath, 'utf-8');
+                    return safeJSONParse<Spool>(content);
+                } catch (error) {
+                    console.error(`Error reading spool file ${file}:`, error);
+                    return null;
+                }
+            });
 
-        // Filter out nulls (failed reads or parses)
-        const spools = results.filter((s): s is Spool => s !== null);
+            const chunkResults = await Promise.all(chunkTasks);
+            const validSpools = chunkResults.filter((s): s is Spool => s !== null);
+            spools.push(...validSpools);
+        }
 
         // Sort by lastUpdated (newest first) or id
         spools.sort((a, b) => {
