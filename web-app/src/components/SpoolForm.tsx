@@ -436,6 +436,37 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
                 </button>
             </div>
 
+            {/* Dashboard: Consumption & Remaining */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 transition-all">
+                <div className="flex justify-between items-end mb-2">
+                    <span className="font-semibold text-gray-600 dark:text-gray-400">Material Remaining</span>
+                    <div className="flex items-baseline gap-2">
+                        {readOnly ? (
+                            <span className="text-4xl font-bold">{formData.weightRemaining}g</span>
+                        ) : (
+                            <div className="relative group">
+                                <input
+                                    type="number"
+                                    value={formData.weightRemaining}
+                                    onChange={e => handleChange('weightRemaining', parseFloat(e.target.value))}
+                                    className="text-4xl font-bold w-40 border-b-2 border-blue-500 bg-transparent text-right focus:outline-none focus:ring-0 p-0 m-0"
+                                />
+                                <span className="text-sm text-blue-500 absolute -bottom-5 right-0 opacity-0 group-hover:opacity-100 transition-opacity">Editable</span>
+                            </div>
+                        )}
+                        <span className="text-lg font-normal text-gray-400">/ {formData.weightTotal}g</span>
+                    </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-500 ${((formData.weightRemaining || 0) / (formData.weightTotal || 1) * 100) < 20 ? 'bg-red-500' : 'bg-blue-500'}`}
+                        style={{ width: `${Math.min(100, Math.max(0, (formData.weightRemaining || 0) / (formData.weightTotal || 1) * 100))}%` }}
+                    />
+                </div>
+            </div>
+
             {renderSection("Basic Information", "basic-info", <Tag className="w-5 h-5" />)}
             {renderSection("Filament Properties & Weight", "weight-props", <Scale className="w-5 h-5" />)}
             {renderSection("Temperature Recommendations (°C)", "temperatures", <Thermometer className="w-5 h-5" />)}

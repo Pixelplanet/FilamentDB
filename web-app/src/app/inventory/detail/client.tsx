@@ -165,7 +165,6 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
     if (!serial) return <div className="p-8 text-center text-red-500">Invalid Spool Serial.</div>;
     if (loading || !spool) return <div className="p-8 text-center flex items-center justify-center gap-2"><div className="animate-spin w-4 h-4 border-2 border-primary rounded-full border-t-transparent" />Loading...</div>;
 
-    const percent = Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100);
 
     return (
         <div className="max-w-4xl mx-auto pb-20">
@@ -191,19 +190,6 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
                 </div>
             </div>
 
-            {/* Consumption Dashboard (kept separate as it's vital status) */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-                <div className="flex justify-between items-end mb-2">
-                    <span className="font-semibold text-gray-600 dark:text-gray-400">Material Remaining</span>
-                    <span className="text-2xl font-bold">{spool.weightRemaining}g <span className="text-sm font-normal text-gray-500">/ {spool.weightTotal}g</span></span>
-                </div>
-                <div className="w-full h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                        className={`h-full rounded-full transition-all duration-500 ${percent < 20 ? 'bg-red-500' : 'bg-blue-500'}`}
-                        style={{ width: `${percent}%` }}
-                    />
-                </div>
-            </div>
 
             {/* Write Stage Feedback */}
             {writeStage !== 'idle' && (
