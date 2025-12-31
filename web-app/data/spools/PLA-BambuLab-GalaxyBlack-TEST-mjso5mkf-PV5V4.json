@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mkf-PV5V4",
+  "brand": "Bambu Lab",
+  "type": "PLA",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 255,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100735,
+  "lastUpdated": 1767104100735,
+  "createdAt": 1767104100735,
+  "notes": "Performance Test Spool"
+}

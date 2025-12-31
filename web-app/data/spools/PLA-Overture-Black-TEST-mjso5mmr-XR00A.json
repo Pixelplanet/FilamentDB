@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mmr-XR00A",
+  "brand": "Overture",
+  "type": "PLA",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 260,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100819,
+  "lastUpdated": 1767104100819,
+  "createdAt": 1767104100819,
+  "notes": "Performance Test Spool"
+}

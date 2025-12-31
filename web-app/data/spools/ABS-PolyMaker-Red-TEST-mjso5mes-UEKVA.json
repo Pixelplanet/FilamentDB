@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mes-UEKVA",
+  "brand": "PolyMaker",
+  "type": "ABS",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 176,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100532,
+  "lastUpdated": 1767104100532,
+  "createdAt": 1767104100532,
+  "notes": "Performance Test Spool"
+}

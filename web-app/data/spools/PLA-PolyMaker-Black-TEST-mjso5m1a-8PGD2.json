@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m1a-8PGD2",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 644,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100046,
+  "lastUpdated": 1767104100046,
+  "createdAt": 1767104100046,
+  "notes": "Performance Test Spool"
+}

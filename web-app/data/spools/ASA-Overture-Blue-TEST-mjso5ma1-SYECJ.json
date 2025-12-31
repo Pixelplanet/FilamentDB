@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5ma1-SYECJ",
+  "brand": "Overture",
+  "type": "ASA",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 333,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100361,
+  "lastUpdated": 1767104100361,
+  "createdAt": 1767104100361,
+  "notes": "Performance Test Spool"
+}

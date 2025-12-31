@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mj3-BDD34",
+  "brand": "Sunlu",
+  "type": "Nylon",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 143,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100687,
+  "lastUpdated": 1767104100687,
+  "createdAt": 1767104100687,
+  "notes": "Performance Test Spool"
+}

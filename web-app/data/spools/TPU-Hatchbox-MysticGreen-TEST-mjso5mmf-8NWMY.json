@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mmf-8NWMY",
+  "brand": "Hatchbox",
+  "type": "TPU",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 725,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100807,
+  "lastUpdated": 1767104100807,
+  "createdAt": 1767104100807,
+  "notes": "Performance Test Spool"
+}

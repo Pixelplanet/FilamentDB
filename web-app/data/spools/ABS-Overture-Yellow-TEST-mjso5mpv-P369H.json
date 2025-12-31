@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpv-P369H",
+  "brand": "Overture",
+  "type": "ABS",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 676,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100931,
+  "lastUpdated": 1767104100931,
+  "createdAt": 1767104100931,
+  "notes": "Performance Test Spool"
+}

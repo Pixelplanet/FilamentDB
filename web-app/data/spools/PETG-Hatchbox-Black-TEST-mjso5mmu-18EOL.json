@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mmu-18EOL",
+  "brand": "Hatchbox",
+  "type": "PETG",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 361,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100822,
+  "lastUpdated": 1767104100822,
+  "createdAt": 1767104100822,
+  "notes": "Performance Test Spool"
+}

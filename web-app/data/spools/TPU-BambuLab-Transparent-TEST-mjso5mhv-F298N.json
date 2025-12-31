@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mhv-F298N",
+  "brand": "Bambu Lab",
+  "type": "TPU",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 306,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100643,
+  "lastUpdated": 1767104100643,
+  "createdAt": 1767104100643,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mcd-85OZQ",
+  "brand": "PolyMaker",
+  "type": "TPU",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 209,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100445,
+  "lastUpdated": 1767104100445,
+  "createdAt": 1767104100445,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m0s-OOLOA",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 483,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100028,
+  "lastUpdated": 1767104100028,
+  "createdAt": 1767104100028,
+  "notes": "Performance Test Spool"
+}

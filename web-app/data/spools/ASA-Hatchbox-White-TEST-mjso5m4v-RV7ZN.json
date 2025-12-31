@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m4v-RV7ZN",
+  "brand": "Hatchbox",
+  "type": "ASA",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 980,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100175,
+  "lastUpdated": 1767104100175,
+  "createdAt": 1767104100175,
+  "notes": "Performance Test Spool"
+}

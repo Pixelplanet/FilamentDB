@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 // Directory where spool files are stored
-const SPOOLS_DIR = path.join(process.cwd(), 'data', 'spools');
+import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
 
 /**
  * Ensure the spools directory exists
@@ -123,12 +123,7 @@ export async function POST(req: NextRequest) {
 
         // Check if we need to handle filename change (if spool details changed)
         // First, try to find existing file with same serial
-        const files = await fs.readdir(SPOOLS_DIR);
-        const existingFile = files.find(file => {
-            // Extract serial from filename (last part before .json)
-            const match = file.match(/-([^-]+)\.json$/);
-            return match && match[1] === spool.serial;
-        });
+        const existingFile = await findSpoolFile(spool.serial);
 
         // If existing file has different name, delete it
         if (existingFile && existingFile !== filename) {
@@ -139,6 +134,8 @@ export async function POST(req: NextRequest) {
 
         // Write the file with pretty-printed JSON
         await fs.writeFile(filePath, prettyJSON(spool), 'utf-8');
+
+        invalidateSpoolCache();
 
         return NextResponse.json({
             success: true,

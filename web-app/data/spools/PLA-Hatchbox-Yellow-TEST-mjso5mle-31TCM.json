@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mle-31TCM",
+  "brand": "Hatchbox",
+  "type": "PLA",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 546,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100770,
+  "lastUpdated": 1767104100770,
+  "createdAt": 1767104100770,
+  "notes": "Performance Test Spool"
+}

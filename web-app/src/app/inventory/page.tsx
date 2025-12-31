@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { Filter, Search, Eye, EyeOff, List, Layers, Upload } from 'lucide-react';
+import { Filter, Search, Eye, EyeOff, List, Layers, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PageTransition } from '@/components/PageTransition';
@@ -23,7 +23,9 @@ function InventoryPageContent() {
     const [search, setSearch] = useState('');
     const [filterType, setFilterType] = useState('All');
     const [showEmpty, setShowEmpty] = useState(true); // Show empty spools by default
-    const [viewMode, setViewMode] = useState<'spools' | 'grouped'>('spools'); // New view mode state
+    const [viewMode, setViewMode] = useState<'spools' | 'grouped'>('spools');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 48;
     const [importing, setImporting] = useState(false);
 
     // Use file storage hook instead of Dexie
@@ -35,6 +37,17 @@ function InventoryPageContent() {
             setFilterType(typeParam);
         }
     }, [searchParams]);
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, filterType, showEmpty, viewMode]);
+
+    const scrollToTop = () => {
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     const handleImportBin = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -54,11 +67,17 @@ function InventoryPageContent() {
                 weightRemaining: data.weight, // Assume full if from generator? Or is 'weight' capacity? Usually capacity.
                 // OpenPrintTag 'weight' usually refers to initial weight or formatted weight.
                 // Let's assume it's the total weight.
-                weightTotal: data.weight,
-                temperatureNozzleMin: data.tempMin,
-                temperatureNozzleMax: data.tempMax,
+                weightTotal: data.weight || 1000,
+                weightSpool: 0, // Default tare
+                temperatureNozzleMin: data.tempMin || 190,
+                temperatureNozzleMax: data.tempMax || 220,
+                temperatureBedMin: 60,
+                temperatureBedMax: 60,
+                density: 1.24,
                 lastScanned: Date.now(),
                 lastUpdated: Date.now(),
+                series: '',
+                finish: 'plain', // Default finish
                 notes: `Imported from OpenPrintTag .bin file (${data.version || 'v1.0'})`
             });
 
@@ -199,7 +218,8 @@ function InventoryPageContent() {
 
                 {viewMode === 'spools' ? (
                     // Individual Spools View
-                    filtered.map(spool => {
+                    // Individual Spools View (Paginated)
+                    filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(spool => {
                         const isEmpty = spool.weightRemaining <= 0;
                         return (
                             <StaggerItem key={spool.serial}>
@@ -270,7 +290,8 @@ function InventoryPageContent() {
                     })
                 ) : (
                     // Grouped Filaments View
-                    groupedArray.map((group, idx) => {
+                    // Grouped Filaments View (Paginated)
+                    groupedArray.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((group, idx) => {
                         const isEmpty = group.isEmpty;
                         const percentage = (group.totalRemaining / group.totalCapacity) * 100;
                         return (
@@ -359,6 +380,46 @@ function InventoryPageContent() {
                     })
                 )}
             </StaggerContainer>
+
+            {/* Pagination Controls */}
+            {(() => {
+                const totalItems = viewMode === 'spools' ? filtered.length : groupedArray.length;
+                const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+                if (totalPages <= 1) return null;
+
+                return (
+                    <div className="flex items-center justify-center gap-4 mt-8 pb-8">
+                        <button
+                            onClick={() => {
+                                setCurrentPage(p => Math.max(1, p - 1));
+                                scrollToTop();
+                            }}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                            aria-label="Previous Page"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+
+                        <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                            Page <span className="text-gray-900 dark:text-gray-100">{currentPage}</span> of {totalPages}
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setCurrentPage(p => Math.min(totalPages, p + 1));
+                                scrollToTop();
+                            }}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                            aria-label="Next Page"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+                );
+            })()}
         </PageTransition>
     );
 }

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mhb-WDL4P",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 963,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100623,
+  "lastUpdated": 1767104100623,
+  "createdAt": 1767104100623,
+  "notes": "Performance Test Spool"
+}

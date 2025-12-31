@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mct-98JY5",
+  "brand": "Hatchbox",
+  "type": "ASA",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 152,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100461,
+  "lastUpdated": 1767104100461,
+  "createdAt": 1767104100461,
+  "notes": "Performance Test Spool"
+}

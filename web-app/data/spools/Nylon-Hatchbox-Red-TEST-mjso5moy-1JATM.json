@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5moy-1JATM",
+  "brand": "Hatchbox",
+  "type": "Nylon",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 698,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100898,
+  "lastUpdated": 1767104100898,
+  "createdAt": 1767104100898,
+  "notes": "Performance Test Spool"
+}

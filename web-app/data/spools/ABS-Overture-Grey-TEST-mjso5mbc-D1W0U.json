@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbc-D1W0U",
+  "brand": "Overture",
+  "type": "ABS",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 710,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100408,
+  "lastUpdated": 1767104100408,
+  "createdAt": 1767104100408,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mqj-NM1NK",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 119,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100955,
+  "lastUpdated": 1767104100955,
+  "createdAt": 1767104100955,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mm9-BDKSA",
+  "brand": "Hatchbox",
+  "type": "PETG",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 831,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100801,
+  "lastUpdated": 1767104100801,
+  "createdAt": 1767104100801,
+  "notes": "Performance Test Spool"
+}

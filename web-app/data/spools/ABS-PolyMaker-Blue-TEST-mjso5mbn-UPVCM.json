@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbn-UPVCM",
+  "brand": "PolyMaker",
+  "type": "ABS",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 729,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100419,
+  "lastUpdated": 1767104100419,
+  "createdAt": 1767104100419,
+  "notes": "Performance Test Spool"
+}

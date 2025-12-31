@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mme-EKF04",
+  "brand": "PolyMaker",
+  "type": "ABS",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 365,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100806,
+  "lastUpdated": 1767104100806,
+  "createdAt": 1767104100806,
+  "notes": "Performance Test Spool"
+}

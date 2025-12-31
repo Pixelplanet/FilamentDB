@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mko-T7RCX",
+  "brand": "Prusament",
+  "type": "PC",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 190,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100744,
+  "lastUpdated": 1767104100744,
+  "createdAt": 1767104100744,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpp-TYFP2",
+  "brand": "Bambu Lab",
+  "type": "ASA",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 2,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100925,
+  "lastUpdated": 1767104100925,
+  "createdAt": 1767104100925,
+  "notes": "Performance Test Spool"
+}

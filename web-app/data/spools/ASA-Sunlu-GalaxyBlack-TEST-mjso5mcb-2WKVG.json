@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mcb-2WKVG",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 123,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100443,
+  "lastUpdated": 1767104100443,
+  "createdAt": 1767104100443,
+  "notes": "Performance Test Spool"
+}

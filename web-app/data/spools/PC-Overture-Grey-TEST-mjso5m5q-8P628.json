@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m5q-8P628",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 592,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100206,
+  "lastUpdated": 1767104100206,
+  "createdAt": 1767104100206,
+  "notes": "Performance Test Spool"
+}

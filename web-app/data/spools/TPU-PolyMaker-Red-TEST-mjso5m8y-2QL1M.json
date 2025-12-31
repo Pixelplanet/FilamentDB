@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m8y-2QL1M",
+  "brand": "PolyMaker",
+  "type": "TPU",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 394,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100322,
+  "lastUpdated": 1767104100322,
+  "createdAt": 1767104100322,
+  "notes": "Performance Test Spool"
+}

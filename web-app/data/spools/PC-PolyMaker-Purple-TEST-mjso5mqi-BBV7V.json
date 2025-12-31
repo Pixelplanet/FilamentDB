@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mqi-BBV7V",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 976,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100954,
+  "lastUpdated": 1767104100954,
+  "createdAt": 1767104100954,
+  "notes": "Performance Test Spool"
+}

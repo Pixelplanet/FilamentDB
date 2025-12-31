@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mkq-5TLHI",
+  "brand": "Hatchbox",
+  "type": "ABS",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 209,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100746,
+  "lastUpdated": 1767104100746,
+  "createdAt": 1767104100746,
+  "notes": "Performance Test Spool"
+}

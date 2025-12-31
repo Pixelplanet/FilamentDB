@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mhx-OATXY",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 831,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100645,
+  "lastUpdated": 1767104100645,
+  "createdAt": 1767104100645,
+  "notes": "Performance Test Spool"
+}

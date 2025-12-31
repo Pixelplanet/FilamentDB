@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mka-SV4VM",
+  "brand": "Overture",
+  "type": "PLA",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 96,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100730,
+  "lastUpdated": 1767104100730,
+  "createdAt": 1767104100730,
+  "notes": "Performance Test Spool"
+}

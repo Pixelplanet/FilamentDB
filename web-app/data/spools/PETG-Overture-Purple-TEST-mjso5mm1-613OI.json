@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mm1-613OI",
+  "brand": "Overture",
+  "type": "PETG",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 555,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100793,
+  "lastUpdated": 1767104100793,
+  "createdAt": 1767104100793,
+  "notes": "Performance Test Spool"
+}

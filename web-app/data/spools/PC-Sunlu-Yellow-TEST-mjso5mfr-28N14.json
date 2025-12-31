@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfr-28N14",
+  "brand": "Sunlu",
+  "type": "PC",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 278,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100567,
+  "lastUpdated": 1767104100567,
+  "createdAt": 1767104100567,
+  "notes": "Performance Test Spool"
+}

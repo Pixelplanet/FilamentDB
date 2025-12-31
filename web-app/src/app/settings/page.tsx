@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, RefreshCw, Server, Download, Check, AlertTriangle, Search, Loader2, Cloud, Lock, FileCode, Book } from 'lucide-react';
+import { Save, RefreshCw, Server, Download, Check, AlertTriangle, Search, Loader2, Cloud, Lock, FileCode, Book, FlaskConical } from 'lucide-react';
+import Link from 'next/link';
 import { PageTransition } from '@/components/PageTransition';
 import { syncSpools } from '@/lib/storage/simpleSync';
 import { useSpools } from '@/hooks/useFileStorage';
@@ -250,6 +251,24 @@ export default function SettingsPage() {
                     <Book className="w-4 h-4" />
                     View Docs
                 </a>
+            </div>
+
+            {/* Material Profiles */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+                <div className="p-3 bg-indigo-100 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-full">
+                    <FlaskConical className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                    <h3 className="font-bold">Material Profiles</h3>
+                    <p className="text-sm text-gray-500">Manage material types and default temperatures</p>
+                </div>
+                <Link
+                    href="/settings/materials"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center gap-2"
+                >
+                    <FlaskConical className="w-4 h-4" />
+                    Manage
+                </Link>
             </div>
 
             {/* NFC Tag Statistics */}

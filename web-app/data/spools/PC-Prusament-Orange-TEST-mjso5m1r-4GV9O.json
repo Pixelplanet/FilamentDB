@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m1r-4GV9O",
+  "brand": "Prusament",
+  "type": "PC",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 383,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100063,
+  "lastUpdated": 1767104100063,
+  "createdAt": 1767104100063,
+  "notes": "Performance Test Spool"
+}

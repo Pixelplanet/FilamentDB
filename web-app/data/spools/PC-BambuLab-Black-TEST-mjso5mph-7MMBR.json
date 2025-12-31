@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mph-7MMBR",
+  "brand": "Bambu Lab",
+  "type": "PC",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 428,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100917,
+  "lastUpdated": 1767104100917,
+  "createdAt": 1767104100917,
+  "notes": "Performance Test Spool"
+}

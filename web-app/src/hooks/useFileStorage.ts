@@ -46,9 +46,9 @@ export function useSpools() {
 /**
  * Hook to get a single spool by serial
  */
-export function useSpool(serial: string | null) {
-    const [spool, setSpool] = useState<Spool | null>(null);
-    const [loading, setLoading] = useState(true);
+export function useSpool(serial: string | null, initialData?: Spool | null) {
+    const [spool, setSpool] = useState<Spool | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
 
     const fetchSpool = useCallback(async () => {
@@ -58,8 +58,13 @@ export function useSpool(serial: string | null) {
             return;
         }
 
+        // If we have initial data matching the serial, we could skip fetch
+        // But for now we'll fetch to ensure freshness, but loading is false so UI doesn't flicker
+
         try {
-            setLoading(true);
+            // Only set loading true if we don't have data
+            if (!spool && !initialData) setLoading(true);
+
             setError(null);
             const storage = getStorage();
             const data = await storage.getSpool(serial);
@@ -69,7 +74,7 @@ export function useSpool(serial: string | null) {
         } finally {
             setLoading(false);
         }
-    }, [serial]);
+    }, [serial]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         fetchSpool();

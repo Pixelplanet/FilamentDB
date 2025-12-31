@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mac-OT7OB",
+  "brand": "eSun",
+  "type": "PC",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 382,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100372,
+  "lastUpdated": 1767104100372,
+  "createdAt": 1767104100372,
+  "notes": "Performance Test Spool"
+}

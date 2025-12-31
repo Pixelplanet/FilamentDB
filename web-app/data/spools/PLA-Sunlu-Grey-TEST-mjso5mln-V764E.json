@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mln-V764E",
+  "brand": "Sunlu",
+  "type": "PLA",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 11,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100779,
+  "lastUpdated": 1767104100779,
+  "createdAt": 1767104100779,
+  "notes": "Performance Test Spool"
+}

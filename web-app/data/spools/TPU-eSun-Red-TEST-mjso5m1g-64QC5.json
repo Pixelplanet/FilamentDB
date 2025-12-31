@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m1g-64QC5",
+  "brand": "eSun",
+  "type": "TPU",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 49,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100052,
+  "lastUpdated": 1767104100052,
+  "createdAt": 1767104100052,
+  "notes": "Performance Test Spool"
+}

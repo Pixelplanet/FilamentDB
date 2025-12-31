@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mgc-JF85S",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 548,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100588,
+  "lastUpdated": 1767104100588,
+  "createdAt": 1767104100588,
+  "notes": "Performance Test Spool"
+}

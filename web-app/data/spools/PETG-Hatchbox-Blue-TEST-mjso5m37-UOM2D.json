@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m37-UOM2D",
+  "brand": "Hatchbox",
+  "type": "PETG",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 246,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100115,
+  "lastUpdated": 1767104100115,
+  "createdAt": 1767104100115,
+  "notes": "Performance Test Spool"
+}

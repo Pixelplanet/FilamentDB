@@ -17,30 +17,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 // Directory where spool files are stored
-const SPOOLS_DIR = path.join(process.cwd(), 'data', 'spools');
+import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
 
-/**
- * Find a spool file by serial number
- * @param serial - Serial number to find
- * @returns Filename if found, null otherwise
- */
-async function findSpoolFile(serial: string): Promise<string | null> {
-    try {
-        const files = await fs.readdir(SPOOLS_DIR);
 
-        // Look for file ending with -{serial}.json
-        // Changed regex to match serials containing hyphens
-        const found = files.find(file => {
-            const match = file.match(/-([^\.]+)\.json$/);
-            return match && match[1] === serial;
-        });
-
-        return found || null;
-    } catch (error) {
-        console.error('Error finding spool file:', error);
-        return null;
-    }
-}
 
 /**
  * GET /api/spools/[serial]
@@ -141,8 +120,11 @@ export async function PUT(
         // If filename changed, delete old file
         if (oldFilename !== newFilename) {
             await fs.unlink(oldFilePath);
+
             console.log(`Renamed spool file: ${oldFilename} -> ${newFilename}`);
         }
+
+        invalidateSpoolCache();
 
         return NextResponse.json({
             success: true,
@@ -182,7 +164,10 @@ export async function DELETE(
 
         // Delete the file
         const filePath = path.join(SPOOLS_DIR, filename);
+
         await fs.unlink(filePath);
+
+        invalidateSpoolCache();
 
         return NextResponse.json({
             success: true,

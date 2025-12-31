@@ -43,8 +43,13 @@ export function createStorage(baseUrl: string = ''): ISpoolStorage {
             return new FileStorageWeb(baseUrl);
 
         case StoragePlatform.MOBILE:
-            // TODO: Implement FileStorageMobile
-            throw new Error('Mobile storage not yet implemented. Use FileStorageWeb for now.');
+            // Mobile fallback to Web API for now (until local FS impl)
+            // This allows connecting to a self-hosted instance from the app
+            let mobileUrl = '';
+            if (typeof window !== 'undefined') {
+                mobileUrl = localStorage.getItem('sync_server_url') || '';
+            }
+            return new FileStorageWeb(mobileUrl);
 
         default:
             throw new Error(`Unknown platform: ${platform}`);

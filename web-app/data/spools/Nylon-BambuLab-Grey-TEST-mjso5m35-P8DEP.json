@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m35-P8DEP",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 665,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100113,
+  "lastUpdated": 1767104100113,
+  "createdAt": 1767104100113,
+  "notes": "Performance Test Spool"
+}

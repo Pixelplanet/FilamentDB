@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5miu-TXOFN",
+  "brand": "Sunlu",
+  "type": "ABS",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 380,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100678,
+  "lastUpdated": 1767104100678,
+  "createdAt": 1767104100678,
+  "notes": "Performance Test Spool"
+}

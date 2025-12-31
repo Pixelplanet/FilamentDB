@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m6j-M0LEM",
+  "brand": "Bambu Lab",
+  "type": "ABS",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 324,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100235,
+  "lastUpdated": 1767104100235,
+  "createdAt": 1767104100235,
+  "notes": "Performance Test Spool"
+}

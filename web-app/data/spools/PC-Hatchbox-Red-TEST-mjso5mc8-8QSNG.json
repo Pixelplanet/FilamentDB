@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mc8-8QSNG",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 171,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100440,
+  "lastUpdated": 1767104100440,
+  "createdAt": 1767104100440,
+  "notes": "Performance Test Spool"
+}

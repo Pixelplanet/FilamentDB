@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   web-app:
+    build: .
     image: pixelplanet5/filamentdb-app:latest
     ports:
       - "3000:3000"

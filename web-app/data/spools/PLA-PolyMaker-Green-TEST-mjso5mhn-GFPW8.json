@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mhn-GFPW8",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 384,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100635,
+  "lastUpdated": 1767104100635,
+  "createdAt": 1767104100635,
+  "notes": "Performance Test Spool"
+}

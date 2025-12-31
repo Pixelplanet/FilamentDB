@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m5x-UA7KO",
+  "brand": "Overture",
+  "type": "PLA",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 500,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100213,
+  "lastUpdated": 1767104100213,
+  "createdAt": 1767104100213,
+  "notes": "Performance Test Spool"
+}

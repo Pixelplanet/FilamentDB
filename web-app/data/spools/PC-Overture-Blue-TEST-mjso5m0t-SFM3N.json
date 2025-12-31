@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m0t-SFM3N",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 644,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100029,
+  "lastUpdated": 1767104100029,
+  "createdAt": 1767104100029,
+  "notes": "Performance Test Spool"
+}

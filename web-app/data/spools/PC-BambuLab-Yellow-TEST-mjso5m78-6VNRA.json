@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m78-6VNRA",
+  "brand": "Bambu Lab",
+  "type": "PC",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 106,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100260,
+  "lastUpdated": 1767104100260,
+  "createdAt": 1767104100260,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mjn-SEN6C",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 532,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100707,
+  "lastUpdated": 1767104100707,
+  "createdAt": 1767104100707,
+  "notes": "Performance Test Spool"
+}

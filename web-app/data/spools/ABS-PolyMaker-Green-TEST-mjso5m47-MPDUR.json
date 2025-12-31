@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m47-MPDUR",
+  "brand": "PolyMaker",
+  "type": "ABS",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 415,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100151,
+  "lastUpdated": 1767104100151,
+  "createdAt": 1767104100151,
+  "notes": "Performance Test Spool"
+}

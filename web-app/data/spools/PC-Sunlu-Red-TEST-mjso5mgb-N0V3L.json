@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mgb-N0V3L",
+  "brand": "Sunlu",
+  "type": "PC",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 160,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100587,
+  "lastUpdated": 1767104100587,
+  "createdAt": 1767104100587,
+  "notes": "Performance Test Spool"
+}

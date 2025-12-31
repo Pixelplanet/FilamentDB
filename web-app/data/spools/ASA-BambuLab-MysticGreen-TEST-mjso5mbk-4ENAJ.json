@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbk-4ENAJ",
+  "brand": "Bambu Lab",
+  "type": "ASA",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 40,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100416,
+  "lastUpdated": 1767104100416,
+  "createdAt": 1767104100416,
+  "notes": "Performance Test Spool"
+}

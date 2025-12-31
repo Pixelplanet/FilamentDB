@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m74-TV788",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 509,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100256,
+  "lastUpdated": 1767104100256,
+  "createdAt": 1767104100256,
+  "notes": "Performance Test Spool"
+}

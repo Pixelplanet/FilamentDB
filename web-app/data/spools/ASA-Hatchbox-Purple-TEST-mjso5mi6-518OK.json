@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mi6-518OK",
+  "brand": "Hatchbox",
+  "type": "ASA",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 706,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100654,
+  "lastUpdated": 1767104100654,
+  "createdAt": 1767104100654,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m1x-UCE7X",
+  "brand": "eSun",
+  "type": "ASA",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 455,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100069,
+  "lastUpdated": 1767104100069,
+  "createdAt": 1767104100069,
+  "notes": "Performance Test Spool"
+}

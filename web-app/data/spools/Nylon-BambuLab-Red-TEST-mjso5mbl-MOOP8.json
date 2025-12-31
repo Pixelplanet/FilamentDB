@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbl-MOOP8",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 146,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100417,
+  "lastUpdated": 1767104100417,
+  "createdAt": 1767104100417,
+  "notes": "Performance Test Spool"
+}

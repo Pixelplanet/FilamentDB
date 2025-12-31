@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfy-NUER1",
+  "brand": "Bambu Lab",
+  "type": "TPU",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 399,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100574,
+  "lastUpdated": 1767104100574,
+  "createdAt": 1767104100574,
+  "notes": "Performance Test Spool"
+}

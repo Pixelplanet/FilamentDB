@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m1v-WFDSW",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 128,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100067,
+  "lastUpdated": 1767104100067,
+  "createdAt": 1767104100067,
+  "notes": "Performance Test Spool"
+}

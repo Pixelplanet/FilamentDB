@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfh-FUIRZ",
+  "brand": "Overture",
+  "type": "ABS",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 991,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100557,
+  "lastUpdated": 1767104100557,
+  "createdAt": 1767104100557,
+  "notes": "Performance Test Spool"
+}

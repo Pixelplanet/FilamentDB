@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mk6-ONRTS",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 735,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100726,
+  "lastUpdated": 1767104100726,
+  "createdAt": 1767104100726,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mdk-UZVN2",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 242,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100488,
+  "lastUpdated": 1767104100488,
+  "createdAt": 1767104100488,
+  "notes": "Performance Test Spool"
+}

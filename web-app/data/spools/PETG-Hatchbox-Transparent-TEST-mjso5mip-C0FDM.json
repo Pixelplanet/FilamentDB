@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mip-C0FDM",
+  "brand": "Hatchbox",
+  "type": "PETG",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 211,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100673,
+  "lastUpdated": 1767104100673,
+  "createdAt": 1767104100673,
+  "notes": "Performance Test Spool"
+}

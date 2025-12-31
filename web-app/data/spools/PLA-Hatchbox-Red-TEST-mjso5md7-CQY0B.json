@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5md7-CQY0B",
+  "brand": "Hatchbox",
+  "type": "PLA",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 555,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100475,
+  "lastUpdated": 1767104100475,
+  "createdAt": 1767104100475,
+  "notes": "Performance Test Spool"
+}

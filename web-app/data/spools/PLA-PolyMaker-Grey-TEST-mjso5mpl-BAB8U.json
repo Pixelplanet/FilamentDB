@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpl-BAB8U",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 321,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100921,
+  "lastUpdated": 1767104100921,
+  "createdAt": 1767104100921,
+  "notes": "Performance Test Spool"
+}

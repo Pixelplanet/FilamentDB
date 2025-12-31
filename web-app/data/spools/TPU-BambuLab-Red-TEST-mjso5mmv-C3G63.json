@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mmv-C3G63",
+  "brand": "Bambu Lab",
+  "type": "TPU",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 236,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100823,
+  "lastUpdated": 1767104100823,
+  "createdAt": 1767104100823,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbn-W6SFX",
+  "brand": "Hatchbox",
+  "type": "ABS",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 159,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100419,
+  "lastUpdated": 1767104100419,
+  "createdAt": 1767104100419,
+  "notes": "Performance Test Spool"
+}

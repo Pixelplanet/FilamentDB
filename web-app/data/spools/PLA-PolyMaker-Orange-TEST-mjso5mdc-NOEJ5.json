@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mdc-NOEJ5",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 595,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100480,
+  "lastUpdated": 1767104100480,
+  "createdAt": 1767104100480,
+  "notes": "Performance Test Spool"
+}

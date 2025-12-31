@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m2x-UZBKP",
+  "brand": "Prusament",
+  "type": "TPU",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 777,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100105,
+  "lastUpdated": 1767104100105,
+  "createdAt": 1767104100105,
+  "notes": "Performance Test Spool"
+}

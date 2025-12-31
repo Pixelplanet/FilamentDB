@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mcc-IXG4W",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 785,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100444,
+  "lastUpdated": 1767104100444,
+  "createdAt": 1767104100444,
+  "notes": "Performance Test Spool"
+}

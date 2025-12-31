@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mng-P71QK",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 519,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100844,
+  "lastUpdated": 1767104100844,
+  "createdAt": 1767104100844,
+  "notes": "Performance Test Spool"
+}

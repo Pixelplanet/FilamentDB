@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mh0-FWTNC",
+  "brand": "Overture",
+  "type": "ASA",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 860,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100612,
+  "lastUpdated": 1767104100612,
+  "createdAt": 1767104100612,
+  "notes": "Performance Test Spool"
+}

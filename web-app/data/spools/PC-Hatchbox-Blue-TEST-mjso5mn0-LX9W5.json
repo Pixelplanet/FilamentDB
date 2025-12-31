@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mn0-LX9W5",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 750,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100828,
+  "lastUpdated": 1767104100828,
+  "createdAt": 1767104100828,
+  "notes": "Performance Test Spool"
+}

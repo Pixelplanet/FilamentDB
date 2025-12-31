@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfo-DG4P4",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 503,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100564,
+  "lastUpdated": 1767104100564,
+  "createdAt": 1767104100564,
+  "notes": "Performance Test Spool"
+}

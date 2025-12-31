@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mmx-PMLV6",
+  "brand": "Hatchbox",
+  "type": "PLA",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 654,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100825,
+  "lastUpdated": 1767104100825,
+  "createdAt": 1767104100825,
+  "notes": "Performance Test Spool"
+}

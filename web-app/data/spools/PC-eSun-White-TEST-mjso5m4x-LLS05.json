@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m4x-LLS05",
+  "brand": "eSun",
+  "type": "PC",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 649,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100177,
+  "lastUpdated": 1767104100177,
+  "createdAt": 1767104100177,
+  "notes": "Performance Test Spool"
+}

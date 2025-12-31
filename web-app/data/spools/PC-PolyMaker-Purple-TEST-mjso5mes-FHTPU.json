@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mes-FHTPU",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 372,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100532,
+  "lastUpdated": 1767104100532,
+  "createdAt": 1767104100532,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mbq-L160D",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 369,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100422,
+  "lastUpdated": 1767104100422,
+  "createdAt": 1767104100422,
+  "notes": "Performance Test Spool"
+}

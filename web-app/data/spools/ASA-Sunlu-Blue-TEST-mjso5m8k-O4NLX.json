@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m8k-O4NLX",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 750,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100308,
+  "lastUpdated": 1767104100308,
+  "createdAt": 1767104100308,
+  "notes": "Performance Test Spool"
+}

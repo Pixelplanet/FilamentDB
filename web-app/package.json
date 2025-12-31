@@ -24,6 +24,9 @@
     "@capacitor/core": "^8.0.0",
     "@capacitor/ios": "^8.0.0",
     "@capgo/capacitor-nfc": "^8.0.5",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@scalar/nextjs-api-reference": "^0.9.7",
     "@types/adm-zip": "^0.5.7",
     "@types/archiver": "^7.0.0",
@@ -38,6 +41,7 @@
     "openapi3-ts": "^4.5.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m2r-3O4LO",
+  "brand": "Bambu Lab",
+  "type": "PC",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 195,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100099,
+  "lastUpdated": 1767104100099,
+  "createdAt": 1767104100099,
+  "notes": "Performance Test Spool"
+}

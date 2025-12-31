@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mhc-4D9IV",
+  "brand": "eSun",
+  "type": "ASA",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 78,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100624,
+  "lastUpdated": 1767104100624,
+  "createdAt": 1767104100624,
+  "notes": "Performance Test Spool"
+}

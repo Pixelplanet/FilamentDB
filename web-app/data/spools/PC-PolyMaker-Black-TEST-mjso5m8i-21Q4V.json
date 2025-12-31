@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m8i-21Q4V",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 538,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100306,
+  "lastUpdated": 1767104100306,
+  "createdAt": 1767104100306,
+  "notes": "Performance Test Spool"
+}

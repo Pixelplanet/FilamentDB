@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mli-8YIVE",
+  "brand": "Hatchbox",
+  "type": "TPU",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 668,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100774,
+  "lastUpdated": 1767104100774,
+  "createdAt": 1767104100774,
+  "notes": "Performance Test Spool"
+}

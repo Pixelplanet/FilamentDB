@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m4w-JUT68",
+  "brand": "Overture",
+  "type": "TPU",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 416,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100176,
+  "lastUpdated": 1767104100176,
+  "createdAt": 1767104100176,
+  "notes": "Performance Test Spool"
+}

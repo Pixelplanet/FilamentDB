@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mft-4UFX6",
+  "brand": "Bambu Lab",
+  "type": "TPU",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 114,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100569,
+  "lastUpdated": 1767104100569,
+  "createdAt": 1767104100569,
+  "notes": "Performance Test Spool"
+}

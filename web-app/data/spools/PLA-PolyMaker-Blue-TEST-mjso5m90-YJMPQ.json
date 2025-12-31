@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m90-YJMPQ",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 203,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100324,
+  "lastUpdated": 1767104100324,
+  "createdAt": 1767104100324,
+  "notes": "Performance Test Spool"
+}

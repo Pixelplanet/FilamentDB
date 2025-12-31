@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m9j-W4604",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 205,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100343,
+  "lastUpdated": 1767104100343,
+  "createdAt": 1767104100343,
+  "notes": "Performance Test Spool"
+}

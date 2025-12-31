@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mem-XKO7D",
+  "brand": "Hatchbox",
+  "type": "ASA",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 937,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100526,
+  "lastUpdated": 1767104100526,
+  "createdAt": 1767104100526,
+  "notes": "Performance Test Spool"
+}

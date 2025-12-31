@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mm4-ENTNX",
+  "brand": "Overture",
+  "type": "ABS",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 83,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100796,
+  "lastUpdated": 1767104100796,
+  "createdAt": 1767104100796,
+  "notes": "Performance Test Spool"
+}

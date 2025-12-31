@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m29-2MWRF",
+  "brand": "Bambu Lab",
+  "type": "PETG",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 380,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100081,
+  "lastUpdated": 1767104100081,
+  "createdAt": 1767104100081,
+  "notes": "Performance Test Spool"
+}

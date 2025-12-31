@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m23-TTKX1",
+  "brand": "PolyMaker",
+  "type": "TPU",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 202,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100075,
+  "lastUpdated": 1767104100075,
+  "createdAt": 1767104100075,
+  "notes": "Performance Test Spool"
+}

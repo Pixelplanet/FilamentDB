@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5ma9-7T7Z0",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 34,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100369,
+  "lastUpdated": 1767104100369,
+  "createdAt": 1767104100369,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mni-H00NG",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 925,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100846,
+  "lastUpdated": 1767104100846,
+  "createdAt": 1767104100846,
+  "notes": "Performance Test Spool"
+}

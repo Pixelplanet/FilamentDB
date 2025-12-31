@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mnq-YKBFO",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 443,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100854,
+  "lastUpdated": 1767104100854,
+  "createdAt": 1767104100854,
+  "notes": "Performance Test Spool"
+}

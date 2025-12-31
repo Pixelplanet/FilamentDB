@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m3h-J2J9I",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 697,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100125,
+  "lastUpdated": 1767104100125,
+  "createdAt": 1767104100125,
+  "notes": "Performance Test Spool"
+}

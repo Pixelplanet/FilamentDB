@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mat-J56XX",
+  "brand": "Hatchbox",
+  "type": "Nylon",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 932,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100389,
+  "lastUpdated": 1767104100389,
+  "createdAt": 1767104100389,
+  "notes": "Performance Test Spool"
+}

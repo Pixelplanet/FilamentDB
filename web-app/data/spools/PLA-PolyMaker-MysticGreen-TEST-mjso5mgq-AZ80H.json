@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mgq-AZ80H",
+  "brand": "PolyMaker",
+  "type": "PLA",
+  "color": "Mystic Green",
+  "colorHex": "#000000",
+  "weightRemaining": 350,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100602,
+  "lastUpdated": 1767104100602,
+  "createdAt": 1767104100602,
+  "notes": "Performance Test Spool"
+}

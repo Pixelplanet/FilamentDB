@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mni-515TT",
+  "brand": "Overture",
+  "type": "PETG",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 340,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100846,
+  "lastUpdated": 1767104100846,
+  "createdAt": 1767104100846,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mm8-KMNTW",
+  "brand": "Prusament",
+  "type": "PLA",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 129,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100800,
+  "lastUpdated": 1767104100800,
+  "createdAt": 1767104100800,
+  "notes": "Performance Test Spool"
+}

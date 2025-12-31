@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m2e-29GBG",
+  "brand": "Hatchbox",
+  "type": "ASA",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 146,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100086,
+  "lastUpdated": 1767104100086,
+  "createdAt": 1767104100086,
+  "notes": "Performance Test Spool"
+}

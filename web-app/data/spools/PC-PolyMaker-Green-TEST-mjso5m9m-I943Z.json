@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m9m-I943Z",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 539,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100346,
+  "lastUpdated": 1767104100346,
+  "createdAt": 1767104100346,
+  "notes": "Performance Test Spool"
+}

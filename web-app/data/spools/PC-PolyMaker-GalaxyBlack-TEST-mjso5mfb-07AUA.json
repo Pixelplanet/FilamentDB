@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfb-07AUA",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 172,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100551,
+  "lastUpdated": 1767104100551,
+  "createdAt": 1767104100551,
+  "notes": "Performance Test Spool"
+}

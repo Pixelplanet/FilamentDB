@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpz-XLU8G",
+  "brand": "Sunlu",
+  "type": "PLA",
+  "color": "Grey",
+  "colorHex": "#000000",
+  "weightRemaining": 342,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100935,
+  "lastUpdated": 1767104100935,
+  "createdAt": 1767104100935,
+  "notes": "Performance Test Spool"
+}

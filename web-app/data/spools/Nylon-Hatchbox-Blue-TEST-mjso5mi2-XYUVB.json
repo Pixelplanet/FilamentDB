@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mi2-XYUVB",
+  "brand": "Hatchbox",
+  "type": "Nylon",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 751,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100650,
+  "lastUpdated": 1767104100650,
+  "createdAt": 1767104100650,
+  "notes": "Performance Test Spool"
+}

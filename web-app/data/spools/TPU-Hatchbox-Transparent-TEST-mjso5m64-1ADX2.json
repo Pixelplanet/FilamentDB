@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m64-1ADX2",
+  "brand": "Hatchbox",
+  "type": "TPU",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 122,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100220,
+  "lastUpdated": 1767104100220,
+  "createdAt": 1767104100220,
+  "notes": "Performance Test Spool"
+}

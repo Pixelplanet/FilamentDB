@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mes-FINHM",
+  "brand": "Sunlu",
+  "type": "PETG",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 266,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100532,
+  "lastUpdated": 1767104100532,
+  "createdAt": 1767104100532,
+  "notes": "Performance Test Spool"
+}

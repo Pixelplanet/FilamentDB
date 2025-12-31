@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m3n-41Z00",
+  "brand": "PolyMaker",
+  "type": "TPU",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 35,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100131,
+  "lastUpdated": 1767104100131,
+  "createdAt": 1767104100131,
+  "notes": "Performance Test Spool"
+}

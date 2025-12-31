@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpm-FNLAE",
+  "brand": "Bambu Lab",
+  "type": "TPU",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 357,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100922,
+  "lastUpdated": 1767104100922,
+  "createdAt": 1767104100922,
+  "notes": "Performance Test Spool"
+}

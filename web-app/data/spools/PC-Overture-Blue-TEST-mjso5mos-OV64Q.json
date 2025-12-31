@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mos-OV64Q",
+  "brand": "Overture",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 185,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100892,
+  "lastUpdated": 1767104100892,
+  "createdAt": 1767104100892,
+  "notes": "Performance Test Spool"
+}

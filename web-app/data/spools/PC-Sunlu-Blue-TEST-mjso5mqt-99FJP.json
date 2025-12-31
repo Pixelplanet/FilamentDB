@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mqt-99FJP",
+  "brand": "Sunlu",
+  "type": "PC",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 18,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100965,
+  "lastUpdated": 1767104100965,
+  "createdAt": 1767104100965,
+  "notes": "Performance Test Spool"
+}

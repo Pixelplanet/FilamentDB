@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m46-3G7H4",
+  "brand": "PolyMaker",
+  "type": "PC",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 106,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100150,
+  "lastUpdated": 1767104100150,
+  "createdAt": 1767104100150,
+  "notes": "Performance Test Spool"
+}

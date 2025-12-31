@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mfv-FK3IA",
+  "brand": "Bambu Lab",
+  "type": "PC",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 50,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100571,
+  "lastUpdated": 1767104100571,
+  "createdAt": 1767104100571,
+  "notes": "Performance Test Spool"
+}

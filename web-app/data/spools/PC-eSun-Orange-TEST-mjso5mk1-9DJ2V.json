@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mk1-9DJ2V",
+  "brand": "eSun",
+  "type": "PC",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 402,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100721,
+  "lastUpdated": 1767104100721,
+  "createdAt": 1767104100721,
+  "notes": "Performance Test Spool"
+}

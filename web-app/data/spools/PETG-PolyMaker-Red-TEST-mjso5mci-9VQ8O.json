@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mci-9VQ8O",
+  "brand": "PolyMaker",
+  "type": "PETG",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 222,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100450,
+  "lastUpdated": 1767104100450,
+  "createdAt": 1767104100450,
+  "notes": "Performance Test Spool"
+}

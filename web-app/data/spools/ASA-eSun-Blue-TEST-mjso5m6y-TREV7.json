@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m6y-TREV7",
+  "brand": "eSun",
+  "type": "ASA",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 202,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100250,
+  "lastUpdated": 1767104100250,
+  "createdAt": 1767104100250,
+  "notes": "Performance Test Spool"
+}

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mpr-AQM0E",
+  "brand": "Bambu Lab",
+  "type": "PLA",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 838,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100927,
+  "lastUpdated": 1767104100927,
+  "createdAt": 1767104100927,
+  "notes": "Performance Test Spool"
+}

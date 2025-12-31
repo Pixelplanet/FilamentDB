@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5max-LNU91",
+  "brand": "Overture",
+  "type": "ABS",
+  "color": "White",
+  "colorHex": "#000000",
+  "weightRemaining": 888,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100393,
+  "lastUpdated": 1767104100393,
+  "createdAt": 1767104100393,
+  "notes": "Performance Test Spool"
+}

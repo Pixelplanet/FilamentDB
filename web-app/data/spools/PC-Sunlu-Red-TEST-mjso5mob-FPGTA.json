@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mob-FPGTA",
+  "brand": "Sunlu",
+  "type": "PC",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 409,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100875,
+  "lastUpdated": 1767104100875,
+  "createdAt": 1767104100875,
+  "notes": "Performance Test Spool"
+}

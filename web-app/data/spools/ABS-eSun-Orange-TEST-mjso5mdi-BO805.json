@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mdi-BO805",
+  "brand": "eSun",
+  "type": "ABS",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 369,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100486,
+  "lastUpdated": 1767104100486,
+  "createdAt": 1767104100486,
+  "notes": "Performance Test Spool"
+}

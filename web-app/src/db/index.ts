@@ -11,24 +11,45 @@ export interface Spool {
 
     // Basic Info
     brand: string;
-    type: string;   // PLA, PETG, etc.
-    color: string;
-    colorHex?: string;
+    series?: string; // e.g. "PolyLite", "Prusament"
+    type: string; // PLA, PETG, etc.
+    color: string; // "Galaxy Black"
+    colorHex?: string; // #000000
+    finish?: 'plain' | 'glossy' | 'matte' | 'silk' | 'textured' | 'n/a';
 
-    // Weights (grams)
+    // Weights (g)
+    weightTotal: number; // Nominal Net Weight
     weightRemaining: number;
-    weightTotal: number;
-    weightSpool?: number; // Tare weight of the empty spool
+    weightSpool: number; // Tare
 
-    // Physical Props
-    diameter: number; // usually 1.75
-    density?: number; // g/cm3
+    // Dimensions
+    diameter: number;
+    density: number;
 
-    // Printing Params
-    temperatureNozzleMin?: number;
-    temperatureNozzleMax?: number;
-    temperatureBedMin?: number;
-    temperatureBedMax?: number;
+    // Thermal
+    temperatureNozzleMin: number;
+    temperatureNozzleMax: number;
+    temperatureBedMin: number;
+    temperatureBedMax: number;
+    temperatureChamberMin?: number;
+    temperatureChamberMax?: number;
+    temperatureChamberIdeal?: number;
+    temperaturePreheat?: number; // New from Generator
+
+    // Advanced Material Props (OpenPrintTag Spec)
+    tags?: string[]; // Key 28
+    gtin?: string; // Key 4
+    countryOfOrigin?: string; // Key 55 (ISO 3166-1 alpha-2)
+    transmissionDistance?: number; // Key 27
+    shoreHardnessA?: number; // Key 31
+    shoreHardnessD?: number; // Key 32
+
+    // Spool Dimensions (mm)
+    spoolWidth?: number; // Key 42
+    spoolOuterDiameter?: number; // Key 43
+    spoolInnerDiameter?: number; // Key 44
+    spoolHoleDiameter?: number; // Key 45
+
 
     // Traceability
     batchNumber?: string;
@@ -71,4 +92,21 @@ export interface NFCTagData {
     density?: number;
     batchNumber?: string;
     productionDate?: string;
+}
+
+/**
+ * Material Profile Setting
+ * 
+ * User-defined presets for material types.
+ * Used to populate defaults for new spools.
+ */
+export interface MaterialProfile {
+    id: string; // UUID
+    name: string; // e.g. "Polylactic Acid"
+    type: string; // Abbreviation e.g. "PLA" - used as key
+    density?: number;
+    temperatureNozzleMin?: number;
+    temperatureNozzleMax?: number;
+    temperatureBedMin?: number;
+    temperatureBedMax?: number;
 }

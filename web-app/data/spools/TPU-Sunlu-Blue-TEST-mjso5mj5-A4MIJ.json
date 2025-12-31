@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mj5-A4MIJ",
+  "brand": "Sunlu",
+  "type": "TPU",
+  "color": "Blue",
+  "colorHex": "#000000",
+  "weightRemaining": 68,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100689,
+  "lastUpdated": 1767104100689,
+  "createdAt": 1767104100689,
+  "notes": "Performance Test Spool"
+}

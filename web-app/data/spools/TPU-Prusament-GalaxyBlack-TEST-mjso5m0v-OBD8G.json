@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m0v-OBD8G",
+  "brand": "Prusament",
+  "type": "TPU",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 840,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100031,
+  "lastUpdated": 1767104100031,
+  "createdAt": 1767104100031,
+  "notes": "Performance Test Spool"
+}

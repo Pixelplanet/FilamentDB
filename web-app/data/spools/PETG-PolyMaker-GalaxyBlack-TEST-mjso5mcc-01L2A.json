@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mcc-01L2A",
+  "brand": "PolyMaker",
+  "type": "PETG",
+  "color": "Galaxy Black",
+  "colorHex": "#000000",
+  "weightRemaining": 229,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100444,
+  "lastUpdated": 1767104100444,
+  "createdAt": 1767104100444,
+  "notes": "Performance Test Spool"
+}

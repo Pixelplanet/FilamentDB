@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m30-VMTTU",
+  "brand": "Overture",
+  "type": "TPU",
+  "color": "Yellow",
+  "colorHex": "#000000",
+  "weightRemaining": 351,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100108,
+  "lastUpdated": 1767104100108,
+  "createdAt": 1767104100108,
+  "notes": "Performance Test Spool"
+}

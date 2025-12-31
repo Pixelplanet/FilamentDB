@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mlt-VVFSA",
+  "brand": "Hatchbox",
+  "type": "PC",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 696,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100785,
+  "lastUpdated": 1767104100785,
+  "createdAt": 1767104100785,
+  "notes": "Performance Test Spool"
+}

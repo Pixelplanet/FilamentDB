@@ -1,0 +1,102 @@
+[
+  {
+    "id": "pla",
+    "name": "Polylactic Acid",
+    "type": "PLA",
+    "density": 1.24,
+    "temperatureNozzleMin": 190,
+    "temperatureNozzleMax": 220,
+    "temperatureBedMin": 40,
+    "temperatureBedMax": 60
+  },
+  {
+    "id": "petg",
+    "name": "Polyethylene Terephthalate Glycol",
+    "type": "PETG",
+    "density": 1.27,
+    "temperatureNozzleMin": 230,
+    "temperatureNozzleMax": 250,
+    "temperatureBedMin": 70,
+    "temperatureBedMax": 90
+  },
+  {
+    "id": "abs",
+    "name": "Acrylonitrile Butadiene Styrene",
+    "type": "ABS",
+    "density": 1.04,
+    "temperatureNozzleMin": 230,
+    "temperatureNozzleMax": 260,
+    "temperatureBedMin": 90,
+    "temperatureBedMax": 110
+  },
+  {
+    "id": "asa",
+    "name": "Acrylonitrile Styrene Acrylate",
+    "type": "ASA",
+    "density": 1.07,
+    "temperatureNozzleMin": 240,
+    "temperatureNozzleMax": 260,
+    "temperatureBedMin": 90,
+    "temperatureBedMax": 110
+  },
+  {
+    "id": "tpu",
+    "name": "Thermoplastic Polyurethane",
+    "type": "TPU",
+    "density": 1.21,
+    "temperatureNozzleMin": 210,
+    "temperatureNozzleMax": 230,
+    "temperatureBedMin": 40,
+    "temperatureBedMax": 60
+  },
+  {
+    "id": "pc",
+    "name": "Polycarbonate",
+    "type": "PC",
+    "density": 1.2,
+    "temperatureNozzleMin": 260,
+    "temperatureNozzleMax": 280,
+    "temperatureBedMin": 100,
+    "temperatureBedMax": 120
+  },
+  {
+    "id": "pa",
+    "name": "Polyamide (Nylon)",
+    "type": "PA",
+    "density": 1.14,
+    "temperatureNozzleMin": 250,
+    "temperatureNozzleMax": 280,
+    "temperatureBedMin": 40,
+    "temperatureBedMax": 60
+  },
+  {
+    "id": "hips",
+    "name": "High Impact Polystyrene",
+    "type": "HIPS",
+    "density": 1.04,
+    "temperatureNozzleMin": 230,
+    "temperatureNozzleMax": 250,
+    "temperatureBedMin": 90,
+    "temperatureBedMax": 110
+  },
+  {
+    "id": "pvb",
+    "name": "Polyvinyl Butyral",
+    "type": "PVB",
+    "density": 1.08,
+    "temperatureNozzleMin": 190,
+    "temperatureNozzleMax": 220,
+    "temperatureBedMin": 40,
+    "temperatureBedMax": 60
+  },
+  {
+    "id": "pva",
+    "name": "Polyvinyl Alcohol",
+    "type": "PVA",
+    "density": 1.19,
+    "temperatureNozzleMin": 190,
+    "temperatureNozzleMax": 210,
+    "temperatureBedMin": 40,
+    "temperatureBedMax": 60
+  }
+]

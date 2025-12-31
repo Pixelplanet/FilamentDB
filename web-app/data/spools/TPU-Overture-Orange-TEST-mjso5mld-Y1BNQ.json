@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mld-Y1BNQ",
+  "brand": "Overture",
+  "type": "TPU",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 229,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100769,
+  "lastUpdated": 1767104100769,
+  "createdAt": 1767104100769,
+  "notes": "Performance Test Spool"
+}

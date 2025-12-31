@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m5m-5T0TR",
+  "brand": "Hatchbox",
+  "type": "Nylon",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 111,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100202,
+  "lastUpdated": 1767104100202,
+  "createdAt": 1767104100202,
+  "notes": "Performance Test Spool"
+}

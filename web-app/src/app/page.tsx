@@ -145,7 +145,11 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {stats.lowStock.map(spool => (
-                <div key={spool.id} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-100 dark:border-red-900/30">
+                <Link
+                  href={`/inventory/detail?serial=${spool.serial}`}
+                  key={spool.serial}
+                  className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-100 dark:border-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
+                >
                   <div>
                     <p className="font-medium text-sm">{spool.brand} {spool.type}</p>
                     <p className="text-xs text-gray-500">{spool.color}</p>
@@ -153,7 +157,7 @@ export default function Home() {
                   <span className="text-red-600 font-bold font-mono text-sm">
                     {spool.weightRemaining}g
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           )}

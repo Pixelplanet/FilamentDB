@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mim-IMIKE",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Red",
+  "colorHex": "#000000",
+  "weightRemaining": 956,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100670,
+  "lastUpdated": 1767104100670,
+  "createdAt": 1767104100670,
+  "notes": "Performance Test Spool"
+}

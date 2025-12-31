@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mee-V8HWA",
+  "brand": "Bambu Lab",
+  "type": "PC",
+  "color": "Purple",
+  "colorHex": "#000000",
+  "weightRemaining": 574,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100518,
+  "lastUpdated": 1767104100518,
+  "createdAt": 1767104100518,
+  "notes": "Performance Test Spool"
+}

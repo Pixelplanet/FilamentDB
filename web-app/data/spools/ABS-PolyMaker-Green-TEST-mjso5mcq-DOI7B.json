@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mcq-DOI7B",
+  "brand": "PolyMaker",
+  "type": "ABS",
+  "color": "Green",
+  "colorHex": "#000000",
+  "weightRemaining": 126,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100458,
+  "lastUpdated": 1767104100458,
+  "createdAt": 1767104100458,
+  "notes": "Performance Test Spool"
+}

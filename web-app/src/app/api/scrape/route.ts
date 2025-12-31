@@ -95,6 +95,26 @@ export function extractMetadata(html: string, url: string) {
                     }
                     if (item.name) log(`Found Product Name in LD+JSON: ${item.name}`);
 
+                    // GTIN Extraction
+                    if (item.gtin) result.gtin = item.gtin;
+                    else if (item.gtin13) result.gtin = item.gtin13;
+                    else if (item.gtin12) result.gtin = item.gtin12;
+                    else if (item.ean) result.gtin = item.ean;
+
+                    if (result.gtin) log(`Found GTIN: ${result.gtin}`);
+
+                    // Country Extraction
+                    if (item.countryOfOrigin) {
+                        const coo = item.countryOfOrigin;
+                        if (typeof coo === 'string') {
+                            result.countryOfOrigin = coo.substring(0, 2).toUpperCase();
+                        } else if (coo.name) {
+                            // Map common names to ISO? Too complex for now, just log/store text if 2 chars
+                            if (coo.name.length === 2) result.countryOfOrigin = coo.name.toUpperCase();
+                        }
+                        if (result.countryOfOrigin) log(`Found Country: ${result.countryOfOrigin}`);
+                    }
+
                     const searchable = (item.name + ' ' + (item.description || '')).toUpperCase();
                     for (const m of materials) {
                         if (searchable.includes(m)) {

@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5mk5-EQ62J",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Transparent",
+  "colorHex": "#000000",
+  "weightRemaining": 300,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100725,
+  "lastUpdated": 1767104100725,
+  "createdAt": 1767104100725,
+  "notes": "Performance Test Spool"
+}

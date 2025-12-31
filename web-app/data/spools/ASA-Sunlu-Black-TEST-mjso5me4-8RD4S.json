@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5me4-8RD4S",
+  "brand": "Sunlu",
+  "type": "ASA",
+  "color": "Black",
+  "colorHex": "#000000",
+  "weightRemaining": 213,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100508,
+  "lastUpdated": 1767104100508,
+  "createdAt": 1767104100508,
+  "notes": "Performance Test Spool"
+}

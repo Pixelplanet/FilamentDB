@@ -1,0 +1,15 @@
+{
+  "serial": "TEST-mjso5m3a-IAFV2",
+  "brand": "Bambu Lab",
+  "type": "Nylon",
+  "color": "Orange",
+  "colorHex": "#000000",
+  "weightRemaining": 140,
+  "weightTotal": 1000,
+  "weightSpool": 200,
+  "diameter": 1.75,
+  "lastScanned": 1767104100118,
+  "lastUpdated": 1767104100118,
+  "createdAt": 1767104100118,
+  "notes": "Performance Test Spool"
+}
