@@ -42,3 +42,38 @@ yarn-error.log*
 next-env.d.ts
 !node_modules/@capacitor/android/capacitor/build.gradle
 !node_modules/@capacitor/camera/android/build.gradle
+
+# Local Data (Keep directory structure but ignore data files)
+data/spools/*.json
+!data/spools/.gitkeep
+# Keep profiles.json if needed, or ignore it if it's user-specific. 
+# User wanted "Material presets" to exist by default. If we seed them, we might want to track a default file, 
+# or just let the API seed it. The API seeds data/profiles.json if missing. 
+# We probably want to ignore USER CHANGES to profiles.json but how to keep defaults?
+# The API "seeds" it from code constants. So we can ignore profiles.json too if we want a fresh start.
+# BUT earlier users wanted defaults tracked?
+# The request was: "only material presets should exist in the app and repo by default".
+# If I git-ignore profiles.json, the repo won't have it.
+# If I track profiles.json, it will have defaults.
+# I will ignore *.json in data/spools/ but KEEP data/profiles.json if it exists, or maybe ignore it and rely on seeding.
+# The user said: "only material presets should exist in the app AND REPO by default".
+# So profiles.json SHOULD be in the repo? 
+# OR the "code" contains the presets.
+# Code says: "DEFAULT_PROFILES" const in route.ts writes to file if missing.
+# So we can safely ignore data/profiles.json, and the app will generate it on startup.
+# This ensures "Repo is clean".
+# I'll check if I should ignore profiles.json. "Clear the repo of any files that are not required".
+# If the app generates it, it's not required.
+
+# Ignore all JSON in data, except maybe if we want to config database explicitly?
+# I'll ignore specific patterns
+data/spools/*.json
+data/profiles.json
+
+# Test Artifacts
+test-results/
+playwright-report/
+*.log
+TEST_RESULTS.md
+build-error.txt
+OPEN_PRINT_TAG_UPDATE.md
