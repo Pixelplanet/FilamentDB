@@ -18,8 +18,9 @@ When a major feature is completed or a release is requested, follow these steps 
     *   Update `improvement_roadmap.md` to check off completed items.
 
 3.  **Build Validation**:
+    *   **Check Mobile Impact**: If ANY client-side code (src/app, src/components, src/lib) changed, you MUST rebuild the Android APK.
     *   Run `npm run build` (PWA).
-    *   Run `npm run cap:build` -> `android/gradlew assembleDebug` (Android).
+    *   Run `npm run cap:build` -> `cd android && ./gradlew assembleDebug` (Android).
     *   Ensure no secrets or test data are baked into the build.
 
 4.  **Version & Release**:
