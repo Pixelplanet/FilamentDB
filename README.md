@@ -122,16 +122,39 @@ npx cap open android
 
 ### 🐳 Docker (Recommended)
 
-Run FilamentDB instantly using the official Docker image:
+Run FilamentDB instantly using the official Docker image.
+
+**Option 1: Single Command (Quickest)**
 
 ```bash
 docker run -d \
   -p 3000:3000 \
-  -v ./data:/app/data \
+  -v ${PWD}/data:/app/data \
   --name filamentdb \
   pixelplanet5/filamentdb-app:latest
 ```
-This serves the app at `http://localhost:3000` and saves your inventory to a local `./data` folder.
+
+**Option 2: Docker Compose (Robust)**
+
+Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  filamentdb:
+    image: pixelplanet5/filamentdb-app:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
+> **Note**: All data is saved to the `./data` directory. For advanced configuration and development workflows, see the [Docker Guide](DOCKER_GUIDE.md).
 
 ---
 
