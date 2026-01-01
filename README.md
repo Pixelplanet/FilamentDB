@@ -42,15 +42,30 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 
 ---
 
+### 🛠️ **Advanced Customization**
+- **Material Profiles**: Manage default density and temperatures for standard materials (PLA, ABS, PETG, etc.)
+- **Dynamic Forms**: Configure Spool Profile form layout (1-5 columns) and reorder fields via drag-and-drop
+- **Smart Defaults**: Auto-fill material properties from your defined profiles when creating new spools
+
+---
+
 ## 🖼️ Screenshots
 
 ### Dashboard
 ![FilamentDB Dashboard](screenshots/dashboard.png)
 *Clean, visual overview of your entire filament inventory*
 
+### Spool Detail & Consumption
+![Spool Detail](screenshots/spool-detail.png)
+*Track usage with an interactive, editable dashboard and detailed history*
+
 ### NFC Scanning
 ![NFC Tag Scanning](screenshots/nfc-scan.png)
 *Tap your phone to an NFC tag and instantly load filament data*
+
+### Material Settings
+![Material Profiles](screenshots/settings-materials.png)
+*Configure global presets for filament density and temperatures*
 
 ---
 
@@ -111,7 +126,7 @@ npx cap open android
 ### Tech Stack
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **UI/Styling**: [Tailwind CSS 4](https://tailwindcss.com/), Lucide Icons
-- **Database**: [Dexie.js](https://dexie.org/) (IndexedDB wrapper)
+- **Database**: Local File System (JSON)
 - **Mobile**: [Capacitor 8](https://capacitorjs.com/)
 - **NFC**: [@capgo/capacitor-nfc](https://www.npmjs.com/package/@capgo/capacitor-nfc)
 - **QR Scanner**: [@yudiel/react-qr-scanner](https://www.npmjs.com/package/@yudiel/react-qr-scanner)
@@ -128,7 +143,7 @@ FilamentDB/
 │   │   │   ├── settings/     # App settings
 │   │   │   └── api/          # API routes (sync, scraping)
 │   │   ├── components/       # React components
-│   │   ├── db/               # Dexie database schemas
+│   │   ├── db/               # Types and Interfaces
 │   │   └── hooks/            # Custom React hooks (useNFC, etc.)
 │   ├── android/              # Capacitor Android project
 │   ├── public/               # Static assets
@@ -278,8 +293,8 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 
 - [ ] End-to-end tests with Playwright
 - [ ] PWA manifest optimization
-- [ ] Service worker for offline functionality
-- [ ] Mobile file storage implementation (Capacitor File System API)
+- [x] Service worker for offline functionality
+- [x] Mobile storage fallback (runs on Android using web storage bridge)
 
 ### 🎯 Future Improvements
 
@@ -337,7 +352,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **OpenPrintTag** community for NFC tag standards
 - **Capacitor Team** for the amazing cross-platform framework
-- **Dexie.js** for making IndexedDB usable
 - **Prusa Research** and **Bambu Lab** for inspiring the URL scraping feature
 
 ---
