@@ -71,12 +71,28 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 20+ and npm
-- **Git**
-- **(Optional)** Android SDK for building the mobile app
+Choose your preferred installation method. For the easiest setup, we recommend **Docker**.
 
-### Installation
+### 🐳 Option 1: Docker (Recommended)
+
+Run FilamentDB instantly without installing Node.js or dependencies.
+
+**Single Command**
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -v ${PWD}/data:/app/data \
+  --name filamentdb \
+  pixelplanet5/filamentdb-app:latest
+```
+
+This starts the app at `http://localhost:3000` and saves data to your local `./data` folder.
+
+> **More Details**: For Docker Compose or advanced configuration, see the [Docker Guide](DOCKER_GUIDE.md).
+
+### 🛠️ Option 2: Manual Installation
+
+**Prerequisites**: Node.js 20+, Git
 
 1. **Clone the repository**
    ```bash
@@ -94,67 +110,14 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
    npm run dev
    ```
 
-4. **Open your browser**
+4. **Building for Production (Optional)**
+   ```bash
+   # Web (PWA)
+   npm run build && npm run start
+
+   # Android App
+   npm run build:mobile && npx cap open android
    ```
-   http://localhost:3000
-   ```
-
-### Building for Production
-
-**Web (PWA)**
-```bash
-npm run build
-npm run start
-```
-
-**Android App**
-```bash
-# Build the web assets for mobile
-npm run build:mobile
-
-# Sync with Capacitor
-npm run cap:sync
-
-# Open Android Studio to build APK
-# Open Android Studio to build APK
-npx cap open android
-```
-
-### 🐳 Docker (Recommended)
-
-Run FilamentDB instantly using the official Docker image.
-
-**Option 1: Single Command (Quickest)**
-
-```bash
-docker run -d \
-  -p 3000:3000 \
-  -v ${PWD}/data:/app/data \
-  --name filamentdb \
-  pixelplanet5/filamentdb-app:latest
-```
-
-**Option 2: Docker Compose (Robust)**
-
-Create a `docker-compose.yml` file:
-
-```yaml
-services:
-  filamentdb:
-    image: pixelplanet5/filamentdb-app:latest
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./data:/app/data
-    restart: unless-stopped
-```
-
-Then run:
-```bash
-docker-compose up -d
-```
-
-> **Note**: All data is saved to the `./data` directory. For advanced configuration and development workflows, see the [Docker Guide](DOCKER_GUIDE.md).
 
 ---
 
