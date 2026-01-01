@@ -116,8 +116,22 @@ npm run build:mobile
 npm run cap:sync
 
 # Open Android Studio to build APK
+# Open Android Studio to build APK
 npx cap open android
 ```
+
+### 🐳 Docker (Recommended)
+
+Run FilamentDB instantly using the official Docker image:
+
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -v ./data:/app/data \
+  --name filamentdb \
+  pixelplanet5/filamentdb-app:latest
+```
+This serves the app at `http://localhost:3000` and saves your inventory to a local `./data` folder.
 
 ---
 
