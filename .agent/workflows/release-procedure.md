@@ -31,6 +31,16 @@ When a major feature is completed or a release is requested, follow these steps 
         ```bash
         gh release create v1.x.x "public/downloads/filamentdb.apk#Android APK" --title "v1.x.x - Title" --notes "Notes..."
         ```
+    *   **Docker Hub Release**:
+        ```bash
+        cd web-app
+        # Build and tag for Latest AND Version
+        docker build -t pixelplanet5/filamentdb-app:latest -t pixelplanet5/filamentdb-app:v1.x.x .
+        
+        # Push to Docker Hub
+        docker push pixelplanet5/filamentdb-app:latest
+        docker push pixelplanet5/filamentdb-app:v1.x.x
+        ```
 
 5.  **Environment**:
     *   Reset local `data/` if requested to "clean state".
