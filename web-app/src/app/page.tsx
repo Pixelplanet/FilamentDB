@@ -32,13 +32,67 @@ export default function Home() {
   const stats = { totalCount, totalWeight, byType, lowStock };
 
   const seedDatabase = async () => {
-    const dummyData = [
-      { serial: 'PRU-PLA-BLK', brand: 'Prusament', type: 'PLA', color: 'Galaxy Black', colorHex: '#1a1a1a', weightRemaining: 850, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
-      { serial: 'PRU-PETG-ORG', brand: 'Prusament', type: 'PETG', color: 'Prusa Orange', colorHex: '#ff8800', weightRemaining: 120, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
-      { serial: 'PRU-ASA-GRY', brand: 'Prusament', type: 'ASA', color: 'Galaxy Silver', colorHex: '#cccccc', weightRemaining: 980, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
-      { serial: 'PRU-PC-CLR', brand: 'Prusament', type: 'PC', color: 'Clear', colorHex: '#ffffff', weightRemaining: 400, weightTotal: 1000, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
-      { serial: 'PRU-PVB-TRN', brand: 'Prusament', type: 'PVB', color: 'Transparent', colorHex: '#e0e0e0', weightRemaining: 500, weightTotal: 500, diameter: 1.75, lastScanned: Date.now(), lastUpdated: Date.now() },
+    const brands = ['Prusament', 'PolyMaker', 'eSun', 'Bambu Lab', 'Sunlu', 'Overture', 'Hatchbox'];
+    const types = ['PLA', 'PETG', 'ASA', 'PC', 'TPU', 'PVB', 'PA-CF', 'PLA+'];
+    const colors = [
+      { name: 'Galaxy Black', hex: '#1a1a1a' },
+      { name: 'Prusa Orange', hex: '#ff8800' },
+      { name: 'Ultramarine Blue', hex: '#0044ff' },
+      { name: 'Lipstick Red', hex: '#cc0000' },
+      { name: 'Jade Green', hex: '#00aa55' },
+      { name: 'Natural', hex: '#f0f0f0' },
+      { name: 'Clear', hex: '#ffffff' },
+      { name: 'Neon Pink', hex: '#ff00ff' },
+      { name: 'Yellow Gold', hex: '#ffd700' },
+      { name: 'Silver', hex: '#c0c0c0' },
+      { name: 'Purple', hex: '#800080' },
     ];
+    const tagsList = ['high-speed', 'matte', 'silk', 'glitter', 'tough', 'lightweight', 'recycled', 'carbon-fiber', 'glow-in-the-dark'];
+
+    const dummyData = [];
+
+    for (let i = 0; i < 20; i++) {
+      const brand = brands[Math.floor(Math.random() * brands.length)];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      const isFlexible = type === 'TPU';
+      const isTransparent = type === 'PC' || type === 'PVB' || color.name === 'Clear' || color.name === 'Natural';
+
+      const spoolTags: string[] = [];
+      if (Math.random() > 0.5) spoolTags.push(tagsList[Math.floor(Math.random() * tagsList.length)]);
+      if (Math.random() > 0.7) {
+        let secondTag = tagsList[Math.floor(Math.random() * tagsList.length)];
+        if (!spoolTags.includes(secondTag)) spoolTags.push(secondTag);
+      }
+
+      const spool = {
+        serial: `SEED-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+        brand,
+        type,
+        color: color.name,
+        colorHex: color.hex,
+        weightRemaining: Math.floor(Math.random() * 1000),
+        weightTotal: 1000,
+        diameter: 1.75,
+        density: 1.24,
+        temperatureNozzleMin: 200,
+        temperatureNozzleMax: 230,
+        temperatureBedMin: 60,
+        temperatureBedMax: 80,
+        lastScanned: Date.now(),
+        lastUpdated: Date.now(),
+        tags: spoolTags,
+        // Add some material properties randomly
+        ...(isFlexible ? { shoreHardnessA: 95 } : {}),
+        ...(isTransparent ? { transmissionDistance: 5 } : {}),
+        ...(Math.random() > 0.8 ? { countryOfOrigin: 'CZ' } : {}),
+        spoolWidth: 65,
+        spoolOuterDiameter: 200,
+        spoolInnerDiameter: 55,
+      };
+      dummyData.push(spool);
+    }
 
     for (const spool of dummyData) {
       await createSpool(spool as any);

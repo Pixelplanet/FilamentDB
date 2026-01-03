@@ -24,6 +24,9 @@ function InventoryPageContent() {
     const [filterType, setFilterType] = useState('All');
     const [showEmpty, setShowEmpty] = useState(true); // Show empty spools by default
     const [viewMode, setViewMode] = useState<'spools' | 'grouped'>('spools');
+    const [showFilters, setShowFilters] = useState(false);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [materialFilter, setMaterialFilter] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 48;
     const [importing, setImporting] = useState(false);
@@ -41,7 +44,7 @@ function InventoryPageContent() {
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [search, filterType, showEmpty, viewMode]);
+    }, [search, filterType, showEmpty, viewMode, selectedTags, materialFilter]);
 
     const scrollToTop = () => {
         if (typeof window !== 'undefined') {
@@ -105,8 +108,19 @@ function InventoryPageContent() {
             (s.color || '').toLowerCase().includes(search.toLowerCase());
         const matchType = filterType === 'All' || s.type === filterType;
         const matchEmpty = showEmpty || s.weightRemaining > 0; // Hide empty if showEmpty is false
-        return matchSearch && matchType && matchEmpty;
+
+        // New Filters
+        const matchTags = selectedTags.length === 0 || selectedTags.every(t => (s.tags || []).includes(t));
+
+        let matchMaterial = true;
+        if (materialFilter === 'Flexible') matchMaterial = s.type === 'TPU' || (s.shoreHardnessA !== undefined && s.shoreHardnessA < 98);
+        if (materialFilter === 'Transparent') matchMaterial = (s.transmissionDistance !== undefined) || s.type === 'PC' || s.type === 'PVB' || (s.color || '').toLowerCase().includes('clear') || (s.color || '').toLowerCase().includes('trans');
+        if (materialFilter === 'With Tags') matchMaterial = (s.tags?.length ?? 0) > 0;
+
+        return matchSearch && matchType && matchEmpty && matchTags && matchMaterial;
     });
+
+    const allTags = Array.from(new Set((spools || []).flatMap(s => s.tags || []))).sort();
 
     // Group spools by brand + type + color
     const groupedFilaments = filtered.reduce((acc, spool) => {
@@ -181,6 +195,19 @@ function InventoryPageContent() {
                         <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`px-3 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors ${showFilters
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                            }`}
+                    >
+                        <Filter className="w-4 h-4" />
+                        <span className="hidden sm:inline">Filters</span>
+                        {(selectedTags.length > 0 || materialFilter !== 'All') && (
+                            <span className="flex h-2 w-2 rounded-full bg-blue-600"></span>
+                        )}
+                    </button>
+                    <button
                         onClick={() => setShowEmpty(!showEmpty)}
                         className={`px-3 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors ${showEmpty
                             ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -208,6 +235,60 @@ function InventoryPageContent() {
                     </button>
                 </div>
             </div>
+
+
+            {/* Extended Filters Panel */}
+            {
+                showFilters && (
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700 space-y-4 animate-in fade-in slide-in-from-top-2">
+                        {/* Material Properties */}
+                        <div>
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Material Properties</h3>
+                            <div className="flex gap-2 flex-wrap">
+                                {['All', 'Flexible', 'Transparent', 'With Tags'].map((prop) => (
+                                    <button
+                                        key={prop}
+                                        onClick={() => setMaterialFilter(prop)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${materialFilter === prop
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                                            }`}
+                                    >
+                                        {prop}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Tags */}
+                        {allTags.length > 0 && (
+                            <div>
+                                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tags</h3>
+                                <div className="flex gap-2 flex-wrap">
+                                    {allTags.map(tag => (
+                                        <button
+                                            key={tag}
+                                            onClick={() => {
+                                                setSelectedTags(prev =>
+                                                    prev.includes(tag)
+                                                        ? prev.filter(t => t !== tag)
+                                                        : [...prev, tag]
+                                                );
+                                            }}
+                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${selectedTags.includes(tag)
+                                                ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+                                                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                                                }`}
+                                        >
+                                            <span className="mr-1">#</span>{tag}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )
+            }
 
             <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(viewMode === 'spools' ? filtered.length === 0 : groupedArray.length === 0) && (
@@ -382,44 +463,46 @@ function InventoryPageContent() {
             </StaggerContainer>
 
             {/* Pagination Controls */}
-            {(() => {
-                const totalItems = viewMode === 'spools' ? filtered.length : groupedArray.length;
-                const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            {
+                (() => {
+                    const totalItems = viewMode === 'spools' ? filtered.length : groupedArray.length;
+                    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
-                if (totalPages <= 1) return null;
+                    if (totalPages <= 1) return null;
 
-                return (
-                    <div className="flex items-center justify-center gap-4 mt-8 pb-8">
-                        <button
-                            onClick={() => {
-                                setCurrentPage(p => Math.max(1, p - 1));
-                                scrollToTop();
-                            }}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                            aria-label="Previous Page"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
+                    return (
+                        <div className="flex items-center justify-center gap-4 mt-8 pb-8">
+                            <button
+                                onClick={() => {
+                                    setCurrentPage(p => Math.max(1, p - 1));
+                                    scrollToTop();
+                                }}
+                                disabled={currentPage === 1}
+                                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                aria-label="Previous Page"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
 
-                        <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                            Page <span className="text-gray-900 dark:text-gray-100">{currentPage}</span> of {totalPages}
+                            <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Page <span className="text-gray-900 dark:text-gray-100">{currentPage}</span> of {totalPages}
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    setCurrentPage(p => Math.min(totalPages, p + 1));
+                                    scrollToTop();
+                                }}
+                                disabled={currentPage === totalPages}
+                                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                aria-label="Next Page"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
                         </div>
-
-                        <button
-                            onClick={() => {
-                                setCurrentPage(p => Math.min(totalPages, p + 1));
-                                scrollToTop();
-                            }}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                            aria-label="Next Page"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    </div>
-                );
-            })()}
-        </PageTransition>
+                    );
+                })()
+            }
+        </PageTransition >
     );
 }

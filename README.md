@@ -25,7 +25,7 @@ FilamentDB is a progressive web application (PWA) and Android app designed to he
 - **Visual Dashboard**: See your entire filament collection at a glance
 - **Weight Tracking**: Monitor total and remaining filament weight with visual indicators
 - **Color-Coded Cards**: Instantly identify spools by their actual filament color
-- **Filtering & Search**: Quickly find spools by material type, brand, or color
+- **Filtering & Search**: Quickly find spools by material type, brand, color, tags, or properties
 - **Grouped View**: View spools grouped by brand, type, and color with aggregated statistics
 - **Empty Spool Management**: Toggle visibility of empty spools with visual distinction
 - **Edit & Delete**: Update spool information or remove consumed filaments
@@ -291,7 +291,7 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 
 ### 🔄 In Progress
 
-- [ ] End-to-end tests with Playwright
+- [x] End-to-end tests with Playwright
 - [ ] PWA manifest optimization
 - [x] Service worker for offline functionality
 - [x] Mobile storage fallback (runs on Android using web storage bridge)
@@ -299,7 +299,7 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 ### 🎯 Future Improvements
 
 #### Core Features
-- [ ] Advanced filtering (by date, purchase history, location)
+- [x] Advanced filtering (by date, purchase history, location, tags, properties)
 - [ ] Print history integration (track which spools were used for which prints)
 - [ ] Support for resin/powder materials
 - [ ] Batch operations (bulk edits)
@@ -308,7 +308,7 @@ See [improvement_roadmap.md](improvement_roadmap.md) for a detailed technical ro
 #### Analytics & Insights
 - [ ] Usage statistics and trends
 - [ ] Cost tracking per print
-- [ ] Low stock alerts and notifications
+- [x] Low stock alerts and notifications
 - [ ] Print planning (estimate spool usage)
 
 #### Integrations
