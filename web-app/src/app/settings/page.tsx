@@ -40,6 +40,9 @@ export default function SettingsPage() {
         localStorage.setItem('sync_server_url', serverUrl);
         localStorage.setItem('sync_api_key', apiKey);
 
+        // Force update context
+        window.dispatchEvent(new Event('storage'));
+
         setSyncStatus('✅ Settings Saved');
         setTimeout(() => setSyncStatus(''), 2000);
     };
@@ -104,6 +107,7 @@ export default function SettingsPage() {
             localStorage.removeItem('sync_server_url');
             localStorage.removeItem('sync_api_key');
             localStorage.removeItem('sync_last_sync');
+            window.dispatchEvent(new Event('storage'));
             setServerUrl('');
             setApiKey('');
             setLastSync(null);

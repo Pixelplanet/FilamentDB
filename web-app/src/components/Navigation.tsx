@@ -9,6 +9,7 @@ import { twMerge } from 'tailwind-merge';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ThemeToggle } from './ThemeToggle';
+import { SyncStatus } from './SyncStatus';
 
 export function Navigation({ children }: { children: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +59,10 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                             FilamentDB
                         </span>
                     </div>
-                    <ThemeToggle />
+                    <div className="flex items-center gap-2">
+                        <SyncStatus />
+                        <ThemeToggle />
+                    </div>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-1">
                     {links.map((link) => {
@@ -131,7 +135,10 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                         </button>
                         <span className="ml-4 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-orange-500">FilamentDB</span>
                     </div>
-                    <ThemeToggle />
+                    <div className="flex items-center gap-2">
+                        <SyncStatus />
+                        <ThemeToggle />
+                    </div>
                 </header>
 
                 {/* Page Content */}

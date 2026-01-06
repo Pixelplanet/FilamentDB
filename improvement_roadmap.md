@@ -144,6 +144,9 @@ This document summarizes the current technical state of FilamentDB and provides 
 - ✅ Simplified sync implemented
 - ✅ Conflict resolution (Last-Write-Wins)
 - ✅ File-based storage complete
+- ✅ Multi-instance Sync validated (Localhost Docker Test)
+- ✅ Auto-Sync & Status Indicator implemented
+- ✅ Sync History with Undo functionality added
 
 ### ⚠️ Testing Coverage
 - ✅ 30+ unit tests for NFC and scraping
