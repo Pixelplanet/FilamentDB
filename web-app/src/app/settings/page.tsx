@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, RefreshCw, Server, Download, Check, AlertTriangle, Search, Loader2, Cloud, Lock, FileCode, Book, FlaskConical } from 'lucide-react';
+import { Save, RefreshCw, Server, Download, Check, AlertTriangle, Search, Loader2, Cloud, Lock, FileCode, Book, FlaskConical, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { PageTransition } from '@/components/PageTransition';
 import { syncSpools } from '@/lib/storage/simpleSync';
@@ -235,6 +235,12 @@ export default function SettingsPage() {
                     <li>Works across unlimited devices</li>
                     <li>Your data stays on your server</li>
                 </ul>
+                <div className="mt-4 pt-3 border-t border-blue-200 dark:border-blue-800">
+                    <Link href="/settings/history" className="text-sm font-medium text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 flex items-center gap-1 group">
+                        View Detailed History
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                </div>
             </div>
 
             {/* API Documentation */}
@@ -318,6 +324,6 @@ export default function SettingsPage() {
                 <p>Version: {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.5'} (Hybrid)</p>
                 <p className="text-xs">Device ID: {typeof window !== 'undefined' ? localStorage.getItem('filamentdb_device_id') || 'Not set' : 'Loading...'}</p>
             </div>
-        </PageTransition>
+        </PageTransition >
     );
 }

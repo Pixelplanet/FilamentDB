@@ -8,4 +8,6 @@ services:
     volumes:
       - ./public/downloads:/app/public/downloads
       - ./data:/app/data
+    environment:
+      - SYNC_API_KEY=test
     restart: unless-stopped

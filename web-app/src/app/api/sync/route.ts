@@ -72,6 +72,45 @@ async function saveSyncData(data: SyncData) {
     await fs.writeFile(SYNC_DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+const SYNC_LOGS_FILE = path.join(SYNC_DATA_DIR, 'sync-logs.json');
+
+interface ServerLogEntry {
+    id: string;
+    timestamp: number;
+    clientIp?: string;
+    changesCount: number;
+    deletionsCount: number;
+    userAgent?: string;
+    status: 'success' | 'failed';
+    error?: string;
+}
+
+async function logSyncEvent(event: Omit<ServerLogEntry, 'id' | 'timestamp'>) {
+    try {
+        await ensureDataDir();
+        let logs: ServerLogEntry[] = [];
+        try {
+            const data = await fs.readFile(SYNC_LOGS_FILE, 'utf-8');
+            logs = JSON.parse(data);
+        } catch {
+            // No logs yet
+        }
+
+        logs.unshift({
+            ...event,
+            id: crypto.randomUUID(),
+            timestamp: Date.now()
+        });
+
+        // Keep last 100 logs
+        if (logs.length > 100) logs.length = 100;
+
+        await fs.writeFile(SYNC_LOGS_FILE, JSON.stringify(logs, null, 2));
+    } catch (e) {
+        console.error('Failed to write sync log', e);
+    }
+}
+
 // Handle sync request
 export async function POST(request: NextRequest) {
     try {
@@ -134,11 +173,17 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // Get server deletions since client's last sync
-        // (In a more robust system, we'd track deletions separately)
-
         // Update server's last modified time
         serverData.lastModified = serverTime;
+
+        // Log the event
+        await logSyncEvent({
+            clientIp: request.headers.get('x-forwarded-for') || 'unknown',
+            userAgent: request.headers.get('user-agent') || 'unknown',
+            changesCount: body.changes.length,
+            deletionsCount: body.deletions.length,
+            status: 'success'
+        });
 
         // Save updated data
         await saveSyncData(serverData);
@@ -181,9 +226,25 @@ function resolveConflict(client: Spool, server: Spool): Spool {
     }
 }
 
-// GET handler for checking sync status
-export async function GET() {
+// GET handler for checking sync status or fetching logs
+export async function GET(request: NextRequest) {
     try {
+        const { searchParams } = new URL(request.url);
+        if (searchParams.get('logs') === 'true') {
+            // Basic API Key check for logs (security) - reading logs should probably be protected
+            const apiKey = request.headers.get('x-api-key');
+            if (apiKey !== SYNC_API_KEY) {
+                return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+            }
+
+            try {
+                const logsData = await fs.readFile(SYNC_LOGS_FILE, 'utf-8');
+                return NextResponse.json({ success: true, logs: JSON.parse(logsData) });
+            } catch {
+                return NextResponse.json({ success: true, logs: [] });
+            }
+        }
+
         const data = await loadSyncData();
         return NextResponse.json({
             success: true,

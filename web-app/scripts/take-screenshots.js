@@ -31,7 +31,7 @@ const path = require('path');
 
         // 3. Spool Detail Page (showing integrated dashboard)
         console.log('Taking Detail screenshot...');
-        const serial = 'SEED-XRRHKX5';
+        const serial = 'SEED-RJXPGNS';
         await page.goto(`http://localhost:3000/inventory/detail?serial=${serial}`, { waitUntil: 'networkidle' });
         await page.waitForTimeout(1000);
         await page.screenshot({ path: path.join(targetDir, 'spool-detail.png') });
