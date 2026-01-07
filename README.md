@@ -217,7 +217,22 @@ FilamentDB includes a robust sync implementation using **Auto-Sync** and timesta
     # Optional: Enable User Management (Multi-user support)
     ENABLE_USER_MANAGEMENT=true
     AUTH_SECRET=long-random-string-for-jwt-signing
+    
+    # Optional: Enable Google Login
+    GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+    # Note: To enable the button on the client side, build the Docker image with:
+    # --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id
     ```
+    
+    **How to get a Google Client ID:**
+    1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+    2. Create a new project or select an existing one.
+    3. Navigate to **APIs & Services** > **Credentials**.
+    4. Click **Create Credentials** > **OAuth client ID**.
+    5. Application Type: **Web application**.
+    6. **Authorized JavaScript origins**: Add your server URL (e.g., `http://localhost:3000` and `http://192.168.1.100:3000`).
+    7. **Authorized redirect URIs**: Add your callback URL (usually not needed for One Tap, but good to add `http://localhost:3000`).
+    8. Copy the **Client ID** (it looks like `12345...apps.googleusercontent.com`).
 
 3.  **On each device**:
     - Go to **Settings**
