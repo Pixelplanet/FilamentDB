@@ -96,10 +96,32 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
 
-        const response = await fetch(`${config.serverUrl}/api/spools`, { headers });
+        console.log(`🌐 Connecting to: ${config.serverUrl}/api/spools`);
+        console.log(`🔑 Auth method: ${config.token ? 'User Token' : config.apiKey ? 'API Key' : 'None'}`);
+
+        let response;
+        try {
+            response = await fetch(`${config.serverUrl}/api/spools`, {
+                headers,
+                mode: 'cors', // Explicitly set CORS mode
+            });
+        } catch (fetchError: any) {
+            // Enhanced error for network failures
+            const errorDetails = {
+                message: fetchError.message,
+                name: fetchError.name,
+                serverUrl: config.serverUrl,
+                suggestion: 'Check if server is reachable. Use http://[IP]:3000 (not localhost) on mobile devices.'
+            };
+            console.error('❌ Network fetch failed:', errorDetails);
+            throw new Error(`Network Error: ${fetchError.message}. Is the server URL correct? (Use IP address, not localhost)`);
+        }
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch remote spools: ${response.statusText}`);
+            const errorText = await response.text().catch(() => 'No error details');
+            console.error(`❌ Server returned ${response.status}: ${response.statusText}`);
+            console.error(`Response body: ${errorText}`);
+            throw new Error(`Server Error (${response.status}): ${response.statusText}. ${errorText}`);
         }
 
         const remoteSpools: Spool[] = await response.json();

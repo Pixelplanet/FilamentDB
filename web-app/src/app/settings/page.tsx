@@ -229,20 +229,48 @@ export default function SettingsPage() {
         }
 
         setSyncStatus('Testing connection...');
+        console.log(`🧪 Testing connection to: ${serverUrl}/api/spools`);
 
         try {
+            const startTime = Date.now();
             const response = await fetch(`${serverUrl}/api/spools`, {
-                method: 'GET'
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json'
+                }
             });
+            const duration = Date.now() - startTime;
+
+            console.log(`✅ Response received in ${duration}ms`);
+            console.log(`Status: ${response.status} ${response.statusText}`);
+            console.log(`Headers:`, Object.fromEntries(response.headers.entries()));
 
             if (response.ok) {
                 const data = await response.json();
-                setSyncStatus(`✅ Server found! Total spools on server: ${data.length || 0}`);
+                setSyncStatus(
+                    `✅ Server OK! Spools: ${data.length || 0} | Response time: ${duration}ms`
+                );
             } else {
-                setSyncStatus(`❌ Server responded with error: ${response.status}`);
+                const errorText = await response.text().catch(() => 'No details');
+                console.error(`❌ Server error response:`, errorText);
+                setSyncStatus(`❌ Server Error ${response.status}: ${response.statusText}`);
             }
         } catch (e: any) {
-            setSyncStatus(`❌ Connection failed: ${e.message}`);
+            console.error('❌ Connection test failed:', e);
+
+            // Detailed error for debugging
+            let errorMsg = `❌ Connection Failed: ${e.message}`;
+
+            if (e.message.includes('Failed to fetch') || e.name === 'TypeError') {
+                errorMsg += '\n\n🔍 Possible causes:\n';
+                errorMsg += '• Server not running (check Docker)\n';
+                errorMsg += '• Wrong IP address (use 192.168.x.x, not localhost)\n';
+                errorMsg += '• Firewall blocking port 3000\n';
+                errorMsg += '• Not on same WiFi network';
+            }
+
+            setSyncStatus(errorMsg);
         }
     };
 
