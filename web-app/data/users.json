@@ -17,6 +17,16 @@
       "role": "user",
       "createdAt": 1767792936428,
       "displayName": "admin"
+    },
+    {
+      "id": "7d6b79c8-ae62-4b4e-9ebe-96bfff9456e0",
+      "username": "tom.winnerl@gmail.com",
+      "authProvider": "google",
+      "role": "user",
+      "createdAt": 1767795065890,
+      "displayName": "Thomas Winnerl (Pixel)",
+      "googleEmail": "tom.winnerl@gmail.com",
+      "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLczAxjZxWKnHZS1TsdSuVVwy3D6-c_Gjiboi8xNxr25oz6nD4m=s96-c"
     }
   ],
   "settings": {

@@ -26,6 +26,8 @@ try {
     console.log('[build-mobile] Build successful!');
 } catch (error) {
     console.error('[build-mobile] Build failed:', error.message);
+    if (error.stdout) console.log(error.stdout.toString());
+    if (error.stderr) console.error(error.stderr.toString());
     process.exitCode = 1;
 } finally {
     // Step 3: Restore API directory
