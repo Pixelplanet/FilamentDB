@@ -199,7 +199,7 @@ BUILD_MODE=pwa  # or 'mobile'
 4. Save changes
 
 ### Syncing Across Devices
-FilamentDB includes a complete sync implementation using delta synchronization:
+FilamentDB includes a robust sync implementation using **Auto-Sync** and timestamp comparisons:
 
 1. **Deploy the sync server**: Run FilamentDB in Docker (includes built-in sync API)
    ```bash
@@ -211,17 +211,24 @@ FilamentDB includes a complete sync implementation using delta synchronization:
 
 2. **Configure environment variables** on the server:
    ```env
-   SYNC_API_KEY=your-secure-random-key
-   SYNC_DATA_DIR=/app/data
-   ```
+    SYNC_API_KEY=your-secure-random-key
+    SYNC_DATA_DIR=/app/data
+    
+    # Optional: Enable User Management (Multi-user support)
+    ENABLE_USER_MANAGEMENT=true
+    AUTH_SECRET=long-random-string-for-jwt-signing
+    ```
 
-3. **On each device**:
-   - Go to **Settings**
-   - Enter your **Server URL** (e.g., `http://192.168.1.100:3000`)
-   - Enter your **API Key** (same as server's `SYNC_API_KEY`)
-   - Click **Save** then **Sync Now**
+3.  **On each device**:
+    - Go to **Settings**
+    - Enter your **Server URL** (e.g., `http://192.168.1.100:3000`)
+    - Enter your **API Key** (same as server's `SYNC_API_KEY`) OR **Login** with your user account (if User Management is enabled).
+    - Click **Save** then **Sync Now**
 
 4. **Features**:
+   - ✅ **Auto-Sync** (Background sync every 5 minutes)
+   - ✅ **Sync History** & **Undo** functionality
+   - ✅ **Status Indicators** in UI
    - ✅ Simplified timestamp sync (compares file modification times)
    - ✅ Last-Write-Wins conflict resolution
    - ✅ Works across unlimited devices

@@ -11,7 +11,6 @@ import archiver from 'archiver';
 import { Readable } from 'stream';
 
 // Must be static for Next.js to parse at build time
-export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 // Directory where spool files are stored

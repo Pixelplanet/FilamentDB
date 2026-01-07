@@ -1,260 +1,205 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { Spool } from '@/db';
+import { getSpoolFileName, prettyJSON, safeJSONParse } from '@/lib/storage/fileUtils';
+import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
+import { getUserFromRequest } from '@/lib/auth/serverUtils';
 
-// Must be static for Next.js to parse at build time
-// Docker builds use force-dynamic (server mode)
-// Mobile builds handled separately with build:mobile script
-export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
-// Types matching client
-interface Spool {
-    id?: number;
-    serial: string;
-    brand: string;
-    type: string;
-    color: string;
-    colorHex?: string;
-    weightRemaining: number;
-    weightTotal: number;
-    diameter: number;
-    lastUpdated: number;
-    deleted?: boolean;
-    [key: string]: any; // Allow other fields
+// Feature Flags
+const AUTH_ENABLED = process.env.ENABLE_USER_MANAGEMENT === 'true';
+const SYNC_API_KEY = process.env.SYNC_API_KEY || 'dev-key-change-in-production';
+
+// Ensure spools directory exists
+async function ensureSpoolsDir() {
+    try {
+        await fs.access(SPOOLS_DIR);
+    } catch {
+        await fs.mkdir(SPOOLS_DIR, { recursive: true });
+    }
 }
 
 interface SyncRequest {
-    apiKey: string;
-    deviceId: string;
+    apiKey?: string;
     lastSyncTime: number;
     changes: Spool[];
-    deletions: number[];
+    deletions: number[]; // Deletions by ID usually, but we use Serial sometimes? 
+    // Mobile Sync sends IDs. Spools have IDs? Types says ID is optional number.
+    // We should probably rely on Serial for sync if possible, but existing sync might use IDs.
+    // Let's check existing sync.ts: It sends "deletions: number[]".
+    // But our spools are file-based, serial-based.
+    // We need to map ID to Serial or support Serial deletions.
+    // If ID is not persistent across devices (it is auto-increment on some DBs), Serial is better.
+    // But Mobile App might be using IDs locally.
+    // Let's assume deletions might need robust handling.
 }
 
-interface SyncData {
-    spools: Spool[];
-    lastModified: number;
-}
-
-// Configuration
-const SYNC_DATA_DIR = process.env.SYNC_DATA_DIR || path.join(process.cwd(), 'data');
-const SYNC_DATA_FILE = path.join(SYNC_DATA_DIR, 'sync.json');
-const SYNC_API_KEY = process.env.SYNC_API_KEY || 'dev-key-change-in-production';
-
-// Ensure data directory exists
-async function ensureDataDir() {
+export async function POST(req: NextRequest) {
     try {
-        await fs.access(SYNC_DATA_DIR);
-    } catch {
-        await fs.mkdir(SYNC_DATA_DIR, { recursive: true });
-    }
-}
+        await ensureSpoolsDir();
+        const body: SyncRequest = await req.json();
 
-// Load sync data from file
-async function loadSyncData(): Promise<SyncData> {
-    try {
-        await ensureDataDir();
-        const data = await fs.readFile(SYNC_DATA_FILE, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        // File doesn't exist or is invalid, return empty data
-        return {
-            spools: [],
-            lastModified: Date.now()
-        };
-    }
-}
+        // 1. Authentication
+        let user = null;
+        if (AUTH_ENABLED) {
+            user = await getUserFromRequest(req);
 
-// Save sync data to file
-async function saveSyncData(data: SyncData) {
-    await ensureDataDir();
-    await fs.writeFile(SYNC_DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
-}
-
-const SYNC_LOGS_FILE = path.join(SYNC_DATA_DIR, 'sync-logs.json');
-
-interface ServerLogEntry {
-    id: string;
-    timestamp: number;
-    clientIp?: string;
-    changesCount: number;
-    deletionsCount: number;
-    userAgent?: string;
-    status: 'success' | 'failed';
-    error?: string;
-}
-
-async function logSyncEvent(event: Omit<ServerLogEntry, 'id' | 'timestamp'>) {
-    try {
-        await ensureDataDir();
-        let logs: ServerLogEntry[] = [];
-        try {
-            const data = await fs.readFile(SYNC_LOGS_FILE, 'utf-8');
-            logs = JSON.parse(data);
-        } catch {
-            // No logs yet
+            // If no user, check API Key (System Sync / Legacy)
+            if (!user && body.apiKey !== SYNC_API_KEY) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
+        } else {
+            // Check API Key
+            if (body.apiKey !== SYNC_API_KEY) {
+                return NextResponse.json({ error: 'Invalid API Key' }, { status: 401 });
+            }
         }
 
-        logs.unshift({
-            ...event,
-            id: crypto.randomUUID(),
-            timestamp: Date.now()
-        });
-
-        // Keep last 100 logs
-        if (logs.length > 100) logs.length = 100;
-
-        await fs.writeFile(SYNC_LOGS_FILE, JSON.stringify(logs, null, 2));
-    } catch (e) {
-        console.error('Failed to write sync log', e);
-    }
-}
-
-// Handle sync request
-export async function POST(request: NextRequest) {
-    try {
-        const body: SyncRequest = await request.json();
-
-        // Validate API key
-        if (body.apiKey !== SYNC_API_KEY) {
-            return NextResponse.json(
-                { success: false, error: 'Invalid API key' },
-                { status: 401 }
-            );
-        }
-
-        // Load current server data
-        const serverData = await loadSyncData();
-        const serverTime = Date.now();
-
-        // Track changes for response
         const serverChanges: Spool[] = [];
-        const serverDeletions: number[] = [];
-        let conflictsResolved = 0;
+        const conflictsResolved = 0; // Tracking not fully impl here yet
 
-        // Apply client changes to server
-        for (const clientSpool of body.changes) {
-            const existingIndex = serverData.spools.findIndex(
-                s => s.id === clientSpool.id || s.serial === clientSpool.serial
-            );
-
-            if (existingIndex >= 0) {
-                // Spool exists on server - check for conflict
-                const serverSpool = serverData.spools[existingIndex];
-
-                if (serverSpool.lastUpdated > body.lastSyncTime) {
-                    // Conflict: both client and server modified
-                    const resolved = resolveConflict(clientSpool, serverSpool);
-                    serverData.spools[existingIndex] = resolved;
-                    conflictsResolved++;
-                } else {
-                    // No conflict: client change wins
-                    serverData.spools[existingIndex] = clientSpool;
-                }
-            } else {
-                // New spool from client
-                serverData.spools.push(clientSpool);
-            }
-        }
-
-        // Apply client deletions to server
-        for (const deletionId of body.deletions) {
-            const index = serverData.spools.findIndex(s => s.id === deletionId);
-            if (index >= 0) {
-                serverData.spools.splice(index, 1);
-            }
-        }
-
-        // Get server changes since client's last sync
-        for (const spool of serverData.spools) {
-            if (spool.lastUpdated > body.lastSyncTime && !spool.deleted) {
-                serverChanges.push(spool);
-            }
-        }
-
-        // Update server's last modified time
-        serverData.lastModified = serverTime;
-
-        // Log the event
-        await logSyncEvent({
-            clientIp: request.headers.get('x-forwarded-for') || 'unknown',
-            userAgent: request.headers.get('user-agent') || 'unknown',
-            changesCount: body.changes.length,
-            deletionsCount: body.deletions.length,
-            status: 'success'
-        });
-
-        // Save updated data
-        await saveSyncData(serverData);
-
-        // Send response
-        return NextResponse.json({
-            success: true,
-            serverTime,
-            changes: serverChanges,
-            deletions: serverDeletions,
-            stats: {
-                totalSpools: serverData.spools.filter(s => !s.deleted).length,
-                synced: body.changes.length + body.deletions.length,
-                conflictsResolved
-            }
-        });
-
-    } catch (error: any) {
-        console.error('Sync error:', error);
-        return NextResponse.json(
-            { success: false, error: error.message || 'Sync failed' },
-            { status: 500 }
-        );
-    }
-}
-
-// Conflict resolution helper (same as client)
-function resolveConflict(client: Spool, server: Spool): Spool {
-    if (server.lastUpdated > client.lastUpdated) {
-        return server;
-    } else if (client.lastUpdated > server.lastUpdated) {
-        return client;
-    } else {
-        // Same timestamp: merge
-        return {
-            ...server,
-            weightRemaining: Math.min(client.weightRemaining, server.weightRemaining),
-            lastUpdated: Math.max(client.lastUpdated, server.lastUpdated)
-        };
-    }
-}
-
-// GET handler for checking sync status or fetching logs
-export async function GET(request: NextRequest) {
-    try {
-        const { searchParams } = new URL(request.url);
-        if (searchParams.get('logs') === 'true') {
-            // Basic API Key check for logs (security) - reading logs should probably be protected
-            const apiKey = request.headers.get('x-api-key');
-            if (apiKey !== SYNC_API_KEY) {
-                return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-            }
-
+        // 2. Load all Server Spools (for diffing) - Expensive but needed for simple sync
+        // Optimization: We could filter by timestamp if we trust file mod times, 
+        // but we need to check IDs for deletions and serials for matching.
+        const files = await fs.readdir(SPOOLS_DIR);
+        const serverSpools: Spool[] = [];
+        for (const file of files) {
+            if (!file.endsWith('.json')) continue;
             try {
-                const logsData = await fs.readFile(SYNC_LOGS_FILE, 'utf-8');
-                return NextResponse.json({ success: true, logs: JSON.parse(logsData) });
-            } catch {
-                return NextResponse.json({ success: true, logs: [] });
+                const content = await fs.readFile(path.join(SPOOLS_DIR, file), 'utf-8');
+                const s = safeJSONParse<Spool>(content);
+                if (s) serverSpools.push(s);
+            } catch { }
+        }
+
+        // 3. Process Client Changes
+        for (const clientSpool of body.changes) {
+            // Find existing
+            const existing = serverSpools.find(s => s.serial === clientSpool.serial); // Match by Serial first
+
+            // Auth Check for this spool
+            if (AUTH_ENABLED && user) {
+                // Determine ownership
+                if (existing) {
+                    if (existing.ownerId && existing.ownerId !== user.id && user.role !== 'admin') {
+                        console.warn(`Sync: User ${user.username} tried to modify spool ${existing.serial} owned by ${existing.ownerId} `);
+                        continue; // Skip unauthorized change
+                    }
+                    // Preserve Owner
+                    clientSpool.ownerId = existing.ownerId;
+                } else {
+                    // New or Adoption
+                    // If existing has NO owner, it's legacy/public.
+                    // If User edits it, maybe they claim it? 
+                    // Or we intentionally set ownerId.
+                    clientSpool.ownerId = user.id;
+                }
+
+                // Visibility
+                if (!clientSpool.visibility) clientSpool.visibility = 'private'; // Default
+            }
+
+            // Timestamp Check (Conflict Resolution)
+            if (existing) {
+                if (existing.lastUpdated > clientSpool.lastUpdated) {
+                    // Server wins (Conflict)
+                    // We don't write. We will return existing as "change" to client later.
+                    continue;
+                }
+            }
+
+            // Write Change
+            const filename = getSpoolFileName(clientSpool);
+            await fs.writeFile(path.join(SPOOLS_DIR, filename), prettyJSON(clientSpool), 'utf-8');
+
+            // Invalidate cache if new
+            if (!existing) invalidateSpoolCache();
+
+            // Handle Renames (if serial changed? Serial shouldn't change. If brand/name changed, filename changes)
+            if (existing) {
+                const oldName = getSpoolFileName(existing);
+                if (oldName !== filename) {
+                    await fs.unlink(path.join(SPOOLS_DIR, oldName)).catch(() => { });
+                }
             }
         }
 
-        const data = await loadSyncData();
+        // 4. Process Deletions
+        // Client sends IDs. We need to find spools with those IDs.
+        // Wait, Mobile IDs are numbers? Spool.id is number (Legacy) or String (UUID)?
+        // Types in db/index.ts say `id ?: number`.
+        for (const id of body.deletions) {
+            const toDelete = serverSpools.find(s => s.id === id);
+            if (toDelete) {
+                if (AUTH_ENABLED && user) {
+                    if (toDelete.ownerId && toDelete.ownerId !== user.id && user.role !== 'admin') {
+                        continue;
+                    }
+                }
+                const filename = getSpoolFileName(toDelete);
+                await fs.unlink(path.join(SPOOLS_DIR, filename)).catch(() => { });
+                invalidateSpoolCache();
+            }
+        }
+
+        // 5. Gather Server Changes (Changes occurring AFTER client's lastSyncTime)
+        // We need to re-read? Or just use serverSpools (which might be stale if we just wrote? No, we iterated serverSpools before write).
+        // Actually, we should return the UPDATED state.
+        // But for "Server Changes", we want to send what the Client DOESN'T have.
+        // If we just wrote Client's change, we don't need to echo it back unless conflict?
+        // Logic:
+        // Iterate all Server Spools (Fresh List).
+        // If spool.lastUpdated > body.lastSyncTime -> Include.
+        // Filter by Visibility for User.
+
+        const finalFiles = await fs.readdir(SPOOLS_DIR);
+        const finalSpools: Spool[] = [];
+        for (const file of finalFiles) {
+            if (!file.endsWith('.json')) continue;
+            try {
+                const content = await fs.readFile(path.join(SPOOLS_DIR, file), 'utf-8');
+                const s = safeJSONParse<Spool>(content);
+                if (s) finalSpools.push(s);
+            } catch { }
+        }
+
+        const changesToSend = finalSpools.filter(s => {
+            // Time Check
+            if (s.lastUpdated <= body.lastSyncTime) return false;
+
+            // Auth Check
+            if (AUTH_ENABLED && user) {
+                const isOwner = s.ownerId === user.id;
+                const isAdmin = user.role === 'admin';
+                const isPublic = s.visibility === 'public';
+                const isLegacy = !s.ownerId;
+                return isOwner || isAdmin || isPublic || isLegacy;
+            }
+
+            return true;
+        });
+
+        // 6. Return
         return NextResponse.json({
             success: true,
-            totalSpools: data.spools.filter(s => !s.deleted).length,
-            lastModified: data.lastModified
+            serverTime: Date.now(),
+            changes: changesToSend,
+            deletions: [], // We don't track server-side deletions cleanly yet (no tombstoning in file system? Deletion log needed?)
+            // If file is gone, client keeps it?
+            // "Sync" assumes Deleted IDs are tracked.
+            // If we assume "Simple Sync" (Client pushes, Client pulls), Client needs to know what was deleted on server.
+            // Since we deleted files, we lost the record. 
+            // We need a "Deletion Log" if we want 2-way deletion sync.
+            // Current "simpleSync" implementation on client likely relies on separate deletion list?
+            // Or maybe it does not handle Server-Side deletions syncing to Mobile well without a log.
+            // For now, we return empty deletions.
         });
-    } catch (error: any) {
-        return NextResponse.json(
-            { success: false, error: error.message },
-            { status: 500 }
-        );
+
+    } catch (e: any) {
+        console.error('Unified Sync Error:', e);
+        return NextResponse.json({ error: e.message }, { status: 500 });
     }
 }

@@ -3,7 +3,6 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { MaterialProfile } from '@/db';
 
-export const dynamic = 'force-dynamic';
 
 const PROFILES_FILE = path.join(process.cwd(), 'data', 'profiles.json');
 

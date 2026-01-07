@@ -13,10 +13,14 @@ const nextConfig: NextConfig = {
   // For static export, exclude API routes directory to prevent build errors
   ...(isServer ? {} : {
     // Static export doesn't support API routes - the Android app uses external server URLs
-    distDir: 'out'
+    distDir: 'out',
+    // Exclude 'ts' files to ignore route.ts (API routes) during static export
+    // Frontend pages are 'tsx', so they will still be built
+    pageExtensions: ['tsx', 'mdx']
   }),
   env: {
-    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '0.1.0'
+    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '0.1.0',
+    NEXT_PUBLIC_BUILD_MODE: process.env.BUILD_MODE || 'unknown'
   }
 };
 

@@ -15,6 +15,9 @@ export interface Spool {
     type: string; // PLA, PETG, etc.
     color: string; // "Galaxy Black"
     colorHex?: string; // #000000
+    // User Management
+    ownerId?: string;
+    visibility?: 'private' | 'public';
     finish?: 'plain' | 'glossy' | 'matte' | 'silk' | 'textured' | 'n/a';
 
     // Weights (g)

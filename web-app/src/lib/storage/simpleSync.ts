@@ -7,10 +7,12 @@
 
 import { Spool } from '@/db';
 import { getStorage } from '@/lib/storage';
+import { addSyncLog, SyncChange } from './syncHistory';
 
 export interface SyncConfig {
     serverUrl: string;
     apiKey?: string;
+    token?: string;
 }
 
 export interface SyncResult {
@@ -42,8 +44,6 @@ export interface SyncResult {
  * @param config Sync configuration
  * @returns Sync result
  */
-import { addSyncLog, SyncChange } from './syncHistory';
-
 // ... (Result types)
 
 export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
@@ -90,7 +90,9 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json'
         };
-        if (config.apiKey) {
+        if (config.token) {
+            headers['Authorization'] = `Bearer ${config.token}`;
+        } else if (config.apiKey) {
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
 
@@ -212,7 +214,9 @@ async function uploadSpool(config: SyncConfig, spool: Spool): Promise<void> {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json'
     };
-    if (config.apiKey) {
+    if (config.token) {
+        headers['Authorization'] = `Bearer ${config.token}`;
+    } else if (config.apiKey) {
         headers['Authorization'] = `Bearer ${config.apiKey}`;
     }
 
@@ -246,7 +250,9 @@ export async function getSpoolSyncStatus(
 
     // Get remote
     const headers: Record<string, string> = {};
-    if (config.apiKey) {
+    if (config.token) {
+        headers['Authorization'] = `Bearer ${config.token}`;
+    } else if (config.apiKey) {
         headers['Authorization'] = `Bearer ${config.apiKey}`;
     }
 
@@ -363,7 +369,9 @@ export async function pullAllSpools(config: SyncConfig): Promise<SyncResult> {
         const storage = getStorage();
 
         const headers: Record<string, string> = {};
-        if (config.apiKey) {
+        if (config.token) {
+            headers['Authorization'] = `Bearer ${config.token}`;
+        } else if (config.apiKey) {
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
 

@@ -11,8 +11,6 @@ import AdmZip from 'adm-zip';
 import { Spool } from '@/db';
 import { safeJSONParse, isValidSpoolFilename } from '@/lib/storage/fileUtils';
 
-// Must be static for Next.js to parse at build time
-export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 // Directory where spool files are stored

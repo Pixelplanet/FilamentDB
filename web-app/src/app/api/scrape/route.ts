@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Must be static for Next.js to parse at build time
 // Docker builds use force-dynamic (server mode)
-export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
 export async function GET(req: NextRequest) {

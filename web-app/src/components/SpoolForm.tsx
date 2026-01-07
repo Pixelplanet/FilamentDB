@@ -7,6 +7,7 @@ import { MaterialTagsSelector } from './MaterialTagsSelector';
 import { FINISH_OPTIONS } from '@/app/inventory/constants';
 import { CollapsibleSection } from './CollapsibleSection';
 import { useMaterialProfiles } from '@/hooks/useMaterialProfiles';
+import { useAuth } from '@/contexts/AuthContext';
 
 // DnD Kit Imports
 import {
@@ -204,6 +205,7 @@ interface Props {
 
 export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultReadOnly = false, headerActions }: Props) {
     const { profiles } = useMaterialProfiles();
+    const { isAuthenticated } = useAuth();
 
     const [formData, setFormData] = useState<Partial<Spool>>({
         brand: '',
@@ -371,6 +373,7 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
         });
 
         // Inject Dynamic Options for 'type'
+        // Inject Dynamic Options for 'type'
         const displayFields = orderedFields.map(f => {
             if (f.id === 'type' && profiles.length > 0) {
                 return {
@@ -380,6 +383,22 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
             }
             return f;
         });
+
+        // Inject Visibility if Authenticated
+        if (id === 'basic-info' && isAuthenticated) {
+            const hasVisibility = displayFields.some(f => f.id === 'visibility');
+            if (!hasVisibility) {
+                displayFields.push({
+                    id: 'visibility',
+                    label: 'Visibility',
+                    type: 'select',
+                    options: [
+                        { value: 'private', label: 'Private (Only Me)' },
+                        { value: 'public', label: 'Public (Everyone)' }
+                    ]
+                });
+            }
+        }
 
         const showControls = id !== 'basic-info';
 

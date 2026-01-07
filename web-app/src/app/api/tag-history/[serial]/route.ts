@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage';
 
-export const dynamic = 'force-dynamic';
-
 /**
  * GET /api/tag-history/[serial]
  * Returns complete history and statistics for a specific NFC tag

@@ -10,13 +10,13 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { Spool } from '@/db';
 import { getSpoolFileName, prettyJSON, safeJSONParse } from '@/lib/storage/fileUtils';
+import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
+import { getUserFromRequest } from '@/lib/auth/serverUtils';
 
-// Must be static for Next.js to parse at build time
-export const dynamic = 'force-dynamic';
 export const revalidate = false;
 
-// Directory where spool files are stored
-import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
+// Feature Flag
+const AUTH_ENABLED = process.env.ENABLE_USER_MANAGEMENT === 'true';
 
 /**
  * Ensure the spools directory exists
@@ -37,6 +37,12 @@ export async function GET(req: NextRequest) {
     try {
         await ensureSpoolsDir();
 
+        // Auth Check
+        let user = null;
+        if (AUTH_ENABLED) {
+            user = await getUserFromRequest(req);
+        }
+
         // Read all files in the spools directory
         const files = await fs.readdir(SPOOLS_DIR);
 
@@ -53,7 +59,27 @@ export async function GET(req: NextRequest) {
                 try {
                     const filePath = path.join(SPOOLS_DIR, file);
                     const content = await fs.readFile(filePath, 'utf-8');
-                    return safeJSONParse<Spool>(content);
+                    const spool = safeJSONParse<Spool>(content);
+
+                    // Filter logic
+                    if (spool && AUTH_ENABLED) {
+                        const isOwner = user && spool.ownerId === user.id;
+                        const isAdmin = user && user.role === 'admin';
+                        const isPublic = spool.visibility === 'public';
+
+                        // If no ownerId (legacy), it's treated as Public for backward compat 
+                        // UNLESS migration script ran and set them private.
+                        // But if truly undefined, let's treat as visible to authenticated users?
+                        // Or visible to everyone? 
+                        // Decision: Legacy (no owner) -> Visible to Everyone (Public)
+                        const isLegacy = !spool.ownerId;
+
+                        if (!isOwner && !isAdmin && !isPublic && !isLegacy) {
+                            return null;
+                        }
+                    }
+
+                    return spool;
                 } catch (error) {
                     console.error(`Error reading spool file ${file}:`, error);
                     return null;
@@ -91,28 +117,57 @@ export async function POST(req: NextRequest) {
     try {
         await ensureSpoolsDir();
 
-        // Parse request body
         const spool: Spool = await req.json();
 
         // Validate required fields
         if (!spool.serial) {
-            return NextResponse.json(
-                { error: 'Serial number is required' },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: 'Serial number is required' }, { status: 400 });
         }
-
         if (!spool.type) {
-            return NextResponse.json(
-                { error: 'Type is required' },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: 'Type is required' }, { status: 400 });
         }
 
-        // Update lastUpdated timestamp
-        spool.lastUpdated = Date.now();
+        // Auth Logic
+        if (AUTH_ENABLED) {
+            const user = await getUserFromRequest(req);
+            if (!user) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
 
-        // If no createdAt, set it
+            // Check existing file ownership
+            const existingFile = await findSpoolFile(spool.serial);
+            if (existingFile) {
+                const filePath = path.join(SPOOLS_DIR, existingFile);
+                const existingContent = await fs.readFile(filePath, 'utf-8');
+                const existingSpool = safeJSONParse<Spool>(existingContent);
+
+                if (existingSpool && existingSpool.ownerId) {
+                    if (existingSpool.ownerId !== user.id && user.role !== 'admin') {
+                        return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
+                    }
+                }
+
+                // Preserve owner if admin is editing someone else's spool
+                if (existingSpool?.ownerId) {
+                    spool.ownerId = existingSpool.ownerId;
+                } else {
+                    // Adopt legacy spool? Yes, if edited by a user, they claim it?
+                    // Better to just set owner to editor if it was null.
+                    spool.ownerId = user.id;
+                }
+            } else {
+                // New Spool
+                spool.ownerId = user.id;
+            }
+
+            // Default visibility
+            if (!spool.visibility) {
+                spool.visibility = 'private';
+            }
+        }
+
+        // Update timestamps
+        spool.lastUpdated = Date.now();
         if (!spool.createdAt) {
             spool.createdAt = spool.lastUpdated;
         }
@@ -121,20 +176,14 @@ export async function POST(req: NextRequest) {
         const filename = getSpoolFileName(spool);
         const filePath = path.join(SPOOLS_DIR, filename);
 
-        // Check if we need to handle filename change (if spool details changed)
-        // First, try to find existing file with same serial
+        // Rename logic
         const existingFile = await findSpoolFile(spool.serial);
-
-        // If existing file has different name, delete it
         if (existingFile && existingFile !== filename) {
             const oldPath = path.join(SPOOLS_DIR, existingFile);
             await fs.unlink(oldPath);
-            console.log(`Renamed spool file: ${existingFile} -> ${filename}`);
         }
 
-        // Write the file with pretty-printed JSON
         await fs.writeFile(filePath, prettyJSON(spool), 'utf-8');
-
         invalidateSpoolCache();
 
         return NextResponse.json({

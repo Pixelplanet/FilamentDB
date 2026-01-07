@@ -44,5 +44,7 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV ENABLE_USER_MANAGEMENT=false
+ENV AUTH_SECRET="change-this-secret-in-production"
 
 CMD ["node", "server.js"]
