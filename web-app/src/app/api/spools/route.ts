@@ -66,16 +66,20 @@ export async function GET(req: NextRequest) {
                         const isOwner = user && spool.ownerId === user.id;
                         const isAdmin = user && user.role === 'admin';
                         const isPublic = spool.visibility === 'public';
+                        const isLegacy = !spool.ownerId; // Legacy spools with no owner
 
-                        // If no ownerId (legacy), it's treated as Public for backward compat 
-                        // UNLESS migration script ran and set them private.
-                        // But if truly undefined, let's treat as visible to authenticated users?
-                        // Or visible to everyone? 
-                        // Decision: Legacy (no owner) -> Visible to Everyone (Public)
-                        const isLegacy = !spool.ownerId;
-
-                        if (!isOwner && !isAdmin && !isPublic && !isLegacy) {
-                            return null;
+                        // If user is NOT logged in
+                        if (!user) {
+                            // Only show public spools or legacy spools
+                            if (!isPublic && !isLegacy) {
+                                return null;
+                            }
+                        } else {
+                            // User IS logged in
+                            // Show: owned spools, public spools, legacy spools, or if admin all spools
+                            if (!isOwner && !isAdmin && !isPublic && !isLegacy) {
+                                return null;
+                            }
                         }
                     }
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Spool } from '@/db';
-import { Tag, Scale, Thermometer, Sparkles, Ruler, Save, Lock, Unlock, GripHorizontal, ChevronUp, ChevronDown, Columns } from 'lucide-react';
+import { Tag, Scale, Thermometer, Sparkles, Ruler, Save, Lock, Unlock, GripHorizontal, ChevronUp, ChevronDown, Columns, Globe, LockKeyhole } from 'lucide-react';
 import { MaterialTagsSelector } from './MaterialTagsSelector';
 import { FINISH_OPTIONS } from '@/app/inventory/constants';
 import { CollapsibleSection } from './CollapsibleSection';
@@ -205,7 +205,7 @@ interface Props {
 
 export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultReadOnly = false, headerActions }: Props) {
     const { profiles } = useMaterialProfiles();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isAuthEnabled } = useAuth();
 
     const [formData, setFormData] = useState<Partial<Spool>>({
         brand: '',
@@ -501,6 +501,40 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
             </CollapsibleSection>
 
             {renderSection("Spool Dimensions (mm)", "spool-dimensions", <Ruler className="w-5 h-5" />)}
+
+            {/* Visibility Toggle - Only show when auth is enabled */}
+            {!readOnly && isAuthEnabled && (
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-lg ${formData.visibility === 'public'
+                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                                }`}>
+                                {formData.visibility === 'public' ? <Globe className="w-5 h-5" /> : <LockKeyhole className="w-5 h-5" />}
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-sm">Visibility</h3>
+                                <p className="text-xs text-gray-500">
+                                    {formData.visibility === 'public'
+                                        ? 'Anyone can view this spool'
+                                        : 'Only you can view this spool'}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => handleChange('visibility', formData.visibility === 'public' ? 'private' : 'public')}
+                            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${formData.visibility === 'public'
+                                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                                    : 'bg-gray-600 hover:bg-gray-700 text-white'
+                                }`}
+                        >
+                            {formData.visibility === 'public' ? 'Public' : 'Private'}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {!readOnly && (
                 <div className="flex justify-end pt-4 sticky bottom-4 z-10 w-full bg-transparent pointer-events-none">
