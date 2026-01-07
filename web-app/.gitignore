@@ -69,6 +69,8 @@ data/spools/*.json
 # I'll ignore specific patterns
 data/spools/*.json
 data/profiles.json
+data/users.json
+data/db.json
 
 # Test Artifacts
 test-results/

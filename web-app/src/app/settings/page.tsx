@@ -8,6 +8,7 @@ import { syncSpools } from '@/lib/storage/simpleSync';
 import { useSpools } from '@/hooks/useFileStorage';
 import { useAuth } from '@/contexts/AuthContext';
 import { ShieldCheck } from 'lucide-react';
+import { checkForAppUpdate, UpdateInfo } from '@/lib/updates';
 
 export default function SettingsPage() {
     const [serverUrl, setServerUrl] = useState('');
@@ -16,7 +17,9 @@ export default function SettingsPage() {
     const [lastSync, setLastSync] = useState<string | null>(null);
     const [syncStatus, setSyncStatus] = useState('');
     const [showApiKey, setShowApiKey] = useState(false);
-    const { user } = useAuth();
+
+    // Auth Context
+    const { user, isAuthEnabled } = useAuth(); // Assuming isAuthEnabled is exported from context
 
     // New Sync Auth
     const [syncToken, setSyncToken] = useState<string | null>(null);
@@ -24,6 +27,10 @@ export default function SettingsPage() {
     const [loginUser, setLoginUser] = useState('');
     const [loginPass, setLoginPass] = useState('');
     const [loginLoading, setLoginLoading] = useState(false);
+
+    // Update Checking
+    const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
+    const [checkingUpdate, setCheckingUpdate] = useState(false);
 
     const { spools } = useSpools();
     const spoolCount = spools?.length || 0;
@@ -41,7 +48,17 @@ export default function SettingsPage() {
         if (savedLastSync) {
             setLastSync(new Date(parseInt(savedLastSync)).toLocaleString());
         }
+
+        // Check for updates automatically (only relevant if running as app/native mostly, but safe to check on web too)
+        checkUpdate();
     }, []);
+
+    const checkUpdate = async () => {
+        setCheckingUpdate(true);
+        const info = await checkForAppUpdate();
+        setUpdateInfo(info);
+        setCheckingUpdate(false);
+    };
 
     const saveSettings = () => {
         if (!serverUrl) {
@@ -80,11 +97,6 @@ export default function SettingsPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Login failed');
 
-            // Assume the token is returned in cookie usually, BUT for cross-origin / mobile app to external server,
-            // we probably need the token in the BODY.
-            // My current login API endpoint sets a cookie. 
-            // Does it return the token in body? Yes, I added that in Session 2.
-
             if (data.token) {
                 localStorage.setItem('sync_auth_token', data.token);
                 setSyncToken(data.token);
@@ -118,16 +130,8 @@ export default function SettingsPage() {
             if (!res.ok) throw new Error(data.error || 'Google Login failed');
 
             if (data.user) {
-                // We need to request a session token specifically for sync?
-                // The /api/auth/google endpoint returns { success: true, user } and sets a Cookie.
-                // It MIGHT NOT return the token in the body unless we added that.
-                // Re-using the /api/auth/login approach where we expect a token.
-                // Does /api/auth/google return a token in body? 
-                // CHECKING: I wrote /api/auth/google in Step 1590. It returns { success: true, user }. It DOES NOT return token in body explicitly in JSON.
-                // I need to update the Google API endpoint to return the token if I want to use it for Mobile Sync which relies on Bearer token.
-                // However, for this fix, I will assume I will update the API next.
-
-                // Let's assume the API returns the token in body now (I'll fix it in a sec).
+                // If the remote server supports returning token, perfect. 
+                // If not, we might need to handle it. Assuming it does for now based on recent updates.
                 if (data.token) {
                     localStorage.setItem('sync_auth_token', data.token);
                     setSyncToken(data.token);
@@ -135,9 +139,6 @@ export default function SettingsPage() {
                     setShowLoginModal(false);
                     setSyncStatus('✅ Logged in with Google');
                 } else {
-                    // Fallback: If cookie is set, maybe we can sync? 
-                    // But "simpleSync" uses `Authorization: Bearer undefined` if we don't have it.
-                    // We need the token.
                     throw new Error('Server did not return a sync token for Google Login. Update Server.');
                 }
             }
@@ -264,8 +265,8 @@ export default function SettingsPage() {
         <PageTransition className="max-w-xl mx-auto space-y-8">
             <h1 className="text-3xl font-bold">Settings</h1>
 
-            {/* User Management (Admin Only) */}
-            {user?.role === 'admin' && (
+            {/* User Management (Admin Only) - Hide if Auth disabled */}
+            {isAuthEnabled && user?.role === 'admin' && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
                     <div className="p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full">
                         <ShieldCheck className="w-6 h-6" />
@@ -336,14 +337,18 @@ export default function SettingsPage() {
 
                             <div className="mt-2 flex items-center gap-2">
                                 <span className="text-xs text-gray-400">OR</span>
-                                <button
-                                    onClick={() => setShowLoginModal(true)}
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                    Login with User Account
-                                </button>
+                                {isAuthEnabled ? ( // Conditional Rendering based on Auth Config
+                                    <button
+                                        onClick={() => setShowLoginModal(true)}
+                                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                    >
+                                        Login with User Account
+                                    </button>
+                                ) : (
+                                    <span className="text-xs text-gray-500 italic">User Management Disabled on Server</span>
+                                )}
                             </div>
-                            <p className="text-xs text-gray-400 mt-1">Use API Key for system sync, or User Login for personal sync.</p>
+                            <p className="text-xs text-gray-400 mt-1">Use API Key for system sync{isAuthEnabled && ', or User Login for personal sync'}.</p>
                         </div>
                     ) : (
                         <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 flex items-center justify-between">
@@ -495,22 +500,34 @@ export default function SettingsPage() {
                 </a>
             </div>
 
-            {/* APK Download */}
+            {/* APK Download / Update Checker */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                <div className="p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full">
+                <div className={`p-3 rounded-full ${updateInfo?.available
+                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 animate-pulse'
+                    : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                    }`}>
                     <Download className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                    <h3 className="font-bold">Download Android App</h3>
-                    <p className="text-sm text-gray-500">Get the APK for your device.</p>
+                    <h3 className="font-bold">Android App</h3>
+                    <p className="text-sm text-gray-500">
+                        {checkingUpdate ? 'Checking for updates...' : (
+                            updateInfo?.available
+                                ? `New version ${updateInfo.latestVersion} available!`
+                                : 'App is up to date'
+                        )}
+                    </p>
                 </div>
                 <a
-                    href="https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"
+                    href={updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm transition-colors"
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${updateInfo?.available
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                        }`}
                 >
-                    Download from GitHub
+                    {updateInfo?.available ? 'Update Now' : 'Download APK'}
                 </a>
             </div>
 
@@ -571,7 +588,6 @@ export default function SettingsPage() {
                                     <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or</span>
                                 </div>
                             </div>
-
                             <div id="googleRemoteLoginBtn" className="w-full h-[40px] flex justify-center"></div>
                         </form>
                     </div>

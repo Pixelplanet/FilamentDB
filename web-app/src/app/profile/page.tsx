@@ -4,11 +4,19 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageTransition } from '@/components/PageTransition';
 import { User, Mail, ShieldCheck, Link as LinkIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
-    const { user, isGoogleAuthEnabled, refreshProfile } = useAuth();
+    const { user, isGoogleAuthEnabled, isAuthEnabled, refreshProfile } = useAuth();
+    const router = useRouter(); // Import this
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!isAuthEnabled) {
+            router.push('/');
+        }
+    }, [isAuthEnabled, router]);
 
     const handleGoogleLink = async (credential: string) => {
         setLoading(true);
