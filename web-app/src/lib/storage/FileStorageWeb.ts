@@ -59,10 +59,23 @@ export class FileStorageWeb implements ISpoolStorage {
             const response = await fetch(`${this.baseUrl}/api/spools`);
 
             if (!response.ok) {
+                // If we get a 404 on the API route, it usually means the server URL is wrong or points to the static app
+                // Return empty list instead of throwing to allow the app to load
+                if (response.status === 404) return [];
+
                 throw new StorageError(
                     `Failed to list spools: ${response.statusText}`,
                     StorageErrorCode.NETWORK_ERROR
                 );
+            }
+
+            // Verify content type is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                // This happens when the API path returns HTML (e.g. index.html fallback)
+                // This implies the server URL is not providing the API
+                console.warn('Received non-JSON response from API, returning empty list');
+                return [];
             }
 
             return await response.json();
