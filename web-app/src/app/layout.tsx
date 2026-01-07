@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Navigation } from "@/components/Navigation";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Script from 'next/script';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,6 +46,7 @@ export default function RootLayout({
             </Navigation>
           </SyncProvider>
         </AuthProvider>
+        <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
       </body>
     </html>
   );

@@ -10,10 +10,13 @@ interface AuthContextType {
     user: User | null;
     loading: boolean;
     login: (username: string, password: string) => Promise<void>;
+    loginWithGoogle: (credential: string) => Promise<void>;
     register: (username: string, password: string, displayName?: string) => Promise<void>;
     logout: () => Promise<void>;
     refreshProfile: () => Promise<void>;
     isAuthenticated: boolean;
+    isAuthEnabled: boolean;
+    isGoogleAuthEnabled: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,6 +25,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+
+    const [isAuthEnabled, setIsAuthEnabled] = useState(false);
+    const [isGoogleAuthEnabled, setIsGoogleAuthEnabled] = useState(false);
+
+    const fetchConfig = async () => {
+        try {
+            const res = await fetch('/api/config/auth');
+            if (res.ok) {
+                const data = await res.json();
+                setIsAuthEnabled(data.enabled);
+                setIsGoogleAuthEnabled(data.googleEnabled);
+            }
+        } catch (e) {
+            console.error('Failed to fetch auth config', e);
+        }
+    };
 
     const fetchProfile = async () => {
         try {
@@ -45,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
-        fetchProfile();
+        fetchConfig().then(fetchProfile);
     }, []);
 
     const login = async (username: string, password: string) => {
@@ -85,6 +104,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push('/');
     };
 
+    const loginWithGoogle = async (credential: string) => {
+        const res = await authFetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Google login failed');
+        }
+
+        setUser(data.user);
+        router.push('/');
+    };
+
     const logout = async () => {
         // Implement logout API if needed to clear cookie
         // For now, just clear state and reload (clearing cookie is needed though)
@@ -106,10 +142,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             user,
             loading,
             login,
+            loginWithGoogle,
             register,
             logout,
             refreshProfile: fetchProfile,
-            isAuthenticated: !!user
+            isAuthenticated: !!user,
+            isAuthEnabled,
+            isGoogleAuthEnabled
         }}>
             {children}
         </AuthContext.Provider>

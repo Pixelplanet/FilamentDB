@@ -14,6 +14,8 @@ COPY . .
 
 # Set Build Mode to Server so next.config.ts uses 'standalone'
 ENV BUILD_MODE=server
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 RUN npm run build
 
 # Production image, copy all the files and run next

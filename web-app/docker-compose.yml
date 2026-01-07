@@ -1,7 +1,10 @@
 version: '3.8'
 services:
   web-app:
-    build: .
+    build:
+      context: .
+      args:
+        - NEXT_PUBLIC_GOOGLE_CLIENT_ID=574949662046-ab5mpv9ni94v06st10r60nbvts3f33nc.apps.googleusercontent.com
     image: pixelplanet5/filamentdb-app:latest
     ports:
       - "3000:3000"
@@ -12,4 +15,19 @@ services:
       - SYNC_API_KEY=test
       - ENABLE_USER_MANAGEMENT=true
       - AUTH_SECRET=dev-secret-change-me
+      - GOOGLE_CLIENT_ID=574949662046-ab5mpv9ni94v06st10r60nbvts3f33nc.apps.googleusercontent.com
+    restart: unless-stopped
+
+  web-app-client:
+    image: pixelplanet5/filamentdb-app:latest
+    depends_on:
+      - web-app
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./public/downloads:/app/public/downloads
+      - ./data-client:/app/data
+    environment:
+      - ENABLE_USER_MANAGEMENT=false
+      - AUTH_SECRET=client-secret-local
     restart: unless-stopped

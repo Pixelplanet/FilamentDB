@@ -8,6 +8,7 @@ export interface User {
     createdAt: number;
     displayName?: string;
     avatarUrl?: string; // Optional URL to avatar image
+    googleEmail?: string; // Linked Google Account Email
 }
 
 export interface UserDatabase {

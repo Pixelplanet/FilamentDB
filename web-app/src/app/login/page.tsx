@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageTransition } from '@/components/PageTransition';
 import { Lock, User, LogIn } from 'lucide-react';
@@ -12,7 +12,44 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
+
+    const handleGoogleCallback = async (response: any) => {
+        setIsLoading(true);
+        try {
+            await loginWithGoogle(response.credential);
+        } catch (err: any) {
+            setError(err.message);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const initGoogle = () => {
+            // @ts-ignore
+            if (window.google && window.google.accounts) {
+                // @ts-ignore
+                window.google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                    callback: handleGoogleCallback
+                });
+                // @ts-ignore
+                window.google.accounts.id.renderButton(
+                    document.getElementById("googleSignInBtn"),
+                    { theme: "outline", size: "large", width: "100%" }
+                );
+            }
+        };
+
+        const interval = setInterval(() => {
+            // @ts-ignore
+            if (window.google) {
+                initGoogle();
+                clearInterval(interval);
+            }
+        }, 100);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,6 +120,17 @@ export default function LoginPage() {
                     >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div id="googleSignInBtn" className="w-full h-[40px] flex justify-center"></div>
+
                 </form>
 
                 <div className="text-center text-sm text-gray-500">

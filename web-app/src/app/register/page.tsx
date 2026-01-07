@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageTransition } from '@/components/PageTransition';
 import { Lock, User, UserPlus } from 'lucide-react';
@@ -14,7 +14,44 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { register } = useAuth();
+    const { register, loginWithGoogle } = useAuth(); // Add loginWithGoogle
+
+    const handleGoogleCallback = async (response: any) => {
+        setIsLoading(true);
+        try {
+            await loginWithGoogle(response.credential);
+        } catch (err: any) {
+            setError(err.message);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const initGoogle = () => {
+            // @ts-ignore
+            if (window.google && window.google.accounts) {
+                // @ts-ignore
+                window.google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                    callback: handleGoogleCallback
+                });
+                // @ts-ignore
+                window.google.accounts.id.renderButton(
+                    document.getElementById("googleSignUpBtn"), // Changed ID
+                    { theme: "outline", size: "large", width: "100%", text: "signup_with" } // Different text
+                );
+            }
+        };
+
+        const interval = setInterval(() => {
+            // @ts-ignore
+            if (window.google) {
+                initGoogle();
+                clearInterval(interval);
+            }
+        }, 100);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,8 +62,8 @@ export default function RegisterPage() {
             return;
         }
 
-        if (password.length < 8) {
-            setError('Password must be at least 8 characters');
+        if (password.length < 12) {
+            setError('Password must be at least 12 characters');
             return;
         }
 
@@ -125,6 +162,18 @@ export default function RegisterPage() {
                     >
                         {isLoading ? 'Creating account...' : 'Create Account'}
                     </button>
+
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or sign up with</span>
+                        </div>
+                    </div>
+
+                    <div id="googleSignUpBtn" className="w-full h-[40px] flex justify-center"></div>
+
                 </form>
 
                 <div className="text-center text-sm text-gray-500">

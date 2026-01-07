@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": "671d4277-1f68-4cfd-a46e-f9b601abd7c0",
+      "username": "Pixel",
+      "passwordHash": "$2b$10$ychRsQHXHrFzfJMjTG5Uae6Ne0G.bnSFVPBuv6GGtDFW5NDdGq0Uu",
+      "authProvider": "local",
+      "role": "admin",
+      "createdAt": 1767792503721,
+      "displayName": "Pixel"
+    },
+    {
+      "id": "7dea1b79-d1f3-404a-b1b1-b43a8646a260",
+      "username": "admin",
+      "passwordHash": "$2b$10$bdf0x/b2.Koyn2Z9/BdGqOw8R9yaQuXndRknHHq4iSYksNBqC7lmS",
+      "authProvider": "local",
+      "role": "user",
+      "createdAt": 1767792936428,
+      "displayName": "admin"
+    }
+  ],
+  "settings": {
+    "allowRegistration": true
+  }
+}

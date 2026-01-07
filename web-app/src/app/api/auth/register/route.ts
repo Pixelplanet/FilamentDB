@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
         }
 
-        if (password.length < 8) {
-            return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+        if (password.length < 12) {
+            return NextResponse.json({ error: 'Password must be at least 12 characters' }, { status: 400 });
         }
 
         // Initialize DB if needed (e.g. first run)

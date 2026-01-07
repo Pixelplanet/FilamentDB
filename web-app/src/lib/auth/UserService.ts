@@ -64,6 +64,11 @@ export class UserService {
         return db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
     }
 
+    static async findUserByGoogleEmail(email: string): Promise<User | undefined> {
+        const db = await this.loadDB();
+        return db.users.find(u => u.googleEmail?.toLowerCase() === email.toLowerCase());
+    }
+
     static async findUserById(id: string): Promise<User | undefined> {
         const db = await this.loadDB();
         return db.users.find(u => u.id === id);

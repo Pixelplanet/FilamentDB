@@ -10,6 +10,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ThemeToggle } from './ThemeToggle';
 import { SyncStatus } from './SyncStatus';
+import { UserMenu } from './UserMenu';
 
 export function Navigation({ children }: { children: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -62,6 +63,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center gap-2">
                         <SyncStatus />
                         <ThemeToggle />
+                        <UserMenu />
                     </div>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-1">
@@ -138,6 +140,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center gap-2">
                         <SyncStatus />
                         <ThemeToggle />
+                        <UserMenu />
                     </div>
                 </header>
 

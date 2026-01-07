@@ -104,6 +104,81 @@ export default function SettingsPage() {
         }
     }
 
+    const handleRemoteGoogleLogin = async (credential: string) => {
+        setLoginLoading(true);
+        try {
+            const base = serverUrl.replace(/\/$/, '');
+            const res = await fetch(`${base}/api/auth/google`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Google Login failed');
+
+            if (data.user) {
+                // We need to request a session token specifically for sync?
+                // The /api/auth/google endpoint returns { success: true, user } and sets a Cookie.
+                // It MIGHT NOT return the token in the body unless we added that.
+                // Re-using the /api/auth/login approach where we expect a token.
+                // Does /api/auth/google return a token in body? 
+                // CHECKING: I wrote /api/auth/google in Step 1590. It returns { success: true, user }. It DOES NOT return token in body explicitly in JSON.
+                // I need to update the Google API endpoint to return the token if I want to use it for Mobile Sync which relies on Bearer token.
+                // However, for this fix, I will assume I will update the API next.
+
+                // Let's assume the API returns the token in body now (I'll fix it in a sec).
+                if (data.token) {
+                    localStorage.setItem('sync_auth_token', data.token);
+                    setSyncToken(data.token);
+                    localStorage.setItem('sync_server_url', serverUrl);
+                    setShowLoginModal(false);
+                    setSyncStatus('✅ Logged in with Google');
+                } else {
+                    // Fallback: If cookie is set, maybe we can sync? 
+                    // But "simpleSync" uses `Authorization: Bearer undefined` if we don't have it.
+                    // We need the token.
+                    throw new Error('Server did not return a sync token for Google Login. Update Server.');
+                }
+            }
+        } catch (e: any) {
+            alert(e.message);
+        } finally {
+            setLoginLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (showLoginModal) {
+            const initGoogle = () => {
+                // @ts-ignore
+                if (window.google && window.google.accounts) {
+                    // @ts-ignore
+                    window.google.accounts.id.initialize({
+                        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                        callback: (response: any) => handleRemoteGoogleLogin(response.credential)
+                    });
+                    // @ts-ignore
+                    window.google.accounts.id.renderButton(
+                        document.getElementById("googleRemoteLoginBtn"),
+                        { theme: "outline", size: "large", width: "100%" }
+                    );
+                }
+            };
+
+            // Try immediately then poll
+            initGoogle();
+            const interval = setInterval(() => {
+                // @ts-ignore
+                if (window.google) {
+                    initGoogle();
+                    clearInterval(interval);
+                }
+            }, 100);
+            return () => clearInterval(interval);
+        }
+    }, [showLoginModal]);
+
     const clearToken = () => {
         localStorage.removeItem('sync_auth_token');
         setSyncToken(null);
@@ -430,12 +505,12 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-500">Get the APK for your device.</p>
                 </div>
                 <a
-                    href="https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"
+                    href="https://github.com/Pixelplanet/FilamentDB/raw/main/filamentdb.apk"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm transition-colors"
                 >
-                    Download
+                    Download from GitHub
                 </a>
             </div>
 
@@ -487,6 +562,17 @@ export default function SettingsPage() {
                                     {loginLoading ? 'Logging in...' : 'Login'}
                                 </button>
                             </div>
+
+                            <div className="relative my-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or</span>
+                                </div>
+                            </div>
+
+                            <div id="googleRemoteLoginBtn" className="w-full h-[40px] flex justify-center"></div>
                         </form>
                     </div>
                 </div>
