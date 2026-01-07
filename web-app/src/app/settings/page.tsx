@@ -505,7 +505,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-500">Get the APK for your device.</p>
                 </div>
                 <a
-                    href="https://github.com/Pixelplanet/FilamentDB/raw/main/filamentdb.apk"
+                    href="https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm transition-colors"
