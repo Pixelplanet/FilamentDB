@@ -6,6 +6,8 @@
 
 import { ISpoolStorage, StoragePlatform } from './types';
 import { FileStorageWeb } from './FileStorageWeb';
+import { FileStorageLocal } from './FileStorageLocal';
+import { FileStorageMobile } from './FileStorageMobile';
 
 /**
  * Detect the current platform
@@ -43,13 +45,10 @@ export function createStorage(baseUrl: string = ''): ISpoolStorage {
             return new FileStorageWeb(baseUrl);
 
         case StoragePlatform.MOBILE:
-            // Mobile fallback to Web API for now (until local FS impl)
-            // This allows connecting to a self-hosted instance from the app
-            let mobileUrl = '';
-            if (typeof window !== 'undefined') {
-                mobileUrl = localStorage.getItem('sync_server_url') || '';
-            }
-            return new FileStorageWeb(mobileUrl);
+            // Mobile is now ALWAYS Local-First (Phase 5)
+            // Sync happens in background via SyncContext/simpleSync
+            console.log('Using Mobile Filesystem Storage');
+            return new FileStorageMobile();
 
         default:
             throw new Error(`Unknown platform: ${platform}`);
