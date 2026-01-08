@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>FilamentDB</Name>
+  <Repository>pixelplanet5/filamentdb-app:latest</Repository>
+  <Registry>https://hub.docker.com/r/pixelplanet5/filamentdb-app</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/Pixelplanet/FilamentDB/issues</Support>
+  <Project>https://github.com/Pixelplanet/FilamentDB</Project>
+  <Overview>
+    FilamentDB is a modern, local-first 3D printer filament inventory management system with NFC scanning support.
+    
+    Features:
+    - Progressive Web App (PWA) with Android app support
+    - NFC tag scanning for instant filament data entry
+    - QR code and barcode scanner support
+    - URL metadata extraction from product pages
+    - Multi-device sync with timestamp-based conflict resolution
+    - File-based storage (human-readable JSON files)
+    - Material profiles with customizable defaults
+    - Advanced filtering and grouped views
+    - Light/Dark mode with persistent preferences
+    - Optional user management with Google OAuth support
+    
+    Access the web interface at: http://[IP]:[PORT:3000]
+  </Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:3000]</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/Pixelplanet/FilamentDB/main/web-app/FilamentDB.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/Pixelplanet/FilamentDB/main/web-app/public/icon-512.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled></DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI Port" Target="3000" Default="3000" Mode="tcp" Description="Port for accessing the FilamentDB web interface" Type="Port" Display="always" Required="true" Mask="false">3000</Config>
+  
+  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/filamentdb/data" Mode="rw" Description="Directory where all filament spool data is stored as JSON files. This should be backed up regularly." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/filamentdb/data</Config>
+  
+  <Config Name="Downloads Directory" Target="/app/public/downloads" Default="/mnt/user/appdata/filamentdb/downloads" Mode="rw" Description="Directory for storing downloadable files like the Android APK. Optional but recommended if you want to download the mobile app." Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/filamentdb/downloads</Config>
+  
+  <Config Name="Sync API Key" Target="SYNC_API_KEY" Default="" Mode="" Description="Secret key for securing the sync endpoint. This must match the API key configured on client devices. Generate a secure random string (e.g., 'openssl rand -hex 32'). Leave empty to use default 'dev-key-change-in-production' (NOT recommended for production)." Type="Variable" Display="always" Required="false" Mask="true"/>
+  
+  <Config Name="Enable User Management" Target="ENABLE_USER_MANAGEMENT" Default="false" Mode="" Description="Enable multi-user support with authentication. When enabled, users can create accounts and login instead of using a shared API key. Options: true or false" Type="Variable" Display="always" Required="false" Mask="false">false</Config>
+  
+  <Config Name="Auth Secret" Target="AUTH_SECRET" Default="" Mode="" Description="Secret key for JWT token signing (required if User Management is enabled). Generate a long random string (e.g., 'openssl rand -hex 32'). Only needed when ENABLE_USER_MANAGEMENT=true." Type="Variable" Display="advanced" Required="false" Mask="true"/>
+  
+  <Config Name="Google Client ID (Server)" Target="GOOGLE_CLIENT_ID" Default="" Mode="" Description="Google OAuth Client ID for enabling Google login (server-side). Get this from Google Cloud Console. Only works if User Management is enabled. Note: You must also rebuild the image with NEXT_PUBLIC_GOOGLE_CLIENT_ID to show the login button." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  
+  <Config Name="Next Public API URL" Target="NEXT_PUBLIC_API_URL" Default="" Mode="" Description="API URL for mobile apps to connect to this server (e.g., http://192.168.1.100:3000). Leave empty for web-only deployment. Only needed if you're using the Android app and want it to sync with this server." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  
+  <Config Name="Sync Data Directory" Target="SYNC_DATA_DIR" Default="/app/data" Mode="" Description="Internal path where sync data is stored. Should match the Data Directory target path. Only change if you know what you're doing." Type="Variable" Display="advanced" Required="false" Mask="false">/app/data</Config>
+  
+  <Config Name="Build Mode" Target="BUILD_MODE" Default="server" Mode="" Description="Build mode for the application. Options: 'server' (default for Docker), 'pwa', or 'mobile'. Leave as 'server' unless you have a specific reason to change it." Type="Variable" Display="advanced" Required="false" Mask="false">server</Config>
+  
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID for file permissions. Use 'id -u' command to find your user ID. Default is 99 (nobody on Unraid)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID for file permissions. Use 'id -g' command to find your group ID. Default is 100 (users on Unraid)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  
+</Container>
