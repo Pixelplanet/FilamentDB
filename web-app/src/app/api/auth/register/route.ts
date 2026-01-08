@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
             const user = await UserService.createUser(username, password, 'local', displayName);
             const token = await createSessionToken(user);
 
-            const response = NextResponse.json({ success: true, user });
+            const response = NextResponse.json({ success: true, user, token });
 
             response.cookies.set('auth_token', token, {
                 httpOnly: true,

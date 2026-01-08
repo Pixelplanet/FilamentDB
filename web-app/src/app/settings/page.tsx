@@ -28,6 +28,10 @@ export default function SettingsPage() {
     const [loginUser, setLoginUser] = useState('');
     const [loginPass, setLoginPass] = useState('');
     const [loginLoading, setLoginLoading] = useState(false);
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+    const [regName, setRegName] = useState('');
+    const [regUser, setRegUser] = useState('');
+    const [regPass, setRegPass] = useState('');
 
     // Update Checking
     const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
@@ -108,6 +112,44 @@ export default function SettingsPage() {
 
                 setShowLoginModal(false);
                 setSyncStatus('✅ Logged in successfully');
+            } else {
+                throw new Error('No token returned from server');
+            }
+
+        } catch (e: any) {
+            alert(e.message);
+        } finally {
+            setLoginLoading(false);
+        }
+    }
+
+    const handleRemoteRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!serverUrl) return;
+
+        setLoginLoading(true);
+        try {
+            const base = serverUrl.replace(/\/$/, '');
+            const res = await fetch(`${base}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: regUser,
+                    password: regPass,
+                    displayName: regName
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+            if (data.token) {
+                localStorage.setItem('sync_auth_token', data.token);
+                setSyncToken(data.token);
+                localStorage.setItem('sync_server_url', serverUrl);
+
+                setShowLoginModal(false);
+                setSyncStatus('✅ Registered & Logged in successfully');
             } else {
                 throw new Error('No token returned from server');
             }
@@ -257,7 +299,15 @@ export default function SettingsPage() {
             } else {
                 const errorText = await response.text().catch(() => 'No details');
                 console.error(`❌ Server error response:`, errorText);
-                setSyncStatus(`❌ Server Error ${response.status}: ${response.statusText}`);
+
+                if (response.status === 401 || response.status === 403) {
+                    setSyncStatus(`🔒 Authentication Required (${response.status})`);
+                    // Automatically prompt for login
+                    setAuthMode('login');
+                    setShowLoginModal(true);
+                } else {
+                    setSyncStatus(`❌ Server Error ${response.status}: ${response.statusText}`);
+                }
             }
         } catch (e: any) {
             console.error('❌ Connection test failed:', e);
@@ -574,15 +624,48 @@ export default function SettingsPage() {
             {showLoginModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-6 border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-xl font-bold mb-4">Remote Login</h3>
-                        <form onSubmit={handleRemoteLogin} className="space-y-4">
+
+                        {/* Auth Mode Tabs */}
+                        <div className="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                type="button"
+                                onClick={() => setAuthMode('login')}
+                                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${authMode === 'login' ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'}`}
+                            >
+                                Login
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setAuthMode('register')}
+                                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${authMode === 'register' ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'}`}
+                            >
+                                Register
+                            </button>
+                        </div>
+
+                        <h3 className="text-xl font-bold mb-4">{authMode === 'login' ? 'Remote Login' : 'Create Account'}</h3>
+                        <form onSubmit={authMode === 'login' ? handleRemoteLogin : handleRemoteRegister} className="space-y-4">
+
+                            {authMode === 'register' && (
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Display Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
+                                        value={regName}
+                                        onChange={e => setRegName(e.target.value)}
+                                        placeholder="Required for new account"
+                                    />
+                                </div>
+                            )}
+
                             <div>
                                 <label className="block text-sm font-medium mb-1">Username</label>
                                 <input
                                     type="text"
                                     className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
-                                    value={loginUser}
-                                    onChange={e => setLoginUser(e.target.value)}
+                                    value={authMode === 'login' ? loginUser : regUser}
+                                    onChange={e => authMode === 'login' ? setLoginUser(e.target.value) : setRegUser(e.target.value)}
                                     autoFocus
                                 />
                             </div>
@@ -591,9 +674,10 @@ export default function SettingsPage() {
                                 <input
                                     type="password"
                                     className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
-                                    value={loginPass}
-                                    onChange={e => setLoginPass(e.target.value)}
+                                    value={authMode === 'login' ? loginPass : regPass}
+                                    onChange={e => authMode === 'login' ? setLoginPass(e.target.value) : setRegPass(e.target.value)}
                                 />
+                                {authMode === 'register' && <p className="text-xs text-gray-400 mt-1">Min. 12 characters</p>}
                             </div>
 
                             <div className="flex gap-2 pt-2">
@@ -609,7 +693,7 @@ export default function SettingsPage() {
                                     disabled={loginLoading}
                                     className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-colors disabled:opacity-50"
                                 >
-                                    {loginLoading ? 'Logging in...' : 'Login'}
+                                    {loginLoading ? 'Processing...' : (authMode === 'login' ? 'Login' : 'Sign Up')}
                                 </button>
                             </div>
 
@@ -618,7 +702,7 @@ export default function SettingsPage() {
                                     <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                                 </div>
                                 <div className="relative flex justify-center text-sm">
-                                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or</span>
+                                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
                                 </div>
                             </div>
                             <div id="googleRemoteLoginBtn" className="w-full h-[40px] flex justify-center"></div>
