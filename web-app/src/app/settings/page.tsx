@@ -9,6 +9,7 @@ import { useSpools } from '@/hooks/useFileStorage';
 import { useAuth } from '@/contexts/AuthContext';
 import { ShieldCheck } from 'lucide-react';
 import { checkForAppUpdate, UpdateInfo } from '@/lib/updates';
+import { Capacitor } from '@capacitor/core';
 
 export default function SettingsPage() {
     const [serverUrl, setServerUrl] = useState('');
@@ -49,8 +50,10 @@ export default function SettingsPage() {
             setLastSync(new Date(parseInt(savedLastSync)).toLocaleString());
         }
 
-        // Check for updates automatically (only relevant if running as app/native mostly, but safe to check on web too)
-        checkUpdate();
+        // Check for updates automatically - ONLY on native platforms (Android/iOS)
+        if (Capacitor.isNativePlatform()) {
+            checkUpdate();
+        }
     }, []);
 
     const checkUpdate = async () => {
@@ -528,36 +531,38 @@ export default function SettingsPage() {
                 </a>
             </div>
 
-            {/* APK Download / Update Checker */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                <div className={`p-3 rounded-full ${updateInfo?.available
-                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 animate-pulse'
-                    : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                    }`}>
-                    <Download className="w-6 h-6" />
+            {/* APK Download / Update Checker - Only show on native platforms */}
+            {Capacitor.isNativePlatform() && (
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+                    <div className={`p-3 rounded-full ${updateInfo?.available
+                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 animate-pulse'
+                        : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                        }`}>
+                        <Download className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-bold">App Update</h3>
+                        <p className="text-sm text-gray-500">
+                            {checkingUpdate ? 'Checking for updates...' : (
+                                updateInfo?.available
+                                    ? `New version ${updateInfo.latestVersion} available!`
+                                    : 'App is up to date'
+                            )}
+                        </p>
+                    </div>
+                    <a
+                        href={updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${updateInfo?.available
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-green-600 hover:bg-green-700 text-white'
+                            }`}
+                    >
+                        {updateInfo?.available ? 'Update Now' : 'Download APK'}
+                    </a>
                 </div>
-                <div className="flex-1">
-                    <h3 className="font-bold">Android App</h3>
-                    <p className="text-sm text-gray-500">
-                        {checkingUpdate ? 'Checking for updates...' : (
-                            updateInfo?.available
-                                ? `New version ${updateInfo.latestVersion} available!`
-                                : 'App is up to date'
-                        )}
-                    </p>
-                </div>
-                <a
-                    href={updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${updateInfo?.available
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                        : 'bg-green-600 hover:bg-green-700 text-white'
-                        }`}
-                >
-                    {updateInfo?.available ? 'Update Now' : 'Download APK'}
-                </a>
-            </div>
+            )}
 
             {/* App Info */}
             <div className="text-center text-gray-400 text-sm space-y-1">
