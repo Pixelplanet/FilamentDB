@@ -43,7 +43,7 @@
   
   <Config Name="Sync API Key" Target="SYNC_API_KEY" Default="" Mode="" Description="Secret key for securing the sync endpoint. This must match the API key configured on client devices. Generate a secure random string (e.g., 'openssl rand -hex 32'). Leave empty to use default 'dev-key-change-in-production' (NOT recommended for production)." Type="Variable" Display="always" Required="false" Mask="true"/>
   
-  <Config Name="Enable User Management" Target="ENABLE_USER_MANAGEMENT" Default="false" Mode="" Description="Enable multi-user support with authentication. Set to 'true' to enable user accounts and login system. IMPORTANT: After enabling, click 'Apply' to save this setting permanently. Options: true or false" Type="Variable" Display="always" Required="false" Mask="false">false</Config>
+  <Config Name="Enable User Management" Target="ENABLE_USER_MANAGEMENT" Default="false" Mode="" Description="Enable multi-user support with authentication. Set to 'true' to enable user accounts and login system. IMPORTANT: Type 'true' in the field and click 'Apply' to save permanently. Options: true or false" Type="Variable" Display="always" Required="false" Mask="false"/>
   
   <Config Name="Auth Secret" Target="AUTH_SECRET" Default="" Mode="" Description="Secret key for JWT token signing (required if User Management is enabled). Generate a long random string (e.g., 'openssl rand -hex 32'). Only needed when ENABLE_USER_MANAGEMENT=true." Type="Variable" Display="advanced" Required="false" Mask="true"/>
   
