@@ -19,11 +19,18 @@ if [ "${PUID}" != "1001" ] || [ "${PGID}" != "1001" ]; then
     
     # Fix ownership of application files
     chown -R nextjs:nodejs /app
-    chown -R nextjs:nodejs /app/data || true
 fi
 
-# Set UMASK (default 0022 = rwxr-xr-x for dirs, rw-r--r-- for files)
-# For Unraid, you might want 0000 for full permissions
+# Ensure data directory exists with proper permissions
+mkdir -p /app/data
+chown -R nextjs:nodejs /app/data
+
+# Set permissions to be world-writable (needed for Unraid with UMASK issues)
+# This ensures existing files/dirs are accessible
+chmod -R 777 /app/data
+
+# Set UMASK (default 0000 = rwxrwxrwx for dirs, rw-rw-rw- for files)
+# This ensures NEW files created by Node.js have correct permissions
 umask "${UMASK}"
 
 # Switch to nextjs user and execute the command

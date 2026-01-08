@@ -56,9 +56,11 @@ ENV ENABLE_USER_MANAGEMENT=false
 ENV AUTH_SECRET="change-this-secret-in-production"
 
 # Default PUID/PGID/UMASK for Unraid compatibility
-ENV PUID=1001
-ENV PGID=1001
-ENV UMASK=0022
+# PUID=99 and PGID=100 = nobody:users on Unraid
+# UMASK=0000 = Full permissions (rwxrwxrwx for dirs, rw-rw-rw- for files)
+ENV PUID=99
+ENV PGID=100
+ENV UMASK=0000
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["node", "server.js"]
