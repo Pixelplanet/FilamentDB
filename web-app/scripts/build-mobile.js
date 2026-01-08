@@ -14,11 +14,6 @@ const API_BACKUP = path.join(__dirname, '..', 'src', 'app', '_api_backup');
 console.log('[build-mobile] Starting mobile build...');
 
 // Step 1: Move API directory out of the way
-if (fs.existsSync(API_DIR)) {
-    console.log('[build-mobile] Temporarily moving API routes...');
-    fs.renameSync(API_DIR, API_BACKUP);
-}
-
 try {
     // Step 2: Run the Next.js build (static export mode)
     console.log('[build-mobile] Running Next.js build...');
@@ -29,12 +24,7 @@ try {
     if (error.stdout) console.log(error.stdout.toString());
     if (error.stderr) console.error(error.stderr.toString());
     process.exitCode = 1;
-} finally {
-    // Step 3: Restore API directory
-    if (fs.existsSync(API_BACKUP)) {
-        console.log('[build-mobile] Restoring API routes...');
-        fs.renameSync(API_BACKUP, API_DIR);
-    }
 }
+
 
 console.log('[build-mobile] Done.');
