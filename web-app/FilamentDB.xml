@@ -39,9 +39,7 @@
   <Requires/>
   <Config Name="WebUI Port" Target="3000" Default="3000" Mode="tcp" Description="Port for accessing the FilamentDB web interface" Type="Port" Display="always" Required="true" Mask="false">3000</Config>
   
-  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/filamentdb/data" Mode="rw" Description="Directory where all filament spool data is stored as JSON files. This should be backed up regularly." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/filamentdb/data</Config>
-  
-  <Config Name="Downloads Directory" Target="/app/public/downloads" Default="/mnt/user/appdata/filamentdb/downloads" Mode="rw" Description="Directory for storing downloadable files like the Android APK. Optional but recommended if you want to download the mobile app." Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/filamentdb/downloads</Config>
+  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/filamentdb/data" Mode="rw" Description="Directory where ALL persistent data is stored, including: individual spool JSON files (in spools/ subdirectory), user accounts (users.json), material profiles and settings (profiles.json). This directory MUST be mapped to persist data across container restarts. Back up regularly!" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/filamentdb/data</Config>
   
   <Config Name="Sync API Key" Target="SYNC_API_KEY" Default="" Mode="" Description="Secret key for securing the sync endpoint. This must match the API key configured on client devices. Generate a secure random string (e.g., 'openssl rand -hex 32'). Leave empty to use default 'dev-key-change-in-production' (NOT recommended for production)." Type="Variable" Display="always" Required="false" Mask="true"/>
   
