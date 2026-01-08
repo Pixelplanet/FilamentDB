@@ -22,12 +22,19 @@ echo "Creating /app/data directory..."
 mkdir -p /app/data
 
 # Set ownership to the modified nextjs user
-echo "Setting ownership: chown -R ${PUID}:${PGID} /app/data"
-chown -R "${PUID}:${PGID}" /app/data
+# First set the directory itself, then recurse into contents
+echo "Setting ownership on /app/data directory: chown ${PUID}:${PGID} /app/data"
+chown "${PUID}:${PGID}" /app/data
+
+echo "Setting ownership recursively: chown -R ${PUID}:${PGID} /app/data/*"
+chown -R "${PUID}:${PGID}" /app/data/* 2>/dev/null || true
 
 # Set world-writable permissions (Unraid compatibility)
-echo "Setting permissions: chmod -R 777 /app/data"
-chmod -R 777 /app/data
+echo "Setting permissions on directory: chmod 777 /app/data"
+chmod 777 /app/data
+
+echo "Setting permissions recursively: chmod -R 777 /app/data/*"
+chmod -R 777 /app/data/* 2>/dev/null || true
 
 # Set UMASK for new file creation
 echo "Setting UMASK to ${UMASK}"
