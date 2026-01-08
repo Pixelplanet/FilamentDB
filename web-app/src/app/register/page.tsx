@@ -4,17 +4,26 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageTransition } from '@/components/PageTransition';
-import { Lock, User, UserPlus } from 'lucide-react';
+import { Lock, User, UserPlus, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [username, setUsername] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { register, loginWithGoogle } = useAuth(); // Add loginWithGoogle
+    const { register, loginWithGoogle, isAuthEnabled } = useAuth();
+
+    // Redirect to home if auth is disabled
+    useEffect(() => {
+        if (isAuthEnabled === false) {
+            router.push('/');
+        }
+    }, [isAuthEnabled, router]);
 
     const handleGoogleCallback = async (response: any) => {
         setIsLoading(true);
@@ -78,6 +87,31 @@ export default function RegisterPage() {
         }
     };
 
+    // Show message if auth is disabled
+    if (isAuthEnabled === false) {
+        return (
+            <PageTransition className="flex flex-col items-center justify-center min-h-[60vh] p-4">
+                <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 space-y-6">
+                    <div className="text-center">
+                        <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertCircle className="w-6 h-6" />
+                        </div>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">User Management Disabled</h1>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm mt-4">
+                            User management is currently disabled on this server. Please contact the administrator to enable it.
+                        </p>
+                        <Link
+                            href="/"
+                            className="mt-6 inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                        >
+                            Go to Home
+                        </Link>
+                    </div>
+                </div>
+            </PageTransition>
+        );
+    }
+
     return (
         <PageTransition className="flex flex-col items-center justify-center min-h-[60vh] p-4">
             <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 space-y-6">
@@ -85,7 +119,7 @@ export default function RegisterPage() {
                     <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
                         <UserPlus className="w-6 h-6" />
                     </div>
-                    <h1 className="text-2xl font-bold">Create Account</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Account</h1>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Join the community</p>
                 </div>
 
@@ -97,7 +131,7 @@ export default function RegisterPage() {
                     )}
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Username</label>
+                        <label className="text-sm font-medium text-gray-900 dark:text-white">Username</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -112,7 +146,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Display Name (Optional)</label>
+                        <label className="text-sm font-medium text-gray-900 dark:text-white">Display Name (Optional)</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -126,7 +160,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Password</label>
+                        <label className="text-sm font-medium text-gray-900 dark:text-white">Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -141,7 +175,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Confirm Password</label>
+                        <label className="text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -176,9 +210,9 @@ export default function RegisterPage() {
 
                 </form>
 
-                <div className="text-center text-sm text-gray-500">
+                <div className="text-center text-sm text-gray-500 dark:text-gray-400">
                     Already have an account?{' '}
-                    <Link href="/login" className="text-blue-600 hover:underline">
+                    <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
                         Sign in
                     </Link>
                 </div>
