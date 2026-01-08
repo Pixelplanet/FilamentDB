@@ -32,10 +32,9 @@ export async function POST(req: NextRequest) {
 
             const response = NextResponse.json({ success: true, user });
 
-            // Set HTTP-only cookie for web
             response.cookies.set('auth_token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: process.env.AUTH_COOKIE_SECURE === 'true',
                 sameSite: 'lax',
                 maxAge: 60 * 60 * 24 * 7 // 7 days
             });

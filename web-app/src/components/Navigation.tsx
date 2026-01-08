@@ -11,11 +11,23 @@ import { Capacitor } from '@capacitor/core';
 import { ThemeToggle } from './ThemeToggle';
 import { SyncStatus } from './SyncStatus';
 import { UserMenu } from './UserMenu';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Navigation({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, isAuthEnabled, loading } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
+
+    // Forced Login Guard (Client-side fallback for Middleware)
+    useEffect(() => {
+        if (!loading && isAuthEnabled && !isAuthenticated) {
+            const isPublicRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
+            if (!isPublicRoute) {
+                router.push('/login');
+            }
+        }
+    }, [isAuthEnabled, isAuthenticated, loading, pathname, router]);
 
     useEffect(() => {
         if (!Capacitor.isNativePlatform()) return;
@@ -146,8 +158,14 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
                 {/* Page Content */}
                 <main className="flex-1 p-4 sm:p-6 lg:p-8">
-                    {children}
+                    {(!isAuthEnabled || isAuthenticated || pathname.startsWith('/login') || pathname.startsWith('/register'))
+                        ? children
+                        : <div className="flex items-center justify-center min-h-[50vh]">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        </div>
+                    }
                 </main>
+
             </div>
         </div>
     );

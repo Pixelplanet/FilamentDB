@@ -12,7 +12,8 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { login, loginWithGoogle } = useAuth();
+    const { login, loginWithGoogle, isGoogleAuthEnabled } = useAuth();
+
 
     const handleGoogleCallback = async (response: any) => {
         setIsLoading(true);
@@ -77,6 +78,7 @@ export default function LoginPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* ... error and inputs ... */}
                     {error && (
                         <div className="p-3 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg">
                             {error}
@@ -84,12 +86,12 @@ export default function LoginPage() {
                     )}
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Username</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 type="text"
-                                className="w-full pl-9 pr-3 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-9 pr-3 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white"
                                 placeholder="Enter username"
                                 value={username}
                                 onChange={e => setUsername(e.target.value)}
@@ -99,12 +101,12 @@ export default function LoginPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Password</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 type="password"
-                                className="w-full pl-9 pr-3 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-9 pr-3 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
@@ -120,18 +122,24 @@ export default function LoginPage() {
                     >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
-                    <div className="relative my-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
-                        </div>
-                    </div>
 
-                    <div id="googleSignInBtn" className="w-full h-[40px] flex justify-center"></div>
+                    {/* Use dynamic runtime config instead of build-time process.env */}
+                    {isGoogleAuthEnabled && (
+                        <>
+                            <div className="relative my-6">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
+                                </div>
+                            </div>
 
+                            <div id="googleSignInBtn" className="w-full h-[40px] flex justify-center"></div>
+                        </>
+                    )}
                 </form>
+
 
                 <div className="text-center text-sm text-gray-500">
                     Don't have an account?{' '}

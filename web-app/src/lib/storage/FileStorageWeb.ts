@@ -30,7 +30,9 @@ export class FileStorageWeb implements ISpoolStorage {
 
     async getSpool(serial: string): Promise<Spool | null> {
         try {
-            const response = await fetch(`${this.baseUrl}/api/spools/${encodeURIComponent(serial)}`);
+            const response = await fetch(`${this.baseUrl}/api/spools/${encodeURIComponent(serial)}`, {
+                credentials: 'include'
+            });
 
             if (response.status === 404) {
                 return null;
@@ -56,7 +58,9 @@ export class FileStorageWeb implements ISpoolStorage {
 
     async listSpools(): Promise<Spool[]> {
         try {
-            const response = await fetch(`${this.baseUrl}/api/spools`);
+            const response = await fetch(`${this.baseUrl}/api/spools`, {
+                credentials: 'include'
+            });
 
             if (!response.ok) {
                 // If we get a 404 on the API route, it usually means the server URL is wrong or points to the static app
@@ -110,7 +114,8 @@ export class FileStorageWeb implements ISpoolStorage {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(spoolToSave)
+                body: JSON.stringify(spoolToSave),
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -134,7 +139,8 @@ export class FileStorageWeb implements ISpoolStorage {
     async deleteSpool(serial: string): Promise<void> {
         try {
             const response = await fetch(`${this.baseUrl}/api/spools/${encodeURIComponent(serial)}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                credentials: 'include'
             });
 
             if (response.status === 404) {
@@ -281,7 +287,9 @@ export class FileStorageWeb implements ISpoolStorage {
 
     async exportAll(): Promise<Blob> {
         try {
-            const response = await fetch(`${this.baseUrl}/api/spools/export`);
+            const response = await fetch(`${this.baseUrl}/api/spools/export`, {
+                credentials: 'include'
+            });
 
             if (!response.ok) {
                 throw new StorageError(
@@ -308,7 +316,8 @@ export class FileStorageWeb implements ISpoolStorage {
 
             const response = await fetch(`${this.baseUrl}/api/spools/import`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include'
             });
 
             if (!response.ok) {
