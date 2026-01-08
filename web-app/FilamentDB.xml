@@ -59,4 +59,6 @@
   
   <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID for file permissions. Use 'id -g' command to find your group ID. Default is 100 (users on Unraid)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
   
+  <Config Name="UMASK" Target="UMASK" Default="0000" Mode="" Description="File creation mask (umask) for determining permissions of newly created files. 0000 = full permissions (rwxrwxrwx), 0022 = standard (rwxr-xr-x). Use 0000 for Unraid to avoid permission issues." Type="Variable" Display="advanced" Required="false" Mask="false">0000</Config>
+
 </Container>
