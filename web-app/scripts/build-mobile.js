@@ -2,6 +2,9 @@
  * Build script for Capacitor/Mobile builds
  * Temporarily moves API routes out of the way since static export doesn't support them.
  * The mobile app uses external server URLs for API calls.
+ * 
+ * CRITICAL: Read .agent/knowledge/project-knowledge.md regarding "Recursive APK Bundling"
+ * Ensure public/downloads/ is empty before running this!
  */
 
 const fs = require('fs');

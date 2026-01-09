@@ -55,6 +55,7 @@ export default function SettingsPage() {
         }
 
         // Attempt to load external config (useful for Android pre-configuration)
+        // See .agent/knowledge/project-knowledge.md for details on config.json usage
         fetch('/config.json')
             .then(res => {
                 if (res.ok) return res.json();

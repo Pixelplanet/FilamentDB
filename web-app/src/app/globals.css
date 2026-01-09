@@ -1,3 +1,7 @@
+/* 
+ * CRITICAL: Before editing dark mode styles, read .agent/knowledge/project-knowledge.md
+ * Rule: Use :root.dark for variables. Explicitly pair text-gray-900 with dark:text-white.
+ */
 @import "tailwindcss";
 
 /* Configure dark mode to use class strategy */
