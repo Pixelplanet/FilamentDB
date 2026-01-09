@@ -360,6 +360,7 @@ Contributions are welcome! Please follow these guidelines:
 
 ### For Maintainers
 - See [RELEASE_GUIDE.md](RELEASE_GUIDE.md) for detailed release procedures
+- See [.agent/knowledge/project-knowledge.md](.agent/knowledge/project-knowledge.md) for critical workarounds and architectural decisions
 - Includes critical file naming constraints and version management
 
 ---
