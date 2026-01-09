@@ -136,7 +136,7 @@ function AddSpoolForm() {
                     <Link href="/inventory" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
-                    <h1 className="text-2xl font-bold">Add New Spool</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Spool</h1>
                 </div>
 
                 {/* Tab Switcher */}

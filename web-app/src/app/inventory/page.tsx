@@ -154,7 +154,7 @@ function InventoryPageContent() {
     return (
         <PageTransition className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-2xl font-bold">Inventory</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Inventory</h1>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                     <Link href="/inventory/add" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-1 transition-colors whitespace-nowrap">
@@ -180,7 +180,7 @@ function InventoryPageContent() {
                             placeholder="Search brand, color..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                         />
                     </div>
                     <div className="relative">
@@ -326,7 +326,7 @@ function InventoryPageContent() {
                                                     </span>
                                                 )}
                                             </div>
-                                            <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : ''}`}>
+                                            <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : 'text-gray-900 dark:text-white'}`}>
                                                 {spool.brand || 'Unknown Brand'}
                                             </h3>
                                             <p className={`text-sm ${isEmpty ? 'text-gray-400 dark:text-gray-700' : 'text-gray-500'}`}>
@@ -404,7 +404,7 @@ function InventoryPageContent() {
                                                     </span>
                                                 )}
                                             </div>
-                                            <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : ''}`}>
+                                            <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : 'text-gray-900 dark:text-white'}`}>
                                                 {group.brand}
                                             </h3>
                                             <p className={`text-sm ${isEmpty ? 'text-gray-400 dark:text-gray-700' : 'text-gray-500'}`}>

@@ -413,7 +413,7 @@ export default function ScanPage() {
 
             {/* Header / Mode Switcher */}
             <div className="w-full flex flex-col gap-4 text-center">
-                <h1 className="text-2xl font-bold">Scanner v2.0</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Scanner v2.0</h1>
                 <div className="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                     <button
                         onClick={() => { setMode('nfc'); reset(); }}
@@ -505,7 +505,7 @@ export default function ScanPage() {
                     <button onClick={() => setLogs([])}>Clear</button>
                 </div>
                 <div className="overflow-y-auto flex flex-col gap-1">
-                    {logs.length === 0 && <span className="text-gray-700 italic">No logs captured...</span>}
+                    {logs.length === 0 && <span className="text-gray-700 dark:text-gray-500 italic">No logs captured...</span>}
                     {logs.map((log, i) => (
                         <div key={i} className={log.includes('ERR') ? 'text-red-400' : log.includes('WRN') ? 'text-yellow-400' : 'text-gray-400'}>
                             {log}

@@ -73,8 +73,8 @@ export default function LoginPage() {
                     <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
                         <LogIn className="w-6 h-6" />
                     </div>
-                    <h1 className="text-2xl font-bold">Welcome Back</h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Sign in to manage your inventory</p>
+                    <h1 className="text-2xl font-bold dark:text-white">Welcome Back</h1>
+                    <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">Sign in to manage your inventory</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

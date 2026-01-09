@@ -109,7 +109,7 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
         opacity: isDragging ? 0.5 : 1,
     };
 
-    const inputClass = `w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 ${readOnly ? 'opacity-70 cursor-not-allowed bg-gray-50 dark:bg-gray-800' : ''}`;
+    const inputClass = `w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-gray-900 dark:text-white ${readOnly ? 'opacity-70 cursor-not-allowed bg-gray-50 dark:bg-gray-800' : ''}`;
 
     // Color Input is special
     if (field.type === 'color') {
@@ -461,14 +461,14 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
                     <span className="font-semibold text-gray-600 dark:text-gray-400">Material Remaining</span>
                     <div className="flex items-baseline gap-2">
                         {readOnly ? (
-                            <span className="text-4xl font-bold">{formData.weightRemaining}g</span>
+                            <span className="text-4xl font-bold text-gray-900 dark:text-white">{formData.weightRemaining}g</span>
                         ) : (
                             <div className="relative group">
                                 <input
                                     type="number"
                                     value={formData.weightRemaining}
                                     onChange={e => handleChange('weightRemaining', parseFloat(e.target.value))}
-                                    className="text-4xl font-bold w-40 border-b-2 border-blue-500 bg-transparent text-right focus:outline-none focus:ring-0 p-0 m-0"
+                                    className="text-4xl font-bold w-40 border-b-2 border-blue-500 bg-transparent text-right focus:outline-none focus:ring-0 p-0 m-0 text-gray-900 dark:text-white"
                                 />
                                 <span className="text-sm text-blue-500 absolute -bottom-5 right-0 opacity-0 group-hover:opacity-100 transition-opacity">Editable</span>
                             </div>
@@ -508,8 +508,8 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className={`p-2 rounded-lg ${formData.visibility === 'public'
-                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                                ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                                 }`}>
                                 {formData.visibility === 'public' ? <Globe className="w-5 h-5" /> : <LockKeyhole className="w-5 h-5" />}
                             </div>
@@ -526,8 +526,8 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
                             type="button"
                             onClick={() => handleChange('visibility', formData.visibility === 'public' ? 'private' : 'public')}
                             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${formData.visibility === 'public'
-                                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                                    : 'bg-gray-600 hover:bg-gray-700 text-white'
+                                ? 'bg-green-600 hover:bg-green-700 text-white'
+                                : 'bg-gray-600 hover:bg-gray-700 text-white'
                                 }`}
                         >
                             {formData.visibility === 'public' ? 'Public' : 'Private'}

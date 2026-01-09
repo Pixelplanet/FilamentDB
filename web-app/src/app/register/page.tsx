@@ -119,8 +119,8 @@ export default function RegisterPage() {
                     <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
                         <UserPlus className="w-6 h-6" />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Account</h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Join the community</p>
+                    <h1 className="text-2xl font-bold dark:text-white">Create Account</h1>
+                    <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">Join the community</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -131,7 +131,7 @@ export default function RegisterPage() {
                     )}
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -146,7 +146,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-white">Display Name (Optional)</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Display Name (Optional)</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -160,7 +160,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input

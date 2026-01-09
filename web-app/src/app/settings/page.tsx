@@ -54,6 +54,27 @@ export default function SettingsPage() {
             setLastSync(new Date(parseInt(savedLastSync)).toLocaleString());
         }
 
+        // Attempt to load external config (useful for Android pre-configuration)
+        fetch('/config.json')
+            .then(res => {
+                if (res.ok) return res.json();
+                return null;
+            })
+            .then(config => {
+                if (config) {
+                    console.log('Loaded external config.json:', config);
+                    if (config.serverUrl && config.serverUrl !== savedUrl) {
+                        setServerUrl(config.serverUrl);
+                        localStorage.setItem('sync_server_url', config.serverUrl);
+                    }
+                    if (config.apiKey && config.apiKey !== savedKey) {
+                        setApiKey(config.apiKey);
+                        localStorage.setItem('sync_api_key', config.apiKey);
+                    }
+                }
+            })
+            .catch(err => console.debug('No external config.json found'));
+
         // Check for updates automatically - ONLY on native platforms (Android/iOS)
         if (Capacitor.isNativePlatform()) {
             checkUpdate();
@@ -344,7 +365,7 @@ export default function SettingsPage() {
 
     return (
         <PageTransition className="max-w-xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold">Settings</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
 
             {/* User Management (Admin Only) - Hide if Auth disabled */}
             {isAuthEnabled && user?.role === 'admin' && (
@@ -353,7 +374,7 @@ export default function SettingsPage() {
                         <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-bold">User Management</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-white">User Management</h3>
                         <p className="text-sm text-gray-500">Manage users, roles and permissions</p>
                     </div>
                     <Link
@@ -376,11 +397,11 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                     {/* Server URL Input */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">Server URL</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Server URL</label>
                         <div className="flex gap-2">
                             <input
                                 placeholder="http://192.168.1.100:3000"
-                                className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white"
                                 value={serverUrl}
                                 onChange={e => setServerUrl(e.target.value)}
                             />
@@ -398,13 +419,13 @@ export default function SettingsPage() {
                     {/* API Key or Login */}
                     {!syncToken ? (
                         <div>
-                            <label className="block text-sm font-medium mb-1">Authentication</label>
+                            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Authentication</label>
                             <div className="flex gap-2">
                                 {/* Toggle between API Key and Login */}
                                 <input
                                     type={showApiKey ? 'text' : 'password'}
                                     placeholder="API Key for System Sync"
-                                    className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm"
+                                    className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm text-gray-900 dark:text-white"
                                     value={apiKey}
                                     onChange={e => setApiKey(e.target.value)}
                                 />
@@ -616,7 +637,7 @@ export default function SettingsPage() {
 
             {/* App Info */}
             <div className="text-center text-gray-400 text-sm space-y-1">
-                <p>Local spools: <span className="font-mono font-bold">{spoolCount}</span></p>
+                <p>Local spools: <span className="font-mono font-bold text-gray-900 dark:text-white">{spoolCount}</span></p>
                 <p>Version: {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.5'} (Hybrid)</p>
                 <p className="text-xs">Device ID: {typeof window !== 'undefined' ? localStorage.getItem('filamentdb_device_id') || 'Not set' : 'Loading...'}</p>
             </div>

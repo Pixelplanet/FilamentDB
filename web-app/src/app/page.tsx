@@ -105,7 +105,7 @@ export default function Home() {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-orange-500">Dashboard</h1>
-          <p className="text-gray-500 mt-2">Overview of your filament inventory.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">Overview of your filament inventory.</p>
         </div>
         <div className="flex items-center gap-2">
           {!((typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform())) && (
