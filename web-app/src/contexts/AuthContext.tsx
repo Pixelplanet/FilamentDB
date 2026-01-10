@@ -31,7 +31,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const fetchConfig = async () => {
         try {
-            const res = await fetch('/api/config/auth');
+            // Determine Base URL
+            let baseUrl = '';
+            // Only check localStorage on client
+            if (typeof window !== 'undefined') {
+                // Check if we are in Capacitor environment or standard web
+                const isNative = window.navigator.userAgent.includes('Capacitor') || window.location.protocol === 'file:';
+                if (isNative) {
+                    const savedUrl = localStorage.getItem('sync_server_url');
+                    if (savedUrl) {
+                        baseUrl = savedUrl.replace(/\/$/, '');
+                    } else {
+                        // If native and no URL set, we can't fetch config.
+                        // Assume disabled or just return.
+                        return;
+                    }
+                }
+            }
+
+            const res = await fetch(`${baseUrl}/api/config/auth`);
             if (res.ok) {
                 const data = await res.json();
                 setIsAuthEnabled(data.enabled);
@@ -41,6 +59,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Failed to fetch auth config', e);
         }
     };
+
+    // Listen for storage events to update config when Server URL changes
+    useEffect(() => {
+        const handleStorageChange = () => {
+            fetchConfig().then(fetchProfile);
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
 
     const fetchProfile = async () => {
         try {
