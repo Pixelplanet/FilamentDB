@@ -21,6 +21,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover", // Required for safe-area-inset to work
 };
 
 export const metadata: Metadata = {
