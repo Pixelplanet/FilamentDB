@@ -92,12 +92,13 @@ export class FileStorageMobile implements ISpoolStorage {
         }
     }
 
-    async saveSpool(spool: Spool): Promise<void> {
+    async saveSpool(spool: Spool, preserveTimestamp: boolean = false): Promise<void> {
         if (!spool.serial) throw new Error('Serial required');
 
         const spoolToSave = {
             ...spool,
-            lastUpdated: Date.now()
+            // Preserve timestamp for synced spools, update for local edits
+            lastUpdated: preserveTimestamp ? (spool.lastUpdated || Date.now()) : Date.now()
         };
 
         const filename = `${this.FOLDER}/${spool.serial}.json`;

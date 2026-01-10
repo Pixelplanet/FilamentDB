@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Tag, Trash2, History } from 'lucide-react';
 import Link from 'next/link';
 import { useSpool, useSpoolMutations } from '@/hooks/useFileStorage';
+import { useSync } from '@/contexts/SyncContext';
 import { Spool } from '@/db';
 import { SpoolForm } from '@/components/SpoolForm';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
@@ -17,7 +18,8 @@ interface Props {
 
 export default function SpoolDetailClient({ initialSpool, serial }: Props) {
     const { spool, loading } = useSpool(serial, initialSpool);
-    const { updateSpool, deleteSpool } = useSpoolMutations();
+    const { queueSync } = useSync();
+    const { updateSpool, deleteSpool } = useSpoolMutations({ onMutation: queueSync });
     const router = useRouter();
 
     // NFC Hook

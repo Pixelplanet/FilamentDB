@@ -6,13 +6,15 @@ import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSpoolMutations } from '@/hooks/useFileStorage';
+import { useSync } from '@/contexts/SyncContext';
 import { getApiUrl } from '@/lib/apiConfig';
 import { SpoolForm } from '@/components/SpoolForm';
 
 function AddSpoolForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { createSpool } = useSpoolMutations();
+    const { queueSync } = useSync();
+    const { createSpool } = useSpoolMutations({ onMutation: queueSync });
     const [activeTab, setActiveTab] = useState<'manual' | 'url'>('manual');
     const [isSubmitting, setIsSubmitting] = useState(false);
 

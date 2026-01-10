@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { syncSpools, SyncResult } from '@/lib/storage/simpleSync';
 
 interface SyncContextType {
@@ -9,6 +8,7 @@ interface SyncContextType {
     lastSyncResult: SyncResult | null;
     errorMessage: string | null;
     performSync: () => Promise<void>;
+    queueSync: () => void; // Debounced sync trigger for automatic syncing
     isConfigured: boolean;
 }
 
@@ -19,15 +19,18 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
     const [lastSyncResult, setLastSyncResult] = useState<SyncResult | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isConfigured, setIsConfigured] = useState(false);
+    const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const AUTOSYNC_INTERVAL_MS = 5 * 60 * 1000;
+    const DEBOUNCE_MS = 2000; // 2 second debounce for automatic sync
 
-    const performSync = async () => {
+    const performSync = useCallback(async () => {
         // Prevent multiple concurrent syncs
         if (status === 'syncing') return;
 
         const serverUrl = localStorage.getItem('sync_server_url');
         const apiKey = localStorage.getItem('sync_api_key');
+        const token = localStorage.getItem('sync_auth_token');
 
         if (!serverUrl) {
             setIsConfigured(false);
@@ -39,7 +42,11 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
         setErrorMessage(null);
 
         try {
-            const result = await syncSpools({ serverUrl, apiKey: apiKey || undefined });
+            const result = await syncSpools({
+                serverUrl,
+                apiKey: apiKey || undefined,
+                token: token || undefined
+            });
             setLastSyncResult(result);
 
             if (result.summary.errorCount > 0) {
@@ -57,7 +64,17 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
             setStatus('error');
             setErrorMessage(e.message);
         }
-    };
+    }, [status]);
+
+    // Debounced sync trigger - call this after every local change
+    const queueSync = useCallback(() => {
+        if (syncTimeoutRef.current) {
+            clearTimeout(syncTimeoutRef.current);
+        }
+        syncTimeoutRef.current = setTimeout(() => {
+            performSync();
+        }, DEBOUNCE_MS);
+    }, [performSync]);
 
     useEffect(() => {
         const updateConfigStatus = () => {
@@ -79,13 +96,14 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
         return () => {
             clearTimeout(timer);
             clearInterval(interval);
+            if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('storage', updateConfigStatus);
         };
-    }, []);
+    }, [performSync]);
 
     return (
-        <SyncContext.Provider value={{ status, lastSyncResult, errorMessage, performSync, isConfigured }}>
+        <SyncContext.Provider value={{ status, lastSyncResult, errorMessage, performSync, queueSync, isConfigured }}>
             {children}
         </SyncContext.Provider>
     );

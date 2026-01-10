@@ -93,7 +93,7 @@ export class FileStorageWeb implements ISpoolStorage {
         }
     }
 
-    async saveSpool(spool: Spool): Promise<void> {
+    async saveSpool(spool: Spool, preserveTimestamp: boolean = false): Promise<void> {
         try {
             // Validate spool data
             if (!spool.serial) {
@@ -103,10 +103,10 @@ export class FileStorageWeb implements ISpoolStorage {
                 );
             }
 
-            // Update lastUpdated timestamp
+            // Update lastUpdated timestamp (or preserve for sync downloads)
             const spoolToSave = {
                 ...spool,
-                lastUpdated: Date.now()
+                lastUpdated: preserveTimestamp ? (spool.lastUpdated || Date.now()) : Date.now()
             };
 
             const response = await fetch(`${this.baseUrl}/api/spools`, {

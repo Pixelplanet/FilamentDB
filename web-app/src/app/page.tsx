@@ -4,10 +4,12 @@ import { Circle, Database, Package, Scale, AlertTriangle, Download } from 'lucid
 import Link from 'next/link';
 import { PageTransition } from '@/components/PageTransition';
 import { useSpools, useSpoolMutations } from '@/hooks/useFileStorage';
+import { useSync } from '@/contexts/SyncContext';
 
 export default function Home() {
   const { spools, loading } = useSpools();
-  const { createSpool } = useSpoolMutations();
+  const { queueSync } = useSync();
+  const { createSpool } = useSpoolMutations({ onMutation: queueSync });
 
   if (loading) return <div className="p-8">Loading Dashboard...</div>;
   if (!spools) return <div className="p-8">No data available</div>;

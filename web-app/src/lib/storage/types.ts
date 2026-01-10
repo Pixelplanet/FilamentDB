@@ -29,9 +29,10 @@ export interface ISpoolStorage {
     /**
      * Save a spool (create or update)
      * @param spool - Spool object to save
+     * @param preserveTimestamp - If true, preserve the spool's lastUpdated field (for sync downloads)
      * @returns void
      */
-    saveSpool(spool: Spool): Promise<void>;
+    saveSpool(spool: Spool, preserveTimestamp?: boolean): Promise<void>;
 
     /**
      * Delete a spool by serial number

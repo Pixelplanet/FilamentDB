@@ -150,7 +150,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
 
                 // Case 2: Remote only -> Download
                 else if (!localSpool && remoteSpool) {
-                    await storage.saveSpool(remoteSpool);
+                    await storage.saveSpool(remoteSpool, true); // preserveTimestamp = true
                     result.downloaded.push(serial);
                     result.summary.downloadCount++;
 
@@ -173,7 +173,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
                         result.summary.uploadCount++;
                     } else if (remoteTime > localTime) {
                         // Remote is newer -> Download (Overwrite Local)
-                        await storage.saveSpool(remoteSpool);
+                        await storage.saveSpool(remoteSpool, true); // preserveTimestamp = true
                         result.downloaded.push(serial);
                         result.summary.downloadCount++;
 

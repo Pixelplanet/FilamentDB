@@ -90,8 +90,10 @@ export function useSpool(serial: string | null, initialData?: Spool | null) {
 
 /**
  * Hook for spool mutations (create, update, delete)
+ * @param options - Optional callbacks
+ * @param options.onMutation - Called after successful create/update/delete (use for auto-sync)
  */
-export function useSpoolMutations() {
+export function useSpoolMutations(options?: { onMutation?: () => void }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -101,6 +103,7 @@ export function useSpoolMutations() {
             setError(null);
             const storage = getStorage();
             await storage.saveSpool(spool);
+            options?.onMutation?.();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -108,7 +111,7 @@ export function useSpoolMutations() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [options?.onMutation]);
 
     const updateSpool = useCallback(async (serial: string, updates: Partial<Spool>) => {
         try {
@@ -125,6 +128,7 @@ export function useSpoolMutations() {
             // Merge updates
             const updated = { ...existing, ...updates };
             await storage.saveSpool(updated);
+            options?.onMutation?.();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -132,7 +136,7 @@ export function useSpoolMutations() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [options?.onMutation]);
 
     const deleteSpool = useCallback(async (serial: string) => {
         try {
@@ -140,6 +144,7 @@ export function useSpoolMutations() {
             setError(null);
             const storage = getStorage();
             await storage.deleteSpool(serial);
+            options?.onMutation?.();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -147,7 +152,7 @@ export function useSpoolMutations() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [options?.onMutation]);
 
     return {
         createSpool,
