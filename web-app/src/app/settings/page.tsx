@@ -84,9 +84,17 @@ export default function SettingsPage() {
 
     const checkUpdate = async () => {
         setCheckingUpdate(true);
-        const info = await checkForAppUpdate();
-        setUpdateInfo(info);
-        setCheckingUpdate(false);
+        try {
+            const info = await checkForAppUpdate();
+            if (info) {
+                setUpdateInfo(info);
+            }
+        } catch (error: any) {
+            console.error('Update check failed:', error);
+            // Silent failure is better here than confusing UI
+        } finally {
+            setCheckingUpdate(false);
+        }
     };
 
     const saveSettings = () => {
