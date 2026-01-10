@@ -68,16 +68,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const fetchProfile = async () => {
         try {
-            const res = await authFetch('/api/auth/me');
-            if (res.ok) {
-                const data = await res.json();
-                if (data.authenticated) {
-                    setUser(data.user);
+            const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
+
+            if (isNative) {
+                // On mobile, check if we have a stored token
+                const storedToken = localStorage.getItem('sync_auth_token');
+                const serverUrl = localStorage.getItem('sync_server_url');
+
+                if (!storedToken || !serverUrl) {
+                    // No token stored = not logged in
+                    setUser(null);
+                    setLoading(false);
+                    return;
+                }
+
+                // Fetch profile from remote server using stored token
+                const res = await fetch(`${serverUrl.replace(/\/$/, '')}/api/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${storedToken}`
+                    }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.authenticated) {
+                        setUser(data.user);
+                    } else {
+                        // Token invalid, clear it
+                        localStorage.removeItem('sync_auth_token');
+                        setUser(null);
+                    }
                 } else {
+                    // Auth failed, clear token
+                    localStorage.removeItem('sync_auth_token');
                     setUser(null);
                 }
             } else {
-                setUser(null);
+                // Web: use cookie-based auth
+                const res = await authFetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.authenticated) {
+                        setUser(data.user);
+                    } else {
+                        setUser(null);
+                    }
+                } else {
+                    setUser(null);
+                }
             }
         } catch (e) {
             console.error('Failed to fetch auth profile', e);
@@ -104,10 +142,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             throw new Error(data.error || 'Login failed');
         }
 
-        setUser(data.user);
+        // Store token for mobile (cookies don't work cross-origin)
+        if (Capacitor.isNativePlatform() && data.token) {
+            localStorage.setItem('sync_auth_token', data.token);
+        }
 
-        // If mobile app is using this context in a WebView, we might need to handle the token.
-        // But for web, cookie is set.
+        setUser(data.user);
         router.push('/');
     };
 
@@ -122,6 +162,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!res.ok) {
             throw new Error(data.error || 'Registration failed');
+        }
+
+        // Store token for mobile
+        if (Capacitor.isNativePlatform() && data.token) {
+            localStorage.setItem('sync_auth_token', data.token);
         }
 
         setUser(data.user);
@@ -146,13 +191,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = async () => {
-        // Implement logout API if needed to clear cookie
-        // For now, just clear state and reload (clearing cookie is needed though)
-        // Let's implement logout API later mostly. 
-        // Or just set user null. But cookie remains.
-        // We need a logout endpoint to clear cookie.
+        // Clear stored token on mobile
+        if (Capacitor.isNativePlatform()) {
+            localStorage.removeItem('sync_auth_token');
+        }
 
-        // Calling logout endpoint
+        // Calling logout endpoint (clears cookie on web)
         try {
             await authFetch('/api/auth/logout', { method: 'POST' });
         } catch { }

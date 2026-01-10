@@ -19,16 +19,25 @@ export function getApiUrl(path: string): string {
 
 export async function authFetch(path: string, options: RequestInit = {}) {
     const url = getApiUrl(path);
+    const isMobile = typeof window !== 'undefined' && Capacitor.isNativePlatform();
 
-    // Merge options
+    // Get stored token for mobile auth
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem('sync_auth_token') : null;
+
+    // Build headers
+    const headers: Record<string, string> = {
+        ...(options.headers as Record<string, string> || {})
+    };
+
+    // Add Bearer token for mobile (cookies don't work cross-origin)
+    if (isMobile && storedToken) {
+        headers['Authorization'] = `Bearer ${storedToken}`;
+    }
+
     const newOptions: RequestInit = {
         ...options,
-        credentials: 'include', // Important for Cookies across origins (Mobile)
-        headers: {
-            ...options.headers,
-            // If we have a token in localStorage (manual handling for mobile fallback?), add it?
-            // Cookies are preferred.
-        }
+        credentials: 'include', // Still include for web (cookie-based auth)
+        headers
     };
 
     return fetch(url, newOptions);
