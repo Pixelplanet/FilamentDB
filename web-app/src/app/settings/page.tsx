@@ -142,6 +142,8 @@ export default function SettingsPage() {
 
                 setShowLoginModal(false);
                 setSyncStatus('✅ Logged in successfully');
+                // Redirect user to home screen after successful remote login
+                window.location.href = '/';
             } else {
                 throw new Error('No token returned from server');
             }
