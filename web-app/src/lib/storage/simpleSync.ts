@@ -103,7 +103,8 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
         try {
             response = await fetch(`${config.serverUrl}/api/spools`, {
                 headers,
-                mode: 'cors', // Explicitly set CORS mode
+                mode: 'cors',
+                credentials: 'include', // Include cookies for cross-origin requests
             });
         } catch (fetchError: any) {
             // Enhanced error for network failures

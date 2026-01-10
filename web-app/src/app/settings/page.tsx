@@ -619,35 +619,46 @@ export default function SettingsPage() {
 
             {/* APK Download / Update Checker - Only show on native platforms */}
             {Capacitor.isNativePlatform() && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-                    <div className={`p-3 rounded-full ${updateInfo?.available
-                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 animate-pulse'
-                        : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                        }`}>
-                        <Download className="w-6 h-6" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className={`p-3 rounded-full ${updateInfo?.available
+                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 animate-pulse'
+                            : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                            }`}>
+                            <Download className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="font-bold">App Update</h3>
+                            <p className="text-sm text-gray-500">
+                                {checkingUpdate ? 'Checking for updates...' : (
+                                    updateInfo?.available
+                                        ? `New version ${updateInfo.latestVersion} available!`
+                                        : `Current version: ${process.env.NEXT_PUBLIC_APP_VERSION || '0.2.10'}`
+                                )}
+                            </p>
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <h3 className="font-bold">App Update</h3>
-                        <p className="text-sm text-gray-500">
-                            {checkingUpdate ? 'Checking for updates...' : (
-                                updateInfo?.available
-                                    ? `New version ${updateInfo.latestVersion} available!`
-                                    : 'App is up to date'
-                            )}
-                        </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => checkUpdate()}
+                            disabled={checkingUpdate}
+                            className="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+                        >
+                            {checkingUpdate ? 'Checking...' : 'Check for Updates'}
+                        </button>
+                        {updateInfo?.available && (
+                            <button
+                                onClick={() => {
+                                    const url = updateInfo.downloadUrl;
+                                    // Use window.location for direct download trigger
+                                    window.location.href = url;
+                                }}
+                                className="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                                Download Update
+                            </button>
+                        )}
                     </div>
-                    <button
-                        onClick={() => {
-                            const url = updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk";
-                            window.open(url, '_system');
-                        }}
-                        className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${updateInfo?.available
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
-                            }`}
-                    >
-                        {updateInfo?.available ? 'Update Now' : 'Download APK'}
-                    </button>
                 </div>
             )}
 

@@ -103,6 +103,11 @@ export async function GET(req: NextRequest) {
             return (b.id || 0) - (a.id || 0);
         });
 
+        // Debug logging
+        if (AUTH_ENABLED) {
+            console.log(`[API /spools GET] User: ${user?.id || 'anonymous'}, Spools returned: ${spools.length}`);
+        }
+
         return NextResponse.json(spools);
     } catch (error) {
         console.error('Error listing spools:', error);
