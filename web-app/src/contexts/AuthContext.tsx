@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/auth/types';
 import { authFetch } from '@/lib/api';
+import { Capacitor } from '@capacitor/core';
 
 interface AuthContextType {
     user: User | null;
@@ -17,6 +18,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isAuthEnabled: boolean;
     isGoogleAuthEnabled: boolean;
+    checkAuthConfig: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -33,19 +35,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             // Determine Base URL
             let baseUrl = '';
-            // Only check localStorage on client
-            if (typeof window !== 'undefined') {
-                // Check if we are in Capacitor environment or standard web
-                const isNative = window.navigator.userAgent.includes('Capacitor') || window.location.protocol === 'file:';
-                if (isNative) {
-                    const savedUrl = localStorage.getItem('sync_server_url');
-                    if (savedUrl) {
-                        baseUrl = savedUrl.replace(/\/$/, '');
-                    } else {
-                        // If native and no URL set, we can't fetch config.
-                        // Assume disabled or just return.
-                        return;
-                    }
+            // Only check server URL on native platforms
+            if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
+                const savedUrl = localStorage.getItem('sync_server_url');
+                if (savedUrl) {
+                    baseUrl = savedUrl.replace(/\/$/, '');
+                } else {
+                    // If native and no URL set, we can't fetch config.
+                    return;
                 }
             }
 
@@ -164,6 +161,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push('/login');
     };
 
+    const checkAuthConfig = async () => {
+        await fetchConfig();
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -173,6 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             register,
             logout,
             refreshProfile: fetchProfile,
+            checkAuthConfig,
             isAuthenticated: !!user,
             isAuthEnabled,
             isGoogleAuthEnabled
