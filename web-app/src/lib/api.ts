@@ -1,6 +1,7 @@
+import { Capacitor } from '@capacitor/core';
 
 export function getApiUrl(path: string): string {
-    const isMobile = process.env.NEXT_PUBLIC_BUILD_MODE === 'mobile';
+    const isMobile = process.env.NEXT_PUBLIC_BUILD_MODE === 'mobile' || (typeof window !== 'undefined' && Capacitor.isNativePlatform());
     if (isMobile) {
         // Run on client side only
         if (typeof window !== 'undefined') {

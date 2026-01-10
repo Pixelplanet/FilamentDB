@@ -22,7 +22,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
     // Forced Login Guard (Client-side fallback for Middleware)
     useEffect(() => {
         if (!loading && isAuthEnabled && !isAuthenticated) {
-            const isPublicRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
+            const isPublicRoute = pathname.startsWith('/login') || pathname.startsWith('/register') || pathname.startsWith('/settings');
             if (!isPublicRoute) {
                 router.push('/login');
             }
