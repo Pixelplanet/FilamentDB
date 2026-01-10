@@ -302,7 +302,9 @@ export default function SettingsPage() {
             const startTime = Date.now();
             const response = await fetch(`${serverUrl}/api/spools`, {
                 method: 'GET',
-                mode: 'cors',
+                // Important: Do not specify 'mode: cors' explicitly if possible, let browser handle it.
+                // But for mobile to external server, we DO need CORS.
+                // 'Accept: application/json' might trigger preflight.
                 headers: {
                     'Accept': 'application/json'
                 }
