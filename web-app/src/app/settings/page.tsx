@@ -20,7 +20,7 @@ export default function SettingsPage() {
     const [showApiKey, setShowApiKey] = useState(false);
 
     // Auth Context
-    const { user, isAuthEnabled } = useAuth(); // Assuming isAuthEnabled is exported from context
+    const { user, isAuthEnabled, checkAuthConfig } = useAuth(); // Assuming isAuthEnabled is exported from context
 
     // New Sync Auth
     const [syncToken, setSyncToken] = useState<string | null>(null);
@@ -330,6 +330,8 @@ export default function SettingsPage() {
                 setSyncStatus(
                     `✅ Server OK! Spools: ${data.length || 0} | Response time: ${duration}ms`
                 );
+                // Trigger auth config check to enable Login button if applicable
+                checkAuthConfig();
             } else {
                 const errorText = await response.text().catch(() => 'No details');
                 console.error(`❌ Server error response:`, errorText);
@@ -634,17 +636,18 @@ export default function SettingsPage() {
                             )}
                         </p>
                     </div>
-                    <a
-                        href={updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk"}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <button
+                        onClick={() => {
+                            const url = updateInfo?.downloadUrl || "https://github.com/Pixelplanet/FilamentDB/releases/latest/download/filamentdb.apk";
+                            window.open(url, '_system');
+                        }}
                         className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${updateInfo?.available
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-green-600 hover:bg-green-700 text-white'
                             }`}
                     >
                         {updateInfo?.available ? 'Update Now' : 'Download APK'}
-                    </a>
+                    </button>
                 </div>
             )}
 
