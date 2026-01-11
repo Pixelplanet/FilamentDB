@@ -650,8 +650,9 @@ export default function SettingsPage() {
                             <button
                                 onClick={() => {
                                     const url = updateInfo.downloadUrl;
-                                    // Use window.location for direct download trigger
-                                    window.location.href = url;
+                                    // Use _system target which Capacitor intercepts to open in system browser
+                                    // This triggers Android's download manager for APK files
+                                    window.open(url, '_system');
                                 }}
                                 className="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                             >
