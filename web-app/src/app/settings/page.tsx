@@ -650,9 +650,18 @@ export default function SettingsPage() {
                             <button
                                 onClick={() => {
                                     const url = updateInfo.downloadUrl;
-                                    // Use _system target which Capacitor intercepts to open in system browser
-                                    // This triggers Android's download manager for APK files
-                                    window.open(url, '_system');
+                                    // Create a hidden anchor and click it - most reliable approach for Android
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.target = '_blank';
+                                    a.rel = 'noopener noreferrer';
+                                    // For APK, also try download attribute
+                                    if (url.endsWith('.apk')) {
+                                        a.download = 'filamentdb.apk';
+                                    }
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
                                 }}
                                 className="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                             >
