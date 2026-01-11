@@ -17,6 +17,8 @@ export const revalidate = false;
 
 // Directory where spool files are stored
 import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
+import { createTombstone } from '@/lib/storage/tombstones';
+import { broadcastSyncEvent } from '@/lib/sync/events';
 
 
 
@@ -125,6 +127,9 @@ export async function PUT(
 
         invalidateSpoolCache();
 
+        // Broadcast sync event
+        broadcastSyncEvent('update', serial);
+
         return NextResponse.json({
             success: true,
             filename: newFilename,
@@ -141,7 +146,7 @@ export async function PUT(
 
 /**
  * DELETE /api/spools/[serial]
- * Delete a specific spool
+ * Delete a specific spool (creates tombstone for sync)
  */
 export async function DELETE(
     req: NextRequest,
@@ -161,16 +166,29 @@ export async function DELETE(
             );
         }
 
-        // Delete the file
+        // Read the spool to get owner info before deletion
         const filePath = path.join(SPOOLS_DIR, filename);
+        const content = await fs.readFile(filePath, 'utf-8');
+        const spool = safeJSONParse<Spool>(content);
 
+        // Get device/user ID from request headers
+        const deletedBy = req.headers.get('x-device-id') || req.headers.get('x-user-id') || undefined;
+
+        // Create tombstone BEFORE deleting the file
+        await createTombstone(SPOOLS_DIR, serial, deletedBy, spool?.ownerId);
+
+        // Delete the actual file
         await fs.unlink(filePath);
 
         invalidateSpoolCache();
 
+        // Broadcast sync event
+        broadcastSyncEvent('delete', serial);
+
         return NextResponse.json({
             success: true,
-            deleted: filename
+            deleted: filename,
+            tombstone: true
         });
     } catch (error) {
         console.error('Error deleting spool:', error);
@@ -180,3 +198,4 @@ export async function DELETE(
         );
     }
 }
+

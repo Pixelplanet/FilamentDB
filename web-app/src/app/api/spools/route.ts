@@ -12,6 +12,8 @@ import { Spool } from '@/db';
 import { getSpoolFileName, prettyJSON, safeJSONParse } from '@/lib/storage/fileUtils';
 import { SPOOLS_DIR, findSpoolFile, invalidateSpoolCache } from '@/lib/storage/server';
 import { getUserFromRequest } from '@/lib/auth/serverUtils';
+import { deleteTombstone } from '@/lib/storage/tombstones';
+import { broadcastSyncEvent } from '@/lib/sync/events';
 
 export const revalidate = false;
 
@@ -194,6 +196,13 @@ export async function POST(req: NextRequest) {
 
         await fs.writeFile(filePath, prettyJSON(spool), 'utf-8');
         invalidateSpoolCache();
+
+        // If this spool was previously deleted (has a tombstone), remove the tombstone
+        await deleteTombstone(SPOOLS_DIR, spool.serial);
+
+        // Broadcast sync event
+        const isNew = !existingFile;
+        broadcastSyncEvent(isNew ? 'create' : 'update', spool.serial);
 
         return NextResponse.json({
             success: true,

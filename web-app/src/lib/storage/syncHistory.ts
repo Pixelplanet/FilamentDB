@@ -4,9 +4,9 @@ import { getStorage } from '@/lib/storage';
 
 export interface SyncChange {
     serial: string;
-    action: 'created' | 'updated';
+    action: 'created' | 'updated' | 'deleted';
     previousSpool?: Spool; // Undefined if created
-    newSpool: Spool;
+    newSpool?: Spool;      // Undefined if deleted
 }
 
 export interface SyncLogEntry {

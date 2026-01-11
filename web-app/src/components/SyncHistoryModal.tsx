@@ -108,12 +108,20 @@ export function SyncHistoryModal({ isOpen, onClose }: SyncHistoryModalProps) {
                                         <div key={i} className="text-xs flex items-center gap-2 text-gray-600 dark:text-gray-400">
                                             {change.action === 'created' ? (
                                                 <span className="text-green-600 font-bold w-12 text-center">CREATE</span>
+                                            ) : change.action === 'deleted' ? (
+                                                <span className="text-red-600 font-bold w-12 text-center">DELETE</span>
                                             ) : (
                                                 <span className="text-orange-600 font-bold w-12 text-center">UPDATE</span>
                                             )}
                                             <span className="font-mono">{change.serial}</span>
                                             <span className="text-gray-400">-</span>
-                                            <span>{change.newSpool.brand} {change.newSpool.type}</span>
+                                            {change.newSpool ? (
+                                                <span>{change.newSpool.brand} {change.newSpool.type}</span>
+                                            ) : change.previousSpool ? (
+                                                <span className="text-gray-500">{change.previousSpool.brand} {change.previousSpool.type}</span>
+                                            ) : (
+                                                <span className="text-gray-400">-</span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

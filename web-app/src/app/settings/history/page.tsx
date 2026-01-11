@@ -131,8 +131,8 @@ export default function SyncHistoryPage() {
                         key={f}
                         onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === f
-                                ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                     >
                         {f === 'server' ? (
@@ -149,8 +149,8 @@ export default function SyncHistoryPage() {
 
             {message && (
                 <div className={`p-4 rounded-lg flex items-center gap-2 ${message.includes('failed') || message.includes('error') || message.includes('cannot')
-                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                        : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                     }`}>
                     {(message.includes('failed') || message.includes('error')) ? <X className="w-5 h-5" /> : <Check className="w-5 h-5" />}
                     {message}
@@ -225,8 +225,8 @@ export default function SyncHistoryPage() {
                                 <div className="p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700 flex flex-wrap gap-4 justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-full ${log.direction === 'incoming'
-                                                ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                                : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                            : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
                                             }`}>
                                             {log.direction === 'incoming' ? <Download className="w-5 h-5" /> : <Upload className="w-5 h-5" />}
                                         </div>
@@ -273,15 +273,25 @@ export default function SyncHistoryPage() {
                                             {log.changes.map((change, i) => (
                                                 <div key={i} className="flex items-center gap-3 text-sm p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                                     <span className={`font-bold text-xs uppercase w-16 text-center py-1 rounded ${change.action === 'created'
-                                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                                        : change.action === 'deleted'
+                                                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                                                             : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                                                         }`}>
                                                         {change.action}
                                                     </span>
                                                     <div className="flex-1">
-                                                        <span className="font-medium">{change.newSpool.brand} {change.newSpool.type}</span>
-                                                        <span className="mx-2 text-gray-300">|</span>
-                                                        <span className="text-gray-500">{change.newSpool.color}</span>
+                                                        {change.newSpool ? (
+                                                            <>
+                                                                <span className="font-medium">{change.newSpool.brand} {change.newSpool.type}</span>
+                                                                <span className="mx-2 text-gray-300">|</span>
+                                                                <span className="text-gray-500">{change.newSpool.color}</span>
+                                                            </>
+                                                        ) : change.previousSpool ? (
+                                                            <span className="text-gray-500">{change.previousSpool.brand} {change.previousSpool.type}</span>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
                                                     </div>
                                                     <span className="font-mono text-xs text-gray-400">{change.serial}</span>
                                                 </div>

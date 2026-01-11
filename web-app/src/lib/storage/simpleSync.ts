@@ -2,12 +2,19 @@
  * Simplified File-Based Sync
  * 
  * Syncs spools between devices using file timestamps
- * Much simpler than delta sync - just compares modification times
+ * Now includes tombstone support for proper deletion sync
  */
 
 import { Spool } from '@/db';
-import { getStorage } from '@/lib/storage';
+import { getStorage, ISpoolStorage } from '@/lib/storage';
 import { addSyncLog, SyncChange } from './syncHistory';
+
+// Tombstone interface matching server
+interface Tombstone {
+    serial: string;
+    deletedAt: number;
+    deletedBy?: string;
+}
 
 export interface SyncConfig {
     serverUrl: string;
@@ -18,12 +25,14 @@ export interface SyncConfig {
 export interface SyncResult {
     uploaded: string[];      // Serials uploaded to server
     downloaded: string[];    // Serials downloaded from server
+    deleted: string[];       // Serials deleted during sync
     conflicts: string[];     // Serials with conflicts (should be rare)
     errors: string[];        // Error messages
     summary: {
         totalProcessed: number;
         uploadCount: number;
         downloadCount: number;
+        deleteCount: number;
         conflictCount: number;
         errorCount: number;
         duration: number;       // milliseconds
@@ -36,28 +45,31 @@ export interface SyncResult {
  * Algorithm:
  * 1. Get list of local spools
  * 2. Get list of remote spools
- * 3. For each spool:
- *    - If only exists locally -> upload
- *    - If only exists remotely -> download
+ * 3. Get list of remote tombstones (deleted spools)
+ * 4. For each spool:
+ *    - If only exists locally AND server has tombstone -> Delete locally (server deleted it)
+ *    - If only exists locally -> Upload (new spool)
+ *    - If only exists remotely AND NOT in local tombstones -> Download
  *    - If exists in both -> compare lastUpdated, sync newer
+ * 5. Push any local deletions to server
  * 
  * @param config Sync configuration
  * @returns Sync result
  */
-// ... (Result types)
-
 export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
     const startTime = Date.now();
 
     const result: SyncResult = {
         uploaded: [],
         downloaded: [],
+        deleted: [],
         conflicts: [],
         errors: [],
         summary: {
             totalProcessed: 0,
             uploadCount: 0,
             downloadCount: 0,
+            deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
             duration: 0
@@ -69,24 +81,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
     try {
         const storage = getStorage();
 
-        // 1. Get local spools
-        console.log('📖 Fetching local spools...');
-        const localSpools = await storage.listSpools();
-        const localMap = new Map(localSpools.map(s => [s.serial, s]));
-
-        // 2. Get remote spools
-        // ... (fetch logic same) ...
-        // To save tokens, assuming fetch logic is preserved or I should write it carefully.
-        // I will copy the fetch logic from original file since I am replacing the WHOLE function roughly?
-        // Actually, replace_file_content replaces a block.
-        // Let's rely on finding lines. Since the function is long, I should probably replace the whole body or key parts.
-        // Let's try to keeping it cleaner by just modifying the loop.
-
-        // WAIT: I cannot use `replace_file_content` easily to inject logic throughout the function without rewriting the whole function body in the tool call.
-        // I will rewrite the `syncSpools` function entirely in the replacement.
-
-        // ... (Fetch remote Logic)
-        console.log('📡 Fetching remote spools...');
+        // Build auth headers
         const headers: Record<string, string> = {
             'Content-Type': 'application/json'
         };
@@ -96,6 +91,13 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
 
+        // 1. Get local spools
+        console.log('📖 Fetching local spools...');
+        const localSpools = await storage.listSpools();
+        const localMap = new Map(localSpools.map(s => [s.serial, s]));
+
+        // 2. Get remote spools
+        console.log('📡 Fetching remote spools...');
         console.log(`🌐 Connecting to: ${config.serverUrl}/api/spools`);
         console.log(`🔑 Auth method: ${config.token ? 'User Token' : config.apiKey ? 'API Key' : 'None'}`);
 
@@ -104,10 +106,9 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             response = await fetch(`${config.serverUrl}/api/spools`, {
                 headers,
                 mode: 'cors',
-                credentials: 'include', // Include cookies for cross-origin requests
+                credentials: 'include',
             });
         } catch (fetchError: any) {
-            // Enhanced error for network failures
             const errorDetails = {
                 message: fetchError.message,
                 name: fetchError.name,
@@ -128,10 +129,39 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
         const remoteSpools: Spool[] = await response.json();
         const remoteMap = new Map(remoteSpools.map(s => [s.serial, s]));
 
-        // 3. Find unique
+        // 3. Get remote tombstones (deleted spools markers)
+        console.log('🪦 Fetching remote tombstones...');
+        let remoteTombstones: Tombstone[] = [];
+        try {
+            const tombstoneResponse = await fetch(`${config.serverUrl}/api/sync/tombstones`, {
+                headers,
+                mode: 'cors',
+                credentials: 'include',
+            });
+            if (tombstoneResponse.ok) {
+                const data = await tombstoneResponse.json();
+                remoteTombstones = data.tombstones || [];
+                console.log(`🪦 Found ${remoteTombstones.length} remote tombstones`);
+            }
+        } catch (e) {
+            console.warn('⚠️ Could not fetch tombstones (server may be older version):', e);
+        }
+        const remoteTombstoneMap = new Map(remoteTombstones.map(t => [t.serial, t]));
+
+        // 4. Get local tombstones (if storage supports it)
+        let localTombstones: Tombstone[] = [];
+        if ('getLocalTombstones' in storage) {
+            localTombstones = await (storage as ISpoolStorage & { getLocalTombstones: () => Promise<Tombstone[]> }).getLocalTombstones();
+            console.log(`🪦 Found ${localTombstones.length} local tombstones`);
+        }
+        const localTombstoneMap = new Map(localTombstones.map(t => [t.serial, t]));
+
+        // 5. Merge and process all serials
         const allSerials = new Set([
             ...Array.from(localMap.keys()),
-            ...Array.from(remoteMap.keys())
+            ...Array.from(remoteMap.keys()),
+            ...Array.from(remoteTombstoneMap.keys()),
+            ...Array.from(localTombstoneMap.keys())
         ]);
 
         console.log(`Processing ${allSerials.size} unique spools...`);
@@ -140,16 +170,78 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             try {
                 const localSpool = localMap.get(serial);
                 const remoteSpool = remoteMap.get(serial);
+                const remoteTombstone = remoteTombstoneMap.get(serial);
+                const localTombstone = localTombstoneMap.get(serial);
 
-                // Case 1: Local only -> Upload
+                // Case 1: Server has tombstone for this spool
+                if (remoteTombstone) {
+                    if (localSpool) {
+                        // Local spool exists but server deleted it
+                        const localTime = localSpool.lastUpdated || 0;
+                        if (remoteTombstone.deletedAt > localTime) {
+                            // Server deletion is newer - delete locally
+                            console.log(`🗑️ Server deleted ${serial}, removing locally...`);
+                            await storage.deleteSpool(serial);
+                            result.deleted.push(serial);
+                            result.summary.deleteCount++;
+                            changes.push({
+                                serial,
+                                action: 'deleted',
+                                previousSpool: localSpool
+                            });
+                        } else {
+                            // Local edit is newer - re-upload to server
+                            console.log(`📤 Local spool ${serial} is newer than server deletion, re-uploading...`);
+                            await uploadSpool(config, localSpool);
+                            result.uploaded.push(serial);
+                            result.summary.uploadCount++;
+                        }
+                    }
+                    // If no local spool and server has tombstone, nothing to do
+                    result.summary.totalProcessed++;
+                    continue;
+                }
+
+                // Case 2: We have a local tombstone (we deleted it locally)
+                if (localTombstone && !localSpool) {
+                    if (remoteSpool) {
+                        // Remote still has it, we deleted it locally
+                        const remoteTime = remoteSpool.lastUpdated || 0;
+                        if (localTombstone.deletedAt > remoteTime) {
+                            // Our deletion is newer - push delete to server
+                            console.log(`📤 Pushing local delete of ${serial} to server...`);
+                            await deleteSpool(config, serial);
+                            result.deleted.push(serial);
+                            result.summary.deleteCount++;
+                        } else {
+                            // Remote update is newer than our deletion - restore locally
+                            console.log(`📥 Remote ${serial} updated after our deletion, restoring...`);
+                            await storage.saveSpool(remoteSpool, true);
+                            result.downloaded.push(serial);
+                            result.summary.downloadCount++;
+                            changes.push({
+                                serial,
+                                action: 'created',
+                                newSpool: remoteSpool
+                            });
+                            // Clear local tombstone
+                            if ('deleteLocalTombstone' in storage) {
+                                await (storage as ISpoolStorage & { deleteLocalTombstone: (s: string) => Promise<void> }).deleteLocalTombstone(serial);
+                            }
+                        }
+                    }
+                    result.summary.totalProcessed++;
+                    continue;
+                }
+
+                // Case 3: Local only (no tombstones involved) -> Upload
                 if (localSpool && !remoteSpool) {
                     await uploadSpool(config, localSpool);
                     result.uploaded.push(serial);
                     result.summary.uploadCount++;
-                    // No local change to log for history (it's outgoing)
                 }
 
-                // Case 2: Remote only -> Download
+                // Case 4: Remote only (no tombstones involved) -> Download
                 else if (!localSpool && remoteSpool) {
                     await storage.saveSpool(remoteSpool, true); // preserveTimestamp = true
                     result.downloaded.push(serial);
@@ -162,7 +254,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
                     });
                 }
 
-                // Case 3: Both exist
+                // Case 5: Both exist -> Compare timestamps
                 else if (localSpool && remoteSpool) {
                     const localTime = localSpool.lastUpdated || 0;
                     const remoteTime = remoteSpool.lastUpdated || 0;
@@ -199,7 +291,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
         result.summary.duration = Date.now() - startTime;
 
         // Save History
-        if (changes.length > 0 || result.summary.uploadCount > 0) {
+        if (changes.length > 0 || result.summary.uploadCount > 0 || result.summary.deleteCount > 0) {
             await addSyncLog({
                 timestamp: Date.now(),
                 direction: 'incoming', // Mixed, but primary concern is incoming changes
@@ -251,6 +343,30 @@ async function uploadSpool(config: SyncConfig, spool: Spool): Promise<void> {
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Upload failed' }));
+        throw new Error(error.error || `HTTP ${response.status}`);
+    }
+}
+
+/**
+ * Delete a spool from the server
+ */
+async function deleteSpool(config: SyncConfig, serial: string): Promise<void> {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+    };
+    if (config.token) {
+        headers['Authorization'] = `Bearer ${config.token}`;
+    } else if (config.apiKey) {
+        headers['Authorization'] = `Bearer ${config.apiKey}`;
+    }
+
+    const response = await fetch(`${config.serverUrl}/api/spools/${serial}`, {
+        method: 'DELETE',
+        headers
+    });
+
+    if (!response.ok && response.status !== 404) {
+        const error = await response.json().catch(() => ({ error: 'Delete failed' }));
         throw new Error(error.error || `HTTP ${response.status}`);
     }
 }
@@ -325,12 +441,14 @@ export async function pushAllSpools(config: SyncConfig): Promise<SyncResult> {
     const result: SyncResult = {
         uploaded: [],
         downloaded: [],
+        deleted: [],
         conflicts: [],
         errors: [],
         summary: {
             totalProcessed: 0,
             uploadCount: 0,
             downloadCount: 0,
+            deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
             duration: 0
@@ -376,12 +494,14 @@ export async function pullAllSpools(config: SyncConfig): Promise<SyncResult> {
     const result: SyncResult = {
         uploaded: [],
         downloaded: [],
+        deleted: [],
         conflicts: [],
         errors: [],
         summary: {
             totalProcessed: 0,
             uploadCount: 0,
             downloadCount: 0,
+            deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
             duration: 0
