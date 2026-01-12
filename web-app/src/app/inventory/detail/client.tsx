@@ -151,6 +151,8 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
         const success = await updateSpool(serial, data);
         if (!success) {
             alert("Failed to update spool.");
+        } else {
+            alert("Saved!");
         }
     };
 

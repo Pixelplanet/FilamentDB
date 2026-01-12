@@ -113,28 +113,52 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
 
     // Color Input is special
     if (field.type === 'color') {
+        const PRESET_COLORS = [
+            '#000000', '#FFFFFF', '#808080', '#FF0000', '#0000FF', '#00FF00',
+            '#FFFF00', '#FFA500', '#800080', '#FFC0CB', '#A52A2A', '#00FFFF'
+        ];
+
         return (
-            <div ref={setNodeRef} style={style} className={`bg-white dark:bg-gray-800 p-1 relative group ${field.span === 2 ? 'col-span-1 md:col-span-2' : ''}`}>
+            <div ref={setNodeRef} style={style} className={`bg-white dark:bg-gray-800 p-3 relative group ${field.span === 2 ? 'col-span-1 md:col-span-2' : ''} border border-gray-200 dark:border-gray-700 rounded-xl`}>
                 {!readOnly && (
                     <div {...attributes} {...listeners} className="absolute -top-2 -right-2 p-1 bg-gray-100 dark:bg-gray-700 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-sm border border-gray-200 dark:border-gray-600">
                         <GripHorizontal className="w-3 h-3 text-gray-500" />
                     </div>
                 )}
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{field.label}</label>
-                <div className="flex gap-2">
-                    <input
-                        type="color"
-                        disabled={readOnly}
-                        className="h-10 w-12 rounded cursor-pointer border p-1 bg-white dark:bg-gray-900 disabled:cursor-not-allowed"
-                        value={value || '#000000'}
-                        onChange={e => onChange(field.id, e.target.value)}
-                    />
-                    <input
-                        disabled={readOnly}
-                        className={`flex-1 ${inputClass} font-mono uppercase`}
-                        value={value || ''}
-                        onChange={e => onChange(field.id, e.target.value)}
-                    />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{field.label}</label>
+                <div className="flex flex-col gap-3">
+                    <div className="flex gap-2">
+                        <div className="w-12 h-12 rounded-lg border shadow-sm shrink-0" style={{ backgroundColor: value || '#000000' }} />
+                        <input
+                            disabled={readOnly}
+                            className={`flex-1 ${inputClass} font-mono uppercase`}
+                            value={value || ''}
+                            onChange={e => onChange(field.id, e.target.value)}
+                            placeholder="#000000"
+                        />
+                        <input
+                            type="color"
+                            disabled={readOnly}
+                            className="h-10 w-12 rounded cursor-pointer border p-0.5 bg-white dark:bg-gray-900 disabled:cursor-not-allowed self-center"
+                            value={value || '#000000'}
+                            onChange={e => onChange(field.id, e.target.value)}
+                        />
+                    </div>
+
+                    {!readOnly && (
+                        <div className="flex flex-wrap gap-2">
+                            {PRESET_COLORS.map(c => (
+                                <button
+                                    key={c}
+                                    type="button"
+                                    onClick={() => onChange(field.id, c)}
+                                    className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm hover:scale-110 transition-transform focus:ring-2 ring-offset-1 dark:ring-offset-gray-900 ring-blue-500"
+                                    style={{ backgroundColor: c }}
+                                    title={c}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         );

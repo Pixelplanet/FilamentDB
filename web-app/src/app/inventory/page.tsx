@@ -10,6 +10,8 @@ import { useSpools } from '@/hooks/useFileStorage';
 import { getStorage } from '@/lib/storage';
 import { parseOpenPrintTagBin } from '@/lib/openPrintTagImporter';
 
+import { SpoolCard } from '@/components/SpoolCard';
+
 export default function InventoryPage() {
     return (
         <Suspense fallback={<div className="p-8 text-center">Loading Inventory...</div>}>
@@ -304,68 +306,7 @@ function InventoryPageContent() {
                         const isEmpty = spool.weightRemaining <= 0;
                         return (
                             <StaggerItem key={spool.serial}>
-                                <Link
-                                    href={`/inventory/detail?serial=${spool.serial}`}
-                                    className={`rounded-xl p-4 shadow-sm border flex flex-col gap-3 transition-all block ${isEmpty
-                                        ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800 opacity-60 hover:opacity-80'
-                                        : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700'
-                                        }`}
-                                >
-                                    <div className="flex items-start justify-between">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${isEmpty
-                                                    ? 'text-gray-500 dark:text-gray-600 bg-gray-200 dark:bg-gray-800'
-                                                    : 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
-                                                    }`}>
-                                                    {spool.type}
-                                                </span>
-                                                {isEmpty && (
-                                                    <span className="text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
-                                                        EMPTY
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <h3 className={`font-semibold text-lg mt-1 ${isEmpty ? 'text-gray-500 dark:text-gray-600' : 'text-gray-900 dark:text-white'}`}>
-                                                {spool.brand || 'Unknown Brand'}
-                                            </h3>
-                                            <p className={`text-sm ${isEmpty ? 'text-gray-400 dark:text-gray-700' : 'text-gray-500'}`}>
-                                                {spool.color || 'No Color'}
-                                            </p>
-                                        </div>
-                                        <div
-                                            className={`w-6 h-6 rounded-full border shadow-inner ${isEmpty ? 'opacity-50' : ''}`}
-                                            style={{
-                                                backgroundColor: spool.colorHex || '#ccc',
-                                                borderColor: isEmpty ? '#d1d5db' : '#e5e7eb'
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="mt-auto">
-                                        <div className="flex justify-between text-sm mb-1">
-                                            <span className={isEmpty ? 'text-gray-400' : ''}>Remaining</span>
-                                            <span className={`font-mono ${isEmpty ? 'text-gray-400' : ''}`}>
-                                                {spool.weightRemaining}g / {spool.weightTotal}g
-                                            </span>
-                                        </div>
-                                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full rounded-full transition-all ${isEmpty
-                                                    ? 'bg-gray-300 dark:bg-gray-600'
-                                                    : spool.weightRemaining < 200
-                                                        ? 'bg-orange-500'
-                                                        : 'bg-blue-500'
-                                                    }`}
-                                                style={{ width: `${Math.min(100, (spool.weightRemaining / spool.weightTotal) * 100)}%` }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className={`text-xs font-mono truncate ${isEmpty ? 'text-gray-400' : 'text-gray-400'}`}>
-                                        ID: {spool.serial}
-                                    </div>
-                                </Link>
+                                <SpoolCard spool={spool} isEmpty={isEmpty} />
                             </StaggerItem>
                         );
                     })
