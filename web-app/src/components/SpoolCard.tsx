@@ -147,7 +147,18 @@ export function SpoolCard({ spool, isEmpty }: Props) {
 
             {/* Context Menu Modal */}
             {showMenu && (
-                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowMenu(false)}>
+                <div
+                    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowMenu(false);
+                    }}
+                    onTouchEnd={(e) => {
+                        e.preventDefault(); // Prevent ghost clicks passing through
+                        e.stopPropagation();
+                        setShowMenu(false);
+                    }}
+                >
                     <div
                         className="w-full sm:w-80 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl p-4 shadow-2xl animate-in slide-in-from-bottom"
                         onClick={e => e.stopPropagation()}
