@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ShieldCheck } from 'lucide-react';
 import { checkForAppUpdate, UpdateInfo } from '@/lib/updates';
 import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
 export default function SettingsPage() {
     const [serverUrl, setServerUrl] = useState('');
@@ -648,20 +649,15 @@ export default function SettingsPage() {
                         </button>
                         {updateInfo?.available && (
                             <button
-                                onClick={() => {
+                                onClick={async () => {
                                     const url = updateInfo.downloadUrl;
-                                    // Create a hidden anchor and click it - most reliable approach for Android
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.target = '_blank';
-                                    a.rel = 'noopener noreferrer';
-                                    // For APK, also try download attribute
-                                    if (url.endsWith('.apk')) {
-                                        a.download = 'filamentdb.apk';
+                                    try {
+                                        await Browser.open({ url, windowName: '_system' });
+                                    } catch (e) {
+                                        console.error('Failed to open browser:', e);
+                                        // Fallback for web or if plugin fails
+                                        window.open(url, '_blank');
                                     }
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    document.body.removeChild(a);
                                 }}
                                 className="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                             >

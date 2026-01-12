@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SOURCE = path.join(__dirname, '..', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'filamentdb.apk');
-const DEST_DIR = path.join(__dirname, '..', '..');
+const DEST_DIR = path.join(__dirname, '..', 'public', 'downloads');
 const DEST = path.join(DEST_DIR, 'filamentdb.apk');
 
 if (!fs.existsSync(SOURCE)) {

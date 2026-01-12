@@ -21,6 +21,7 @@ When a major feature is completed or a release is requested, follow these steps 
     *   **Check Mobile Impact**: If ANY client-side code (src/app, src/components, src/lib) changed, you MUST rebuild the Android APK.
     *   Run `npm run build` (PWA).
     *   Run `npm run cap:build` -> `cd android && ./gradlew assembleDebug` (Android).
+    *   Run `npm run copy:apk` to copy the new APK to `public/downloads`.
     *   Ensure no secrets or test data are baked into the build.
 
 4.  **Version & Release**:
@@ -29,6 +30,7 @@ When a major feature is completed or a release is requested, follow these steps 
     *   Push `main` branch AND tags.
     *   Create GitHub Release (`gh release create`) with APK attached:
         ```bash
+        cd web-app
         gh release create v1.x.x "public/downloads/filamentdb.apk#Android APK" --title "v1.x.x - Title" --notes "Notes..."
         ```
     *   **Docker Hub Release**:

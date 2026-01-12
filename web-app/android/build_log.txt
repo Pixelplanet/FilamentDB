@@ -1,0 +1,186 @@
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :clean
+> Task :app:clean
+> Task :capacitor-android:clean
+> Task :capacitor-app:clean
+> Task :capacitor-browser:clean
+> Task :capacitor-camera:clean
+> Task :capacitor-cordova-android-plugins:clean
+> Task :capacitor-filesystem:clean
+> Task :capgo-capacitor-nfc:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:mergeReleaseJniLibFolders
+> Task :capacitor-android:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-app:preBuild UP-TO-DATE
+> Task :capacitor-app:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:copyReleaseJniLibsProjectOnly
+> Task :capacitor-app:mergeReleaseJniLibFolders
+> Task :capacitor-app:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-browser:preBuild UP-TO-DATE
+> Task :capacitor-browser:preReleaseBuild UP-TO-DATE
+> Task :capacitor-app:copyReleaseJniLibsProjectOnly
+> Task :capacitor-browser:mergeReleaseJniLibFolders
+> Task :capacitor-browser:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-browser:copyReleaseJniLibsProjectOnly
+> Task :capacitor-camera:preReleaseBuild UP-TO-DATE
+> Task :capacitor-camera:mergeReleaseJniLibFolders
+> Task :capacitor-camera:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preReleaseBuild UP-TO-DATE
+> Task :capacitor-camera:copyReleaseJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeReleaseJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-filesystem:preBuild UP-TO-DATE
+> Task :capacitor-filesystem:preReleaseBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:copyReleaseJniLibsProjectOnly
+> Task :capacitor-filesystem:mergeReleaseJniLibFolders
+> Task :capacitor-filesystem:mergeReleaseNativeLibs NO-SOURCE
+> Task :capgo-capacitor-nfc:preBuild UP-TO-DATE
+> Task :capgo-capacitor-nfc:preReleaseBuild UP-TO-DATE
+> Task :capacitor-filesystem:copyReleaseJniLibsProjectOnly
+> Task :capgo-capacitor-nfc:mergeReleaseJniLibFolders
+> Task :capgo-capacitor-nfc:mergeReleaseNativeLibs NO-SOURCE
+> Task :capgo-capacitor-nfc:copyReleaseJniLibsProjectOnly
+> Task :capacitor-android:generateReleaseResValues
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :capacitor-android:generateReleaseResources
+> Task :capacitor-android:packageReleaseResources
+> Task :capacitor-android:processReleaseNavigationResources
+> Task :capacitor-android:javaPreCompileRelease
+> Task :capacitor-app:generateReleaseResValues
+> Task :capacitor-android:parseReleaseLocalResources
+> Task :capacitor-app:generateReleaseResources
+> Task :capacitor-android:generateReleaseRFile
+> Task :capacitor-app:packageReleaseResources
+
+> Task :capacitor-android:compileReleaseJavaWithJavac
+Hinweis: Einige Eingabedateien verwenden nicht geprüfte oder unsichere Vorgänge.
+Hinweis: Wiederholen Sie die Kompilierung mit -Xlint:unchecked, um Details zu erhalten.
+
+> Task :capacitor-app:processReleaseNavigationResources
+> Task :capacitor-app:javaPreCompileRelease
+> Task :capacitor-browser:generateReleaseResValues
+> Task :capacitor-app:parseReleaseLocalResources
+> Task :capacitor-browser:generateReleaseResources
+> Task :capacitor-app:generateReleaseRFile
+> Task :capacitor-browser:packageReleaseResources
+> Task :capacitor-browser:processReleaseNavigationResources
+> Task :capacitor-android:bundleLibCompileToJarRelease
+> Task :capacitor-browser:javaPreCompileRelease
+> Task :capacitor-browser:parseReleaseLocalResources
+> Task :capacitor-app:compileReleaseJavaWithJavac
+> Task :capacitor-camera:generateReleaseResValues
+> Task :capacitor-app:bundleLibRuntimeToDirRelease
+> Task :capacitor-browser:generateReleaseRFile
+> Task :capacitor-camera:generateReleaseResources
+> Task :capacitor-browser:compileReleaseJavaWithJavac
+> Task :capacitor-camera:packageReleaseResources
+> Task :capacitor-camera:processReleaseNavigationResources
+> Task :capacitor-browser:bundleLibRuntimeToDirRelease
+> Task :capacitor-filesystem:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :capacitor-camera:javaPreCompileRelease
+> Task :capacitor-filesystem:generateReleaseResValues
+> Task :capacitor-camera:parseReleaseLocalResources
+> Task :capacitor-camera:generateReleaseRFile
+> Task :capacitor-filesystem:generateReleaseResources
+
+> Task :capacitor-camera:compileReleaseJavaWithJavac
+Hinweis: C:\Projects\FilamentDB\web-app\node_modules\@capacitor\camera\android\src\main\java\com\capacitorjs\plugins\camera\CameraBottomSheetDialogFragment.java verwendet nicht geprüfte oder unsichere Vorgänge.
+Hinweis: Wiederholen Sie die Kompilierung mit -Xlint:unchecked, um Details zu erhalten.
+
+> Task :capacitor-camera:bundleLibRuntimeToDirRelease
+> Task :capacitor-filesystem:packageReleaseResources
+> Task :capacitor-filesystem:processReleaseNavigationResources
+> Task :capacitor-filesystem:javaPreCompileRelease
+> Task :capgo-capacitor-nfc:generateReleaseResValues
+> Task :capacitor-filesystem:parseReleaseLocalResources
+> Task :capgo-capacitor-nfc:generateReleaseResources
+> Task :capacitor-filesystem:generateReleaseRFile
+> Task :capgo-capacitor-nfc:packageReleaseResources
+> Task :capgo-capacitor-nfc:processReleaseNavigationResources
+> Task :capgo-capacitor-nfc:javaPreCompileRelease
+> Task :capgo-capacitor-nfc:parseReleaseLocalResources
+> Task :capacitor-cordova-android-plugins:generateReleaseResValues
+> Task :capacitor-cordova-android-plugins:generateReleaseResources
+> Task :capgo-capacitor-nfc:generateReleaseRFile
+> Task :capacitor-cordova-android-plugins:packageReleaseResources
+> Task :capacitor-android:bundleLibRuntimeToDirRelease
+> Task :capgo-capacitor-nfc:compileReleaseJavaWithJavac
+> Task :capacitor-cordova-android-plugins:processReleaseNavigationResources
+> Task :capgo-capacitor-nfc:bundleLibRuntimeToDirRelease
+> Task :capacitor-cordova-android-plugins:javaPreCompileRelease
+> Task :capacitor-cordova-android-plugins:parseReleaseLocalResources
+> Task :app:javaPreCompileRelease
+> Task :capacitor-android:writeReleaseAarMetadata
+> Task :capacitor-cordova-android-plugins:writeReleaseAarMetadata
+> Task :capacitor-app:writeReleaseAarMetadata
+> Task :capacitor-filesystem:writeReleaseAarMetadata
+> Task :capacitor-browser:writeReleaseAarMetadata
+> Task :capgo-capacitor-nfc:writeReleaseAarMetadata
+> Task :capacitor-camera:writeReleaseAarMetadata
+> Task :capacitor-cordova-android-plugins:generateReleaseRFile
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseNavigationResources
+> Task :capacitor-cordova-android-plugins:compileReleaseJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirRelease
+> Task :app:compileReleaseNavigationResources
+> Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata FAILED
+> Task :app:mapReleaseSourceSetPaths
+
+> Task :capacitor-filesystem:compileReleaseKotlin
+w: file:///C:/Projects/FilamentDB/web-app/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemPlugin.kt:335:31 'fun downloadFile(call: PluginCall): Unit' is deprecated. Use @capacitor/file-transfer plugin instead.
+w: file:///C:/Projects/FilamentDB/web-app/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/LegacyFilesystemImplementation.kt:66:29 Java type mismatch: inferred type is 'String?', but 'String' was expected.
+
+[Incubating] Problems report is available at: file:///C:/Projects/FilamentDB/web-app/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:checkReleaseAarMetadata'.
+> A failure occurred while executing com.android.build.gradle.internal.tasks.CheckAarMetadataWorkAction
+   > An issue was found when checking AAR metadata:
+     
+       1.  Dependency 'androidx.browser:browser:1.9.0' requires libraries and applications that
+           depend on it to compile against version 36 or later of the
+           Android APIs.
+     
+           :app is currently compiled against android-35.
+     
+           Recommended action: Update this project to use a newer compileSdk
+           of at least 36, for example 36.
+     
+           Note that updating a library or application's compileSdk (which
+           allows newer APIs to be used) can be done separately from updating
+           targetSdk (which opts the app in to new runtime behavior) and
+           minSdk (which determines which devices the app can be installed
+           on).
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 8s
+100 actionable tasks: 100 executed
