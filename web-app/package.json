@@ -1,6 +1,6 @@
 {
   "name": "web-app",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -25,6 +25,7 @@
     "@capacitor/core": "^8.0.0",
     "@capacitor/filesystem": "^8.0.0",
     "@capacitor/ios": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
     "@capgo/capacitor-nfc": "^8.0.5",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

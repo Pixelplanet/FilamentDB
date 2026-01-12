@@ -13,6 +13,7 @@ dependencies {
     implementation project(':capacitor-browser')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-filesystem')
+    implementation project(':capacitor-status-bar')
     implementation project(':capgo-capacitor-nfc')
 
 }
