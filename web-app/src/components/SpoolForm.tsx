@@ -10,6 +10,7 @@ import { FINISH_OPTIONS } from '@/app/inventory/constants';
 import { CollapsibleSection } from './CollapsibleSection';
 import { useMaterialProfiles } from '@/hooks/useMaterialProfiles';
 import { useAuth } from '@/contexts/AuthContext';
+import { Capacitor } from '@capacitor/core';
 
 // DnD Kit Imports
 import {
@@ -143,7 +144,9 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                                     onClick={e => e.stopPropagation()}
                                 >
                                     <h3 className="text-lg font-bold mb-4 text-center">Pick Color</h3>
-                                    <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} />
+                                    <div className="custom-color-picker">
+                                        <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} style={{ width: '100%', height: '240px' }} />
+                                    </div>
                                     <div className="mt-4 flex justify-end">
                                         <button
                                             onClick={() => setShowPicker(false)}
@@ -258,9 +261,12 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
     const [readOnly, setReadOnly] = useState(defaultReadOnly);
     const [sectionOrders, setSectionOrders] = useState<Record<string, string[]>>({});
     const [sectionColumns, setSectionColumns] = useState<Record<string, number>>({});
+    const [isNative, setIsNative] = useState(false);
 
     // Init Logic
     useEffect(() => {
+        setIsNative(Capacitor.isNativePlatform());
+
         const loadedOrders: Record<string, string[]> = {};
         const loadedCols: Record<string, number> = {};
 
@@ -361,7 +367,7 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
     };
 
     const renderColumnControl = (sectionId: string) => {
-        if (readOnly) return null;
+        if (readOnly || isNative) return null;
         const cols = sectionColumns[sectionId] || (sectionId === 'basic-info' ? 2 : 3);
 
         return (
@@ -440,7 +446,7 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
             >
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, id)}>
                     <SortableContext items={displayFields.map(f => f.id)} strategy={rectSortingStrategy}>
-                        <div className={`grid grid-cols-1 ${GRID_COLS[cols]} gap-4 transition-all duration-300`}>
+                        <div className={`grid grid-cols-1 ${isNative ? 'grid-cols-1' : GRID_COLS[cols]} gap-4 transition-all duration-300`}>
                             {displayFields.map(field => (
                                 <SortableField
                                     key={field.id}
