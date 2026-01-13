@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Spool } from '@/db';
 import { Tag, Scale, Thermometer, Sparkles, Ruler, Save, Lock, Unlock, GripHorizontal, ChevronUp, ChevronDown, Columns, Globe, LockKeyhole } from 'lucide-react';
 import { MaterialTagsSelector } from './MaterialTagsSelector';
@@ -115,11 +116,6 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
     // Color Input is special
     // Color Input is special
     if (field.type === 'color') {
-        const PRESET_COLORS = [
-            '#000000', '#FFFFFF', '#808080', '#FF0000', '#0000FF', '#00FF00',
-            '#FFFF00', '#FFA500', '#800080', '#FFC0CB', '#A52A2A', '#00FFFF'
-        ];
-
         const [showPicker, setShowPicker] = useState(false);
 
         return (
@@ -140,14 +136,25 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                             style={{ backgroundColor: value || '#000000' }}
                             title="Click to pick color"
                         />
-                        {showPicker && (
-                            <div className="absolute top-14 left-0 z-50 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 animate-in fade-in zoom-in-95 w-[230px]">
+                        {showPicker && createPortal(
+                            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowPicker(false)}>
                                 <div
-                                    className="fixed inset-0 z-[-1]"
-                                    onClick={() => setShowPicker(false)}
-                                />
-                                <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} />
-                            </div>
+                                    className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 mx-4 animate-in zoom-in-95 scale-100"
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    <h3 className="text-lg font-bold mb-4 text-center">Pick Color</h3>
+                                    <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} />
+                                    <div className="mt-4 flex justify-end">
+                                        <button
+                                            onClick={() => setShowPicker(false)}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium"
+                                        >
+                                            Done
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>,
+                            document.body
                         )}
                         <input
                             disabled={readOnly}
@@ -157,21 +164,6 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                             placeholder="#000000"
                         />
                     </div>
-
-                    {!readOnly && (
-                        <div className="flex flex-wrap gap-2">
-                            {PRESET_COLORS.map(c => (
-                                <button
-                                    key={c}
-                                    type="button"
-                                    onClick={() => onChange(field.id, c)}
-                                    className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm hover:scale-110 transition-transform focus:ring-2 ring-offset-1 dark:ring-offset-gray-900 ring-blue-500"
-                                    style={{ backgroundColor: c }}
-                                    title={c}
-                                />
-                            ))}
-                        </div>
-                    )}
                 </div>
             </div>
         );
