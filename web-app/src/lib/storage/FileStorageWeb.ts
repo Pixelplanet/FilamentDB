@@ -337,4 +337,126 @@ export class FileStorageWeb implements ISpoolStorage {
             );
         }
     }
+
+    // ===== Usage History =====
+
+    async getUsageHistory(serial: string): Promise<import('@/db').UsageLog[]> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/history/${encodeURIComponent(serial)}`, {
+                credentials: 'include'
+            });
+
+            if (response.status === 404) {
+                return [];
+            }
+
+            if (!response.ok) {
+                throw new StorageError(
+                    `Failed to get usage history: ${response.statusText}`,
+                    StorageErrorCode.NETWORK_ERROR
+                );
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error instanceof StorageError) throw error;
+            // Return empty if API not available
+            return [];
+        }
+    }
+
+    async logUsage(log: import('@/db').UsageLog): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/history/${encodeURIComponent(log.spoolId)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(log),
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new StorageError(
+                    `Failed to log usage: ${response.statusText}`,
+                    StorageErrorCode.NETWORK_ERROR
+                );
+            }
+        } catch (error) {
+            if (error instanceof StorageError) throw error;
+            // Silently fail if API not available
+            console.warn('Failed to log usage:', error);
+        }
+    }
+
+    // ===== Recycling Bin =====
+
+    async listDeletedSpools(): Promise<Spool[]> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/spools/deleted`, {
+                credentials: 'include'
+            });
+
+            if (response.status === 404) {
+                return [];
+            }
+
+            if (!response.ok) {
+                throw new StorageError(
+                    `Failed to list deleted spools: ${response.statusText}`,
+                    StorageErrorCode.NETWORK_ERROR
+                );
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error instanceof StorageError) throw error;
+            // Return empty if API not available
+            return [];
+        }
+    }
+
+    async restoreSpool(serial: string): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/spools/deleted/${encodeURIComponent(serial)}/restore`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new StorageError(
+                    `Failed to restore spool: ${response.statusText}`,
+                    StorageErrorCode.NETWORK_ERROR
+                );
+            }
+        } catch (error) {
+            if (error instanceof StorageError) throw error;
+            throw new StorageError(
+                `Failed to restore spool: ${error}`,
+                StorageErrorCode.UNKNOWN,
+                error
+            );
+        }
+    }
+
+    async permanentlyDeleteSpool(serial: string): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/spools/deleted/${encodeURIComponent(serial)}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (!response.ok && response.status !== 404) {
+                throw new StorageError(
+                    `Failed to permanently delete spool: ${response.statusText}`,
+                    StorageErrorCode.NETWORK_ERROR
+                );
+            }
+        } catch (error) {
+            if (error instanceof StorageError) throw error;
+            throw new StorageError(
+                `Failed to permanently delete spool: ${error}`,
+                StorageErrorCode.UNKNOWN,
+                error
+            );
+        }
+    }
 }

@@ -18,24 +18,35 @@ import {
  */
 export class FileStorageMobile implements ISpoolStorage {
     private readonly DIRECTORY = Directory.Data;
-    private readonly FOLDER = 'spools';
+    private readonly DELETED_FOLDER = 'spools/deleted';
+    private readonly HISTORY_FOLDER = 'history';
 
     constructor() {
-        this.ensureDirectory();
+        this.ensureDirectories();
     }
 
     /**
-     * Ensure the spools folder exists
+     * Ensure the spools and subfolders exist
      */
-    private async ensureDirectory() {
+    private async ensureDirectories() {
         try {
             await Filesystem.mkdir({
                 path: this.FOLDER,
                 directory: this.DIRECTORY,
                 recursive: true
             });
+            await Filesystem.mkdir({
+                path: this.DELETED_FOLDER,
+                directory: this.DIRECTORY,
+                recursive: true
+            });
+            await Filesystem.mkdir({
+                path: this.HISTORY_FOLDER,
+                directory: this.DIRECTORY,
+                recursive: true
+            });
         } catch (e) {
-            // Directory likely already exists
+            // Directories likely already exist
         }
     }
 
@@ -46,6 +57,7 @@ export class FileStorageMobile implements ISpoolStorage {
                 directory: this.DIRECTORY
             });
 
+            // files contains "deleted" folder, we filter for .json
             const files = result.files.filter(f => f.name.endsWith('.json'));
             const spools: Spool[] = [];
 
@@ -61,7 +73,10 @@ export class FileStorageMobile implements ISpoolStorage {
                     // Capacitor 6+ returns data in 'data' field, simpler for text
                     const content = typeof data.data === 'string' ? data.data : JSON.stringify(data.data);
                     const spool = JSON.parse(content);
-                    spools.push(spool);
+                    // Double check it's not marked deleted (shouldn't be in main folder if moved, but for safety)
+                    if (!spool.deleted) {
+                        spools.push(spool);
+                    }
                 } catch (err) {
                     console.error(`Failed to read spool ${file.name}`, err);
                 }
@@ -75,6 +90,172 @@ export class FileStorageMobile implements ISpoolStorage {
         }
     }
 
+    // ... getSpool and saveSpool ...
+
+    // Override deleteSpool to move to recycle bin
+    async deleteSpool(serial: string): Promise<void> {
+        const filename = `${this.FOLDER}/${serial}.json`;
+        const destFilename = `${this.DELETED_FOLDER}/${serial}.json`;
+
+        try {
+            // First read and update the deleted flag
+            const spool = await this.getSpool(serial);
+            if (spool) {
+                spool.deleted = true;
+                spool.lastUpdated = Date.now();
+
+                await Filesystem.writeFile({
+                    path: destFilename,
+                    data: JSON.stringify(spool, null, 2),
+                    directory: this.DIRECTORY,
+                    encoding: Encoding.UTF8
+                });
+
+                // Then remove original
+                await Filesystem.deleteFile({
+                    path: filename,
+                    directory: this.DIRECTORY
+                });
+            }
+        } catch (e) {
+            console.error('Failed to move spool to recycle bin', e);
+        }
+    }
+
+    // ... saveSpools and deleteSpools ...
+
+    // Recycling Bin Methods
+    async listDeletedSpools(): Promise<Spool[]> {
+        try {
+            const result = await Filesystem.readdir({
+                path: this.DELETED_FOLDER,
+                directory: this.DIRECTORY
+            });
+
+            const files = result.files.filter(f => f.name.endsWith('.json'));
+            const spools: Spool[] = [];
+
+            await Promise.all(files.map(async (file) => {
+                try {
+                    const data = await Filesystem.readFile({
+                        path: `${this.DELETED_FOLDER}/${file.name}`,
+                        directory: this.DIRECTORY,
+                        encoding: Encoding.UTF8
+                    });
+
+                    const content = typeof data.data === 'string' ? data.data : JSON.stringify(data.data);
+                    spools.push(JSON.parse(content));
+                } catch (err) {
+                    // ignore error
+                }
+            }));
+
+            return spools.sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    async restoreSpool(serial: string): Promise<void> {
+        const sourceFilename = `${this.DELETED_FOLDER}/${serial}.json`;
+        const destFilename = `${this.FOLDER}/${serial}.json`;
+
+        try {
+            // Read, un-delete, write to destination
+            const data = await Filesystem.readFile({
+                path: sourceFilename,
+                directory: this.DIRECTORY,
+                encoding: Encoding.UTF8
+            });
+            const content = typeof data.data === 'string' ? data.data : JSON.stringify(data.data);
+            const spool = JSON.parse(content);
+
+            spool.deleted = undefined; // Remove deleted flag
+            spool.lastUpdated = Date.now();
+
+            await Filesystem.writeFile({
+                path: destFilename,
+                data: JSON.stringify(spool, null, 2),
+                directory: this.DIRECTORY,
+                encoding: Encoding.UTF8
+            });
+
+            // Delete from recycle bin
+            await Filesystem.deleteFile({
+                path: sourceFilename,
+                directory: this.DIRECTORY
+            });
+        } catch (e) {
+            console.error('Failed to restore spool', e);
+            throw e;
+        }
+    }
+
+    async permanentlyDeleteSpool(serial: string): Promise<void> {
+        const filename = `${this.DELETED_FOLDER}/${serial}.json`;
+        try {
+            await Filesystem.deleteFile({
+                path: filename,
+                directory: this.DIRECTORY
+            });
+        } catch (e) {
+            // Ignore if already gone
+        }
+    }
+
+    // Usage History
+
+    async getUsageHistory(serial: string): Promise<import('@/db').UsageLog[]> {
+        const filename = `${this.HISTORY_FOLDER}/${serial}.json`;
+        try {
+            const result = await Filesystem.readFile({
+                path: filename,
+                directory: this.DIRECTORY,
+                encoding: Encoding.UTF8
+            });
+            const content = typeof result.data === 'string' ? result.data : JSON.stringify(result.data);
+            return JSON.parse(content);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    async logUsage(log: import('@/db').UsageLog): Promise<void> {
+        const filename = `${this.HISTORY_FOLDER}/${log.spoolId}.json`;
+        let history: import('@/db').UsageLog[] = [];
+
+        try {
+            // Read existing history
+            const result = await Filesystem.readFile({
+                path: filename,
+                directory: this.DIRECTORY,
+                encoding: Encoding.UTF8
+            });
+            const content = typeof result.data === 'string' ? result.data : JSON.stringify(result.data);
+            history = JSON.parse(content);
+        } catch (e) {
+            // File likely doesn't exist yet
+            history = [];
+        }
+
+        history.push(log);
+
+        await Filesystem.writeFile({
+            path: filename,
+            data: JSON.stringify(history, null, 2),
+            directory: this.DIRECTORY,
+            encoding: Encoding.UTF8
+        });
+    }
+
+    private readonly FOLDER = 'spools';
+
+    // ... search/filter using listSpools ...
+
+    // Original methods are now replaced by the ones above or need to be merged.
+    // getSpool needs to check both folders if not found in one? 
+    // Usually getSpool is for active inventory.
+
     async getSpool(serial: string): Promise<Spool | null> {
         try {
             const filename = `${this.FOLDER}/${serial}.json`;
@@ -87,7 +268,9 @@ export class FileStorageMobile implements ISpoolStorage {
             const content = typeof result.data === 'string' ? result.data : JSON.stringify(result.data);
             return JSON.parse(content);
         } catch (error) {
-            // If file not found, return null
+            // Check recycled bin if not found? 
+            // For now, ISpoolStorage.getSpool usually implies active. 
+            // If we want to support recovering deleted, we might need a separate method or flag.
             return null;
         }
     }
@@ -110,19 +293,9 @@ export class FileStorageMobile implements ISpoolStorage {
         });
     }
 
-    async deleteSpool(serial: string): Promise<void> {
-        const filename = `${this.FOLDER}/${serial}.json`;
-        try {
-            await Filesystem.deleteFile({
-                path: filename,
-                directory: this.DIRECTORY
-            });
-        } catch (e) {
-            // Check if file existed, otherwise ignore
-        }
-    }
+    // deleteSpool is already implemented above correctly with soft-delete logic.
+    // saveSpools and deleteSpools are batch wrappers around single ops.
 
-    // Batch operations
     async saveSpools(spools: Spool[]): Promise<void> {
         for (const spool of spools) {
             await this.saveSpool(spool);

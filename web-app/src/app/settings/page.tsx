@@ -11,6 +11,7 @@ import { ShieldCheck } from 'lucide-react';
 import { checkForAppUpdate, UpdateInfo } from '@/lib/updates';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import { RecycleBin } from '@/components/RecycleBin';
 
 export default function SettingsPage() {
     const [serverUrl, setServerUrl] = useState('');
@@ -599,6 +600,9 @@ export default function SettingsPage() {
                     Manage
                 </Link>
             </div>
+
+            {/* Recycle Bin */}
+            <RecycleBin />
 
             {/* NFC Tag Statistics */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">

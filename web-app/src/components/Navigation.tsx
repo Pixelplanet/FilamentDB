@@ -76,7 +76,6 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center gap-2">
                         <SyncStatus />
                         <ThemeToggle />
-                        <UserMenu />
                     </div>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-1">
@@ -100,6 +99,9 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                         );
                     })}
                 </nav>
+                <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+                    <UserMenu align="left" direction="up" />
+                </div>
             </aside>
 
             {/* Mobile Drawer */}

@@ -103,6 +103,39 @@ export interface ISpoolStorage {
      * @returns Import result
      */
     importAll(data: Blob): Promise<ImportResult>;
+
+    // ===== Usage History =====
+
+    /**
+     * Get usage history for a spool
+     * @param serial - Serial number
+     */
+    getUsageHistory(serial: string): Promise<import('@/db').UsageLog[]>;
+
+    /**
+     * Log filament usage
+     * @param log - Usage log entry
+     */
+    logUsage(log: import('@/db').UsageLog): Promise<void>;
+
+    // ===== Recycling Bin =====
+
+    /**
+     * List deleted spools (in recycling bin)
+     */
+    listDeletedSpools(): Promise<Spool[]>;
+
+    /**
+     * Restore a deleted spool from recycling bin
+     * @param serial - Serial number
+     */
+    restoreSpool(serial: string): Promise<void>;
+
+    /**
+     * Permanently delete a spool (remove from recycling bin)
+     * @param serial - Serial number
+     */
+    permanentlyDeleteSpool(serial: string): Promise<void>;
 }
 
 /**

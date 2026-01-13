@@ -15,9 +15,15 @@ export function SpoolCard({ spool, isEmpty }: Props) {
     const { updateSpool, deleteSpool } = useSpoolMutations();
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const isLongPress = useRef(false);
+    const touchStartPos = useRef<{ x: number; y: number } | null>(null);
 
-    const handleTouchStart = () => {
+    const LONG_PRESS_THRESHOLD = 10; // pixels of movement before canceling
+
+    const handleTouchStart = (e: React.TouchEvent) => {
         isLongPress.current = false;
+        const touch = e.touches[0];
+        touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+
         timerRef.current = setTimeout(() => {
             isLongPress.current = true;
             setShowMenu(true);
@@ -26,10 +32,26 @@ export function SpoolCard({ spool, isEmpty }: Props) {
         }, 500);
     };
 
+    const handleTouchMove = (e: React.TouchEvent) => {
+        // Cancel long press if user moves finger (scrolling)
+        if (touchStartPos.current && timerRef.current) {
+            const touch = e.touches[0];
+            const dx = Math.abs(touch.clientX - touchStartPos.current.x);
+            const dy = Math.abs(touch.clientY - touchStartPos.current.y);
+
+            if (dx > LONG_PRESS_THRESHOLD || dy > LONG_PRESS_THRESHOLD) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+                touchStartPos.current = null;
+            }
+        }
+    };
+
     const handleTouchEnd = () => {
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
+        touchStartPos.current = null;
     };
 
     const handleContextMenu = (e: React.MouseEvent) => {
@@ -72,9 +94,11 @@ export function SpoolCard({ spool, isEmpty }: Props) {
         <>
             <div
                 onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 onContextMenu={handleContextMenu}
                 className="relative h-full"
+                style={{ touchAction: 'pan-y' }}
             >
                 <Link
                     href={`/inventory/detail?serial=${spool.serial}`}

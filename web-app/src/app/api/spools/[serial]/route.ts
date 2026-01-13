@@ -146,7 +146,7 @@ export async function PUT(
 
 /**
  * DELETE /api/spools/[serial]
- * Delete a specific spool (creates tombstone for sync)
+ * Delete a specific spool (moves to recycle bin and creates tombstone for sync)
  */
 export async function DELETE(
     req: NextRequest,
@@ -166,18 +166,37 @@ export async function DELETE(
             );
         }
 
-        // Read the spool to get owner info before deletion
+        // Read the spool before moving
         const filePath = path.join(SPOOLS_DIR, filename);
         const content = await fs.readFile(filePath, 'utf-8');
         const spool = safeJSONParse<Spool>(content);
 
+        if (!spool) {
+            return NextResponse.json(
+                { error: 'Failed to parse spool data' },
+                { status: 500 }
+            );
+        }
+
         // Get device/user ID from request headers
         const deletedBy = req.headers.get('x-device-id') || req.headers.get('x-user-id') || undefined;
 
-        // Create tombstone BEFORE deleting the file
+        // Mark spool as deleted and update timestamp
+        spool.deleted = true;
+        spool.lastUpdated = Date.now();
+
+        // Ensure .deleted directory exists
+        const deletedDir = path.join(SPOOLS_DIR, '.deleted');
+        await fs.mkdir(deletedDir, { recursive: true });
+
+        // Move to .deleted folder (using serial.json for consistency)
+        const deletedPath = path.join(deletedDir, `${serial}.json`);
+        await fs.writeFile(deletedPath, prettyJSON(spool), 'utf-8');
+
+        // Create tombstone for sync BEFORE deleting the original file
         await createTombstone(SPOOLS_DIR, serial, deletedBy, spool?.ownerId);
 
-        // Delete the actual file
+        // Delete the original file
         await fs.unlink(filePath);
 
         invalidateSpoolCache();
@@ -188,7 +207,8 @@ export async function DELETE(
         return NextResponse.json({
             success: true,
             deleted: filename,
-            tombstone: true
+            tombstone: true,
+            recycleBin: true
         });
     } catch (error) {
         console.error('Error deleting spool:', error);

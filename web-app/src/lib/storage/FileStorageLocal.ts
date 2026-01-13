@@ -38,7 +38,9 @@ export class FileStorageLocal implements ISpoolStorage {
 
     async listSpools(): Promise<Spool[]> {
         const map = this.getSpoolsMap();
-        return Object.values(map).sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+        return Object.values(map)
+            .filter(s => !s.deleted)
+            .sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
     }
 
     async saveSpool(spool: Spool): Promise<void> {
@@ -55,10 +57,13 @@ export class FileStorageLocal implements ISpoolStorage {
     async deleteSpool(serial: string): Promise<void> {
         const map = this.getSpoolsMap();
         if (map[serial]) {
-            delete map[serial];
+            map[serial].deleted = true;
+            map[serial].lastUpdated = Date.now();
             this.saveSpoolsMap(map);
         }
     }
+
+    // ... saveSpools and deleteSpools ...
 
     async saveSpools(spools: Spool[]): Promise<void> {
         const map = this.getSpoolsMap();
@@ -73,10 +78,15 @@ export class FileStorageLocal implements ISpoolStorage {
     async deleteSpools(serials: string[]): Promise<void> {
         const map = this.getSpoolsMap();
         for (const serial of serials) {
-            delete map[serial];
+            if (map[serial]) {
+                map[serial].deleted = true;
+                map[serial].lastUpdated = Date.now();
+            }
         }
         this.saveSpoolsMap(map);
     }
+
+    // ... search/filter ...
 
     async searchSpools(query: string): Promise<Spool[]> {
         const spools = await this.listSpools();
@@ -87,6 +97,61 @@ export class FileStorageLocal implements ISpoolStorage {
             s.color?.toLowerCase().includes(lowerQuery) ||
             s.serial.toLowerCase().includes(lowerQuery)
         );
+    }
+
+    // ... 
+
+    // Usage History
+    private readonly HISTORY_KEY = 'filamentdb_history';
+
+    private getHistoryMap(): Record<string, import('@/db').UsageLog[]> {
+        try {
+            const data = localStorage.getItem(this.HISTORY_KEY);
+            return data ? JSON.parse(data) : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    private saveHistoryMap(map: Record<string, import('@/db').UsageLog[]>): void {
+        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(map));
+    }
+
+    async getUsageHistory(serial: string): Promise<import('@/db').UsageLog[]> {
+        const map = this.getHistoryMap();
+        return (map[serial] || []).sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    async logUsage(log: import('@/db').UsageLog): Promise<void> {
+        const map = this.getHistoryMap();
+        if (!map[log.spoolId]) map[log.spoolId] = [];
+        map[log.spoolId].push(log);
+        this.saveHistoryMap(map);
+    }
+
+    // Recycling Bin
+    async listDeletedSpools(): Promise<Spool[]> {
+        const map = this.getSpoolsMap();
+        return Object.values(map)
+            .filter(s => s.deleted)
+            .sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+    }
+
+    async restoreSpool(serial: string): Promise<void> {
+        const map = this.getSpoolsMap();
+        if (map[serial]) {
+            map[serial].deleted = undefined; // Remove deleted flg
+            map[serial].lastUpdated = Date.now();
+            this.saveSpoolsMap(map);
+        }
+    }
+
+    async permanentlyDeleteSpool(serial: string): Promise<void> {
+        const map = this.getSpoolsMap();
+        if (map[serial]) {
+            delete map[serial];
+            this.saveSpoolsMap(map);
+        }
     }
 
     async filterSpools(filters: SpoolFilters): Promise<Spool[]> {

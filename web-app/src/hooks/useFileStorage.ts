@@ -143,6 +143,33 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
                 throw new Error(`Spool not found: ${serial}`);
             }
 
+            // Check for weight change and log usage
+            if (updates.weightRemaining !== undefined &&
+                existing.weightRemaining !== undefined &&
+                updates.weightRemaining !== existing.weightRemaining) {
+
+                const delta = existing.weightRemaining - updates.weightRemaining;
+
+                // Log consumption (positive delta means usage)
+                if (delta !== 0) {
+                    try {
+                        const log: import('@/db').UsageLog = {
+                            id: crypto.randomUUID(),
+                            spoolId: serial,
+                            timestamp: Date.now(),
+                            amount: Math.abs(delta),
+                            previousWeight: existing.weightRemaining,
+                            newWeight: updates.weightRemaining,
+                            action: delta > 0 ? 'print' : 'correction'
+                        };
+                        await storage.logUsage(log);
+                    } catch (e) {
+                        // Don't fail the update if logging fails
+                        console.warn('Failed to log usage:', e);
+                    }
+                }
+            }
+
             // Merge updates
             const updated = { ...existing, ...updates };
             await storage.saveSpool(updated);

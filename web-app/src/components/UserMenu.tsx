@@ -7,7 +7,12 @@ import { User, LogOut, UserCircle, LogIn, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { clsx } from 'clsx';
 
-export function UserMenu() {
+interface UserMenuProps {
+    align?: 'left' | 'right';
+    direction?: 'up' | 'down';
+}
+
+export function UserMenu({ align = 'right', direction = 'down' }: UserMenuProps) {
     const { user, logout, isAuthEnabled } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -72,7 +77,12 @@ export function UserMenu() {
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                <div className={clsx(
+                    "absolute w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 animate-in fade-in zoom-in-95 duration-100",
+                    align === 'right' ? 'right-0' : 'left-0',
+                    direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2',
+                    direction === 'up' ? (align === 'right' ? 'origin-bottom-right' : 'origin-bottom-left') : (align === 'right' ? 'origin-top-right' : 'origin-top-left')
+                )}>
                     <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                             {user.displayName || user.username}

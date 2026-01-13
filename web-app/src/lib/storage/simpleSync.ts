@@ -35,6 +35,7 @@ export interface SyncResult {
         deleteCount: number;
         conflictCount: number;
         errorCount: number;
+        ingressCount: number;   // Number of remote changes applied locally
         duration: number;       // milliseconds
     };
 }
@@ -72,6 +73,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
+            ingressCount: 0,
             duration: 0
         }
     };
@@ -288,6 +290,7 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
             }
         }
 
+        result.summary.ingressCount = result.summary.downloadCount + result.summary.deleteCount;
         result.summary.duration = Date.now() - startTime;
 
         // Save History
@@ -451,6 +454,7 @@ export async function pushAllSpools(config: SyncConfig): Promise<SyncResult> {
             deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
+            ingressCount: 0,
             duration: 0
         }
     };
@@ -504,6 +508,7 @@ export async function pullAllSpools(config: SyncConfig): Promise<SyncResult> {
             deleteCount: 0,
             conflictCount: 0,
             errorCount: 0,
+            ingressCount: 0,
             duration: 0
         }
     };

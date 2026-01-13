@@ -57,6 +57,11 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
                 setTimeout(() => setStatus(prev => prev === 'success' ? 'idle' : prev), 30000);
             }
 
+            // If we received changes (ingress), notify the app to reload views
+            if (result.summary.ingressCount > 0) {
+                window.dispatchEvent(new Event('filament-db-change'));
+            }
+
             // Update last sync time in local storage for other components to see
             localStorage.setItem('sync_last_sync', Date.now().toString());
 

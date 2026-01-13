@@ -97,12 +97,6 @@ export interface NFCTagData {
     productionDate?: string;
 }
 
-/**
- * Material Profile Setting
- * 
- * User-defined presets for material types.
- * Used to populate defaults for new spools.
- */
 export interface MaterialProfile {
     id: string; // UUID
     name: string; // e.g. "Polylactic Acid"
@@ -112,4 +106,20 @@ export interface MaterialProfile {
     temperatureNozzleMax?: number;
     temperatureBedMin?: number;
     temperatureBedMax?: number;
+}
+
+/**
+ * Filament Usage Log
+ * 
+ * Records consumption of filament for statistics and history.
+ */
+export interface UsageLog {
+    id: string; // UUID
+    spoolId: string;
+    timestamp: number;
+    amount: number; // Grams used (positive value)
+    previousWeight: number;
+    newWeight: number;
+    action: 'print' | 'manual_adjustment' | 'correction' | 'initial_weight';
+    notes?: string;
 }
