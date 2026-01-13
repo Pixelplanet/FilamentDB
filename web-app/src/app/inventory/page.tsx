@@ -120,6 +120,14 @@ function InventoryPageContent() {
         if (materialFilter === 'With Tags') matchMaterial = (s.tags?.length ?? 0) > 0;
 
         return matchSearch && matchType && matchEmpty && matchTags && matchMaterial;
+    }).sort((a, b) => {
+        // 1. Sort by Empty Status (Empty at bottom)
+        const aEmpty = a.weightRemaining <= 0;
+        const bEmpty = b.weightRemaining <= 0;
+        if (aEmpty !== bEmpty) return aEmpty ? 1 : -1;
+
+        // 2. Sort by Date (Newest first)
+        return (b.lastUpdated || 0) - (a.lastUpdated || 0);
     });
 
     const allTags = Array.from(new Set((spools || []).flatMap(s => s.tags || []))).sort();
@@ -148,7 +156,13 @@ function InventoryPageContent() {
         return acc;
     }, {} as Record<string, any>);
 
-    const groupedArray = Object.values(groupedFilaments);
+    const groupedArray = Object.values(groupedFilaments).sort((a: any, b: any) => {
+        // 1. Sort by Empty Status (Empty groups at bottom)
+        if (a.isEmpty !== b.isEmpty) return a.isEmpty ? 1 : -1;
+
+        // 2. Sort by Brand (A-Z)
+        return a.brand.localeCompare(b.brand);
+    });
 
     const uniqueTypes = Array.from(new Set((spools || []).map(s => s.type))).sort();
     const emptyCount = (spools || []).filter(s => s.weightRemaining <= 0).length;
