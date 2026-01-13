@@ -140,12 +140,12 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                         {showPicker && createPortal(
                             <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowPicker(false)}>
                                 <div
-                                    className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 mx-4 animate-in zoom-in-95 scale-100"
+                                    className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-[95vw] max-w-lg animate-in zoom-in-95 scale-100 flex flex-col items-center"
                                     onClick={e => e.stopPropagation()}
                                 >
-                                    <h3 className="text-lg font-bold mb-4 text-center">Pick Color</h3>
-                                    <div className="custom-color-picker">
-                                        <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} style={{ width: '100%', height: '240px' }} />
+                                    <h3 className="text-xl font-bold mb-6 text-center w-full">Pick Color</h3>
+                                    <div className="custom-color-picker w-full flex-1 flex justify-center">
+                                        <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} style={{ width: '100%', height: '50vh', maxHeight: '500px' }} />
                                     </div>
                                     <div className="mt-4 flex justify-end">
                                         <button
