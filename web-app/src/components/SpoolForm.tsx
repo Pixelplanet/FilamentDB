@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Spool } from '@/db';
 import { Tag, Scale, Thermometer, Sparkles, Ruler, Save, Lock, Unlock, GripHorizontal, ChevronUp, ChevronDown, Columns, Globe, LockKeyhole } from 'lucide-react';
 import { MaterialTagsSelector } from './MaterialTagsSelector';
+import { HexColorPicker } from 'react-colorful';
 import { FINISH_OPTIONS } from '@/app/inventory/constants';
 import { CollapsibleSection } from './CollapsibleSection';
 import { useMaterialProfiles } from '@/hooks/useMaterialProfiles';
@@ -112,11 +113,14 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
     const inputClass = `w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-gray-900 dark:text-white ${readOnly ? 'opacity-70 cursor-not-allowed bg-gray-50 dark:bg-gray-800' : ''}`;
 
     // Color Input is special
+    // Color Input is special
     if (field.type === 'color') {
         const PRESET_COLORS = [
             '#000000', '#FFFFFF', '#808080', '#FF0000', '#0000FF', '#00FF00',
             '#FFFF00', '#FFA500', '#800080', '#FFC0CB', '#A52A2A', '#00FFFF'
         ];
+
+        const [showPicker, setShowPicker] = useState(false);
 
         return (
             <div ref={setNodeRef} style={style} className={`bg-white dark:bg-gray-800 p-3 relative group ${field.span === 2 ? 'col-span-1 md:col-span-2' : ''} border border-gray-200 dark:border-gray-700 rounded-xl`}>
@@ -127,21 +131,30 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                 )}
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{field.label}</label>
                 <div className="flex flex-col gap-3">
-                    <div className="flex gap-2">
-                        <div className="w-12 h-12 rounded-lg border shadow-sm shrink-0" style={{ backgroundColor: value || '#000000' }} />
+                    <div className="flex gap-2 relative">
+                        <button
+                            type="button"
+                            disabled={readOnly}
+                            onClick={() => setShowPicker(!showPicker)}
+                            className="w-12 h-12 rounded-lg border shadow-sm shrink-0 cursor-pointer hover:scale-105 transition-transform"
+                            style={{ backgroundColor: value || '#000000' }}
+                            title="Click to pick color"
+                        />
+                        {showPicker && (
+                            <div className="absolute top-14 left-0 z-50 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 animate-in fade-in zoom-in-95 w-[230px]">
+                                <div
+                                    className="fixed inset-0 z-[-1]"
+                                    onClick={() => setShowPicker(false)}
+                                />
+                                <HexColorPicker color={value || '#000000'} onChange={(c) => onChange(field.id, c)} />
+                            </div>
+                        )}
                         <input
                             disabled={readOnly}
                             className={`flex-1 ${inputClass} font-mono uppercase`}
                             value={value || ''}
                             onChange={e => onChange(field.id, e.target.value)}
                             placeholder="#000000"
-                        />
-                        <input
-                            type="color"
-                            disabled={readOnly}
-                            className="h-10 w-12 rounded cursor-pointer border p-0.5 bg-white dark:bg-gray-900 disabled:cursor-not-allowed self-center"
-                            value={value || '#000000'}
-                            onChange={e => onChange(field.id, e.target.value)}
                         />
                     </div>
 

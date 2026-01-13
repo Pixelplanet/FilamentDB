@@ -146,13 +146,20 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
         setWriteStage('idle');
     };
 
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const showToast = (msg: string) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 2000);
+    };
+
     const handleSave = async (data: Partial<Spool>) => {
         if (!serial) return;
         const success = await updateSpool(serial, data);
         if (!success) {
             alert("Failed to update spool.");
         } else {
-            alert("Saved!");
+            showToast("Saved!");
         }
     };
 
@@ -172,6 +179,13 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
 
     return (
         <div className="max-w-4xl mx-auto pb-20">
+            {/* Toast Notification */}
+            {toastMessage && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-2 bg-black/80 text-white rounded-full text-sm font-medium shadow-lg animate-in fade-in zoom-in-95 pointer-events-none">
+                    {toastMessage}
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
