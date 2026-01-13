@@ -154,9 +154,12 @@ export function SpoolCard({ spool, isEmpty }: Props) {
                         setShowMenu(false);
                     }}
                     onTouchEnd={(e) => {
-                        e.preventDefault(); // Prevent ghost clicks passing through
-                        e.stopPropagation();
-                        setShowMenu(false);
+                        // Only close if tapping the backdrop itself
+                        if (e.target === e.currentTarget) {
+                            e.preventDefault(); // Prevent ghost clicks passing through
+                            e.stopPropagation();
+                            setShowMenu(false);
+                        }
                     }}
                 >
                     <div
