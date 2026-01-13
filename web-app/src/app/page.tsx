@@ -14,12 +14,14 @@ export default function Home() {
   if (loading) return <div className="p-8">Loading Dashboard...</div>;
   if (!spools) return <div className="p-8">No data available</div>;
 
-  // Calculate stats from spools
-  const totalCount = spools.length;
-  const totalWeight = spools.reduce((sum, s) => sum + s.weightRemaining, 0) / 1000;
+  // Calculate stats from spools (exclude empty)
+  const activeSpools = spools.filter(s => s.weightRemaining > 0);
+
+  const totalCount = activeSpools.length;
+  const totalWeight = activeSpools.reduce((sum, s) => sum + s.weightRemaining, 0) / 1000;
 
   // Breakdown by type
-  const byType = spools.reduce((acc, spool) => {
+  const byType = activeSpools.reduce((acc, spool) => {
     if (!acc[spool.type]) {
       acc[spool.type] = { count: 0, weight: 0 };
     }
@@ -29,7 +31,7 @@ export default function Home() {
   }, {} as Record<string, { count: number, weight: number }>);
 
   // Low stock (<200g)
-  const lowStock = spools.filter(s => s.weightRemaining < 200);
+  const lowStock = activeSpools.filter(s => s.weightRemaining < 200);
 
   const stats = { totalCount, totalWeight, byType, lowStock };
 
