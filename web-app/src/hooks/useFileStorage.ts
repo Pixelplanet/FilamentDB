@@ -12,6 +12,12 @@ import { getStorage } from '@/lib/storage';
 /**
  * Hook to get all spools
  */
+// Event name for checking updates
+const DB_CHANGE_EVENT = 'filament-db-change';
+
+/**
+ * Hook to get all spools
+ */
 export function useSpools() {
     const [spools, setSpools] = useState<Spool[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,6 +39,10 @@ export function useSpools() {
 
     useEffect(() => {
         fetchSpools();
+
+        const handleDbChange = () => fetchSpools();
+        window.addEventListener(DB_CHANGE_EVENT, handleDbChange);
+        return () => window.removeEventListener(DB_CHANGE_EVENT, handleDbChange);
     }, [fetchSpools]);
 
     return {
@@ -58,9 +68,6 @@ export function useSpool(serial: string | null, initialData?: Spool | null) {
             return;
         }
 
-        // If we have initial data matching the serial, we could skip fetch
-        // But for now we'll fetch to ensure freshness, but loading is false so UI doesn't flicker
-
         try {
             // Only set loading true if we don't have data
             if (!spool && !initialData) setLoading(true);
@@ -78,6 +85,10 @@ export function useSpool(serial: string | null, initialData?: Spool | null) {
 
     useEffect(() => {
         fetchSpool();
+
+        const handleDbChange = () => fetchSpool();
+        window.addEventListener(DB_CHANGE_EVENT, handleDbChange);
+        return () => window.removeEventListener(DB_CHANGE_EVENT, handleDbChange);
     }, [fetchSpool]);
 
     return {
@@ -97,6 +108,12 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
+    const notifyChange = useCallback(() => {
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event(DB_CHANGE_EVENT));
+        }
+    }, []);
+
     const createSpool = useCallback(async (spool: Spool) => {
         try {
             setLoading(true);
@@ -104,6 +121,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
             const storage = getStorage();
             await storage.saveSpool(spool);
             options?.onMutation?.();
+            notifyChange();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -111,7 +129,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
         } finally {
             setLoading(false);
         }
-    }, [options?.onMutation]);
+    }, [options?.onMutation, notifyChange]);
 
     const updateSpool = useCallback(async (serial: string, updates: Partial<Spool>) => {
         try {
@@ -129,6 +147,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
             const updated = { ...existing, ...updates };
             await storage.saveSpool(updated);
             options?.onMutation?.();
+            notifyChange();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -136,7 +155,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
         } finally {
             setLoading(false);
         }
-    }, [options?.onMutation]);
+    }, [options?.onMutation, notifyChange]);
 
     const deleteSpool = useCallback(async (serial: string) => {
         try {
@@ -145,6 +164,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
             const storage = getStorage();
             await storage.deleteSpool(serial);
             options?.onMutation?.();
+            notifyChange();
             return true;
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
@@ -152,7 +172,7 @@ export function useSpoolMutations(options?: { onMutation?: () => void }) {
         } finally {
             setLoading(false);
         }
-    }, [options?.onMutation]);
+    }, [options?.onMutation, notifyChange]);
 
     return {
         createSpool,
@@ -171,6 +191,7 @@ export function useSpoolSearch(query: string) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
+    // Initial search
     useEffect(() => {
         const search = async () => {
             if (!query.trim()) {
@@ -194,6 +215,10 @@ export function useSpoolSearch(query: string) {
         const debounce = setTimeout(search, 300);
         return () => clearTimeout(debounce);
     }, [query]);
+
+    // We could add DB_CHANGE_EVENT listener here too if we want live search results, 
+    // but usually search is triggered by typing. 
+    // Let's keep it simple for now, but adding it wouldn't hurt. Since this has a debounce, it's slightly more complex to hook up cleanly.
 
     return {
         results,
@@ -226,6 +251,10 @@ export function useStorageStats() {
 
     useEffect(() => {
         fetchStats();
+
+        const handleDbChange = () => fetchStats();
+        window.addEventListener(DB_CHANGE_EVENT, handleDbChange);
+        return () => window.removeEventListener(DB_CHANGE_EVENT, handleDbChange);
     }, [fetchStats]);
 
     return {
