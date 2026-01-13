@@ -1,6 +1,7 @@
 import { Spool } from '@/db';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { MoreVertical, Eye, EyeOff, Trash2, BoxSelect, Droplets } from 'lucide-react';
 import { useSpoolMutations } from '@/hooks/useFileStorage';
 
@@ -146,9 +147,9 @@ export function SpoolCard({ spool, isEmpty }: Props) {
             </div>
 
             {/* Context Menu Modal */}
-            {showMenu && (
+            {showMenu && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in"
+                    className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in"
                     onClick={(e) => {
                         e.stopPropagation();
                         setShowMenu(false);
@@ -156,7 +157,7 @@ export function SpoolCard({ spool, isEmpty }: Props) {
                     onTouchEnd={(e) => {
                         // Only close if tapping the backdrop itself
                         if (e.target === e.currentTarget) {
-                            e.preventDefault(); // Prevent ghost clicks passing through
+                            e.preventDefault();
                             e.stopPropagation();
                             setShowMenu(false);
                         }
@@ -190,7 +191,8 @@ export function SpoolCard({ spool, isEmpty }: Props) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
