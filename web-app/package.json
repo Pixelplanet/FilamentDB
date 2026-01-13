@@ -1,6 +1,6 @@
 {
   "name": "web-app",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -49,6 +49,7 @@
     "react": "19.2.3",
     "react-colorful": "^5.6.1",
     "react-dom": "19.2.3",
+    "recharts": "^3.6.0",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0"
   },

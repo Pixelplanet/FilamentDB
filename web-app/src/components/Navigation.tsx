@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Database, ScanLine, Menu, X, Settings } from 'lucide-react';
+import { LayoutDashboard, Database, ScanLine, Menu, X, Settings, BarChart3 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -55,6 +55,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
     const links = [
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },
         { name: 'Inventory', href: '/inventory', icon: Database },
+        { name: 'Statistics', href: '/statistics', icon: BarChart3 },
         { name: 'Scanner', href: '/scan', icon: ScanLine },
         { name: 'Settings', href: '/settings', icon: Settings },
     ];
