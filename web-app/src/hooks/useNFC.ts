@@ -131,21 +131,83 @@ export const useNFC = () => {
 
                     const parsedRecords: any[] = [];
                     if (tag.ndefMessage && Array.isArray(tag.ndefMessage)) {
-                        for (const record of tag.ndefMessage) {
+                        console.log("[NFC] Found", tag.ndefMessage.length, "NDEF records");
+
+                        for (let i = 0; i < tag.ndefMessage.length; i++) {
+                            const record = tag.ndefMessage[i];
+                            console.log(`[NFC] Record ${i}:`, JSON.stringify({
+                                tnf: record.tnf,
+                                typeLength: record.type?.length,
+                                payloadLength: record.payload?.length,
+                                type: record.type
+                            }));
+
                             try {
+                                // Get the type as string
+                                let typeStr = '';
                                 if (record.type) {
-                                    const typeStr = String.fromCharCode(...record.type);
-                                    if (typeStr === 'application/vnd.openprinttag' || typeStr.includes('openprinttag')) {
-                                        const payloadBytes = new Uint8Array(record.payload);
+                                    if (Array.isArray(record.type)) {
+                                        typeStr = String.fromCharCode(...record.type);
+                                    } else if (typeof record.type === 'string') {
+                                        typeStr = record.type;
+                                    } else if (record.type instanceof Uint8Array) {
+                                        typeStr = String.fromCharCode(...(Array.from(record.type) as number[]));
+                                    }
+                                }
+                                console.log(`[NFC] Record ${i} type string:`, typeStr);
+
+                                // Check for OpenPrintTag MIME type
+                                // TNF 2 = MIME Media type
+                                const isOpenPrintTag = typeStr === 'application/vnd.openprinttag' ||
+                                    typeStr.includes('openprinttag') ||
+                                    (record.tnf === 2 && typeStr.includes('openprinttag'));
+
+                                if (isOpenPrintTag && record.payload) {
+                                    console.log(`[NFC] Parsing OpenPrintTag record...`);
+                                    let payloadBytes: Uint8Array;
+                                    if (record.payload instanceof Uint8Array) {
+                                        payloadBytes = record.payload;
+                                    } else if (Array.isArray(record.payload)) {
+                                        payloadBytes = new Uint8Array(record.payload);
+                                    } else {
+                                        payloadBytes = new Uint8Array(Object.values(record.payload));
+                                    }
+                                    console.log(`[NFC] Payload bytes (first 50):`, Array.from(payloadBytes.slice(0, 50)));
+
+                                    const decoded = decode(payloadBytes);
+                                    console.log(`[NFC] CBOR Decoded:`, JSON.stringify(decoded));
+                                    parsedRecords.push({ mediaType: typeStr, data: decoded });
+                                } else if (record.tnf === 2 && record.payload) {
+                                    // Try to parse any MIME type record as CBOR (might be openprinttag with different type string)
+                                    console.log(`[NFC] Attempting CBOR decode on MIME record with type: ${typeStr}`);
+                                    try {
+                                        let payloadBytes: Uint8Array;
+                                        if (record.payload instanceof Uint8Array) {
+                                            payloadBytes = record.payload;
+                                        } else if (Array.isArray(record.payload)) {
+                                            payloadBytes = new Uint8Array(record.payload);
+                                        } else {
+                                            payloadBytes = new Uint8Array(Object.values(record.payload));
+                                        }
                                         const decoded = decode(payloadBytes);
-                                        parsedRecords.push({ mediaType: typeStr, data: decoded });
+                                        // Check if it looks like OpenPrintTag data (has numeric keys like 10, 11, 16)
+                                        if (decoded && (Array.isArray(decoded) || (decoded[10] !== undefined || decoded[11] !== undefined || decoded[16] !== undefined))) {
+                                            console.log(`[NFC] Found potential OpenPrintTag data in MIME record`);
+                                            parsedRecords.push({ mediaType: typeStr || 'application/vnd.openprinttag', data: decoded });
+                                        }
+                                    } catch (cborErr) {
+                                        console.log(`[NFC] Not a CBOR record: ${cborErr}`);
                                     }
                                 }
                             } catch (e) {
-                                console.warn("Failed to parse record", e);
+                                console.warn(`[NFC] Failed to parse record ${i}:`, e);
                             }
                         }
+                    } else {
+                        console.warn("[NFC] No NDEF message found on tag");
                     }
+
+                    console.log("[NFC] Parsed records:", parsedRecords.length);
 
                     setReading({ serialNumber: tagId, records: parsedRecords });
                     setState('success');
@@ -241,19 +303,92 @@ export const useNFC = () => {
             setError(null);
 
             const encoded = encode(data);
+            console.log('[NFC Write] Encoded CBOR data, size:', encoded.byteLength, 'bytes');
 
             if (isNative) {
                 const payloadArray = Array.from(new Uint8Array(encoded));
                 const typeArray = Array.from(new TextEncoder().encode('application/vnd.openprinttag'));
 
-                await CapacitorNfc.write({
-                    records: [{
-                        tnf: 2, // TNF_MIME_MEDIA
-                        type: typeArray as any,
-                        id: [],
-                        payload: payloadArray as any,
-                    }]
+                console.log('[NFC Write] Preparing to write NDEF record...');
+                console.log('[NFC Write] Type:', 'application/vnd.openprinttag');
+                console.log('[NFC Write] Payload size:', payloadArray.length, 'bytes');
+
+                // Start scanning first to discover the tag
+                // Remove any existing listeners
+                // @ts-ignore
+                await CapacitorNfc.removeAllListeners();
+
+                // Set up listener for tag discovery
+                const writePromise = new Promise<void>((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Write timeout - no tag detected within 30 seconds'));
+                    }, 30000);
+
+                    const onTagDiscovered = async (event: any) => {
+                        try {
+                            clearTimeout(timeout);
+                            console.log('[NFC Write] Tag discovered:', JSON.stringify(event));
+
+                            const tag = event.tag;
+                            if (tag) {
+                                console.log('[NFC Write] Tag type:', tag.type);
+                                console.log('[NFC Write] Tag techTypes:', tag.techTypes);
+                                console.log('[NFC Write] Tag isWritable:', tag.isWritable);
+                                console.log('[NFC Write] Tag maxSize:', tag.maxSize);
+
+                                // Check if tag is writable
+                                if (tag.isWritable === false) {
+                                    reject(new Error('This tag is read-only and cannot be written to'));
+                                    return;
+                                }
+
+                                // Check size
+                                if (tag.maxSize && payloadArray.length > tag.maxSize) {
+                                    reject(new Error(`Data too large for tag. Data: ${payloadArray.length} bytes, Tag max: ${tag.maxSize} bytes`));
+                                    return;
+                                }
+                            }
+
+                            // Write to the tag
+                            // Set allowFormat to false since OpenPrintTag tags are already NDEF formatted
+                            await CapacitorNfc.write({
+                                allowFormat: false, // Don't try to format - OpenPrintTag tags are already formatted
+                                records: [{
+                                    tnf: 2, // TNF_MIME_MEDIA
+                                    type: typeArray as any,
+                                    id: [],
+                                    payload: payloadArray as any,
+                                }]
+                            });
+
+                            console.log('[NFC Write] Write successful!');
+                            resolve();
+                        } catch (writeErr) {
+                            console.error('[NFC Write] Write failed:', writeErr);
+                            reject(writeErr);
+                        }
+                    };
+
+                    // Listen for tag discovery events
+                    CapacitorNfc.addListener('ndefDiscovered', onTagDiscovered);
+                    CapacitorNfc.addListener('tagDiscovered', onTagDiscovered);
+                    CapacitorNfc.addListener('ndefFormatableDiscovered', onTagDiscovered);
                 });
+
+                // Start scanning
+                console.log('[NFC Write] Starting scan for tag...');
+                await CapacitorNfc.startScanning({
+                    invalidateAfterFirstRead: false, // Keep session open for writing
+                    alertMessage: 'Hold your NFC tag near the device to write...'
+                });
+
+                // Wait for write to complete
+                await writePromise;
+
+                // Cleanup
+                await CapacitorNfc.stopScanning();
+                // @ts-ignore
+                await CapacitorNfc.removeAllListeners();
             } else {
                 // @ts-ignore
                 const ndef = new NDEFReader();
@@ -269,11 +404,19 @@ export const useNFC = () => {
             setState('success');
             setTimeout(() => setState('idle'), 2000);
         } catch (err: any) {
-            console.error('NFC write error:', err);
+            console.error('[NFC Write] Error:', err);
 
             let errorMessage = err.message || 'Failed to write to NFC tag';
+
+            // Provide more helpful error messages
             if (err.message?.includes('cancelled')) {
                 errorMessage = 'Write operation cancelled';
+            } else if (err.message?.includes('NDEF formatting')) {
+                errorMessage = 'Tag write failed. Try holding the tag steady and closer to the NFC reader area on your device.';
+            } else if (err.message?.includes('read-only')) {
+                errorMessage = 'This tag is write-protected and cannot be modified';
+            } else if (err.message?.includes('timeout')) {
+                errorMessage = 'No NFC tag detected. Please try again and hold the tag near your device.';
             }
 
             setError(errorMessage);

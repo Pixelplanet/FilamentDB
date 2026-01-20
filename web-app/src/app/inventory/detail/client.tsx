@@ -10,6 +10,7 @@ import { useSync } from '@/contexts/SyncContext';
 import { Spool } from '@/db';
 import { SpoolForm } from '@/components/SpoolForm';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
+import { UsageHistory } from '@/components/UsageHistory';
 
 interface Props {
     initialSpool: Spool | null;
@@ -275,6 +276,9 @@ export default function SpoolDetailClient({ initialSpool, serial }: Props) {
                                 <span className="font-mono">{spool.nfcTagSerial}</span>
                             </div>
                         )}
+                        <div className="pt-4">
+                            <UsageHistory serial={serial} />
+                        </div>
                     </div>
                 </CollapsibleSection>
             </div>

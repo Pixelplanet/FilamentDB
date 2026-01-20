@@ -58,11 +58,11 @@ const SECTIONS: Record<string, FieldDef[]> = {
         { id: 'colorHex', label: 'Color Hex', type: 'color', span: 2 },
     ],
     'weight-props': [
-        { id: 'diameter', label: 'Diameter', type: 'number', suffix: 'mm' },
+        { id: 'diameter', label: 'Diameter (mm)', type: 'number', suffix: 'mm' },
         { id: 'density', label: 'Density', type: 'number', suffix: 'g/cm³' },
-        { id: 'weightTotal', label: 'Nominal Weight', type: 'number', suffix: 'g' },
-        { id: 'weightRemaining', label: 'Remaining', type: 'number', suffix: 'g' },
-        { id: 'weightSpool', label: 'Empty Spool', type: 'number', suffix: 'g' },
+        { id: 'weightTotal', label: 'Total (g)', type: 'number', suffix: 'g' },
+        { id: 'weightRemaining', label: 'Remaining (g)', type: 'number', suffix: 'g' },
+        { id: 'weightSpool', label: 'Empty Spool (g)', type: 'number', suffix: 'g' },
     ],
     'temperatures': [
         { id: 'temperatureNozzleMin', label: 'Nozzle Min', type: 'number', suffix: '°C' },
@@ -126,7 +126,7 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                         <GripHorizontal className="w-3 h-3 text-gray-500" />
                     </div>
                 )}
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{field.label}</label>
+                <label htmlFor={field.id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{field.label}</label>
                 <div className="flex flex-col gap-3">
                     <div className="flex gap-2 relative">
                         <button
@@ -160,6 +160,7 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                             document.body
                         )}
                         <input
+                            id={field.id}
                             disabled={readOnly}
                             className={`flex-1 ${inputClass} font-mono uppercase`}
                             value={value || ''}
@@ -180,13 +181,14 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                     <GripHorizontal className="w-4 h-4 text-gray-400 dark:text-gray-600" />
                 </div>
             )}
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{field.label}</label>
+            <label htmlFor={field.id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{field.label}</label>
             <div className="relative flex items-center">
                 {field.type === 'select' ? (
                     readOnly ? (
                         <input disabled value={value || ''} className={`capitalize ${inputClass}`} />
                     ) : (
                         <select
+                            id={field.id}
                             value={value || ''}
                             onChange={e => onChange(field.id, e.target.value)}
                             className={inputClass}
@@ -200,6 +202,7 @@ function SortableField({ id, field, readOnly, value, onChange }: { id: string, f
                     <input disabled value={field.readonlyValue} className={inputClass} />
                 ) : (
                     <input
+                        id={field.id}
                         type={field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text'}
                         step={field.type === 'number' ? '0.01' : undefined}
                         disabled={readOnly}
@@ -233,9 +236,10 @@ interface Props {
     defaultReadOnly?: boolean;
     spoolId?: string; // For section persistence
     headerActions?: React.ReactNode;
+    submitLabel?: string;
 }
 
-export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultReadOnly = false, headerActions }: Props) {
+export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultReadOnly = false, headerActions, submitLabel = 'Save Changes' }: Props) {
     const { profiles } = useMaterialProfiles();
     const { isAuthenticated, isAuthEnabled } = useAuth();
 
@@ -399,12 +403,22 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
         const order = sectionOrders[id] || fieldDefs.map(f => f.id);
         const cols = sectionColumns[id] || (id === 'basic-info' ? 2 : 3);
 
-        const orderedFields = order
-            .map(fieldId => fieldDefs.find(f => f.id === fieldId))
-            .filter(Boolean) as FieldDef[];
+        const orderedFields: FieldDef[] = [];
+        const seenIds = new Set<string>();
+
+        order.forEach(fieldId => {
+            const f = fieldDefs.find(def => def.id === fieldId);
+            if (f && !seenIds.has(f.id)) {
+                orderedFields.push(f);
+                seenIds.add(f.id);
+            }
+        });
 
         fieldDefs.forEach(f => {
-            if (!order.includes(f.id)) orderedFields.push(f);
+            if (!seenIds.has(f.id)) {
+                orderedFields.push(f);
+                seenIds.add(f.id);
+            }
         });
 
         // Inject Dynamic Options for 'type'
@@ -493,7 +507,7 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
             {/* Dashboard: Consumption & Remaining */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 transition-all">
                 <div className="flex justify-between items-end mb-2">
-                    <span className="font-semibold text-gray-600 dark:text-gray-400">Material Remaining</span>
+                    <span className="font-semibold text-gray-600 dark:text-gray-400">Weight Remaining</span>
                     <div className="flex items-baseline gap-2">
                         {readOnly ? (
                             <span className="text-4xl font-bold text-gray-900 dark:text-white">{formData.weightRemaining}g</span>
@@ -572,14 +586,14 @@ export function SpoolForm({ initialData = {}, onSubmit, isSubmitting, defaultRea
             )}
 
             {!readOnly && (
-                <div className="flex justify-end pt-4 sticky bottom-4 z-10 w-full bg-transparent pointer-events-none">
+                <div className="flex justify-end pt-4">
                     <button
                         onClick={() => onSubmit(formData)}
                         disabled={isSubmitting}
-                        className="pointer-events-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/25 transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/25 transition-all flex items-center gap-2 disabled:opacity-50"
                     >
                         <Save className="w-5 h-5" />
-                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                        {isSubmitting ? 'Saving...' : submitLabel}
                     </button>
                 </div>
             )}

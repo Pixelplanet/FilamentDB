@@ -20,6 +20,7 @@ export default function SettingsPage() {
     const [lastSync, setLastSync] = useState<string | null>(null);
     const [syncStatus, setSyncStatus] = useState('');
     const [showApiKey, setShowApiKey] = useState(false);
+    const [deviceId, setDeviceId] = useState<string | null>(null);
 
     // Auth Context
     const { user, isAuthEnabled, checkAuthConfig } = useAuth(); // Assuming isAuthEnabled is exported from context
@@ -48,6 +49,8 @@ export default function SettingsPage() {
         const savedKey = localStorage.getItem('sync_api_key');
         const savedLastSync = localStorage.getItem('sync_last_sync');
         const savedToken = localStorage.getItem('sync_auth_token'); // New
+        const savedDeviceId = localStorage.getItem('filamentdb_device_id');
+        setDeviceId(savedDeviceId);
 
         if (savedUrl) setServerUrl(savedUrl);
         if (savedKey) setApiKey(savedKey);
@@ -676,7 +679,7 @@ export default function SettingsPage() {
             <div className="text-center text-gray-400 text-sm space-y-1">
                 <p>Local spools: <span className="font-mono font-bold text-gray-900 dark:text-white">{spoolCount}</span></p>
                 <p>Version: {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.5'} (Hybrid)</p>
-                <p className="text-xs">Device ID: {typeof window !== 'undefined' ? localStorage.getItem('filamentdb_device_id') || 'Not set' : 'Loading...'}</p>
+                <p className="text-xs">Device ID: {deviceId || 'Not set'}</p>
             </div>
             {/* Login Modal */}
             {showLoginModal && (

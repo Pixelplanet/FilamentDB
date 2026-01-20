@@ -214,6 +214,7 @@ function AddSpoolForm() {
                     onSubmit={handleSave}
                     isSubmitting={isSubmitting}
                     defaultReadOnly={false}
+                    submitLabel="Save to Inventory"
                 />
             )}
         </div>

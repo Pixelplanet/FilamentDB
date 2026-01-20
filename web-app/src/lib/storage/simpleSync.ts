@@ -123,9 +123,9 @@ export async function syncSpools(config: SyncConfig): Promise<SyncResult> {
 
         if (!response.ok) {
             const errorText = await response.text().catch(() => 'No error details');
-            console.error(`❌ Server returned ${response.status}: ${response.statusText}`);
-            console.error(`Response body: ${errorText}`);
-            throw new Error(`Server Error (${response.status}): ${response.statusText}. ${errorText}`);
+            // Use warn instead of error for expected failures (404, etc.)
+            console.warn(`⚠️ Sync: Server returned ${response.status}: ${response.statusText}`);
+            throw new Error(`Server Error (${response.status}): ${response.statusText}`);
         }
 
         const remoteSpools: Spool[] = await response.json();

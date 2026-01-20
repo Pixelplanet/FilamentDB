@@ -25,17 +25,19 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
     const DEBOUNCE_MS = 2000; // 2 second debounce for automatic sync
 
     const performSync = useCallback(async () => {
-        // Prevent multiple concurrent syncs
-        if (status === 'syncing') return;
-
+        // Check if sync is configured
         const serverUrl = localStorage.getItem('sync_server_url');
         const apiKey = localStorage.getItem('sync_api_key');
         const token = localStorage.getItem('sync_auth_token');
 
+        // Silently skip if not configured (don't spam console)
         if (!serverUrl) {
             setIsConfigured(false);
             return;
         }
+
+        // Prevent multiple concurrent syncs
+        if (status === 'syncing') return;
 
         setIsConfigured(true);
         setStatus('syncing');
@@ -67,6 +69,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
 
         } catch (e: any) {
             setStatus('error');
+            // Only set error message, don't spam console with expected errors
             setErrorMessage(e.message);
         }
     }, [status]);

@@ -278,34 +278,123 @@ export default function ScanPage() {
                 }
 
                 // Apply NFC Records (from OpenPrintTag)
-                const optRecord = records.find(r => r.mediaType === 'application/vnd.openprinttag');
+                const optRecord = records.find(r => r.mediaType === 'application/vnd.openprinttag' || r.mediaType?.includes('openprinttag'));
                 if (optRecord && optRecord.data) {
                     const d = optRecord.data;
                     console.log("[NFC] Raw Decoded Data:", JSON.stringify(d, null, 2));
 
-                    // Heuristic: OpenPrintTag might be an array [Meta, Main, Aux]
-                    // or a flat object depending on the version/generator.
-                    // We try to find the "Main" section which contains the static info.
+                    // OpenPrintTag CBOR format uses numeric keys according to spec:
+                    // The payload is an array: [Meta, Main, Auxiliary]
+                    // Main section (index 1) contains the material info with these numeric keys:
+                    // 11 = brand_name, 10 = material_name, 9 = material_type (enum)
+                    // 19 = primary_color (RGBA bytes), 16 = nominal_netto_full_weight
+                    // 30 = filament_diameter
                     let mainSection: any = d;
 
-                    if (Array.isArray(d) && d.length > 1) {
-                        // If array, index 1 is usually the Main section
-                        mainSection = d[1];
-                        console.log("[NFC] Using Array Index 1 as Main Section:", JSON.stringify(mainSection));
+                    if (Array.isArray(d)) {
+                        // If array, index 1 is the Main section (static material info)
+                        if (d.length > 1 && d[1]) {
+                            mainSection = d[1];
+                            console.log("[NFC] Using Array Index 1 as Main Section:", JSON.stringify(mainSection));
+                        } else if (d.length === 1) {
+                            mainSection = d[0];
+                            console.log("[NFC] Using Array Index 0 as Main Section:", JSON.stringify(mainSection));
+                        }
                     }
 
-                    if (mainSection) {
-                        // Flexible Key Mapping
-                        spoolData.brand = mainSection.brand || mainSection['Brand Name'] || mainSection['Brand'] || spoolData.brand;
-                        spoolData.type = mainSection.type || mainSection['Material Name'] || mainSection['Material Type'] || mainSection['Material'] || spoolData.type;
-                        spoolData.color = mainSection.color || mainSection['Primary Color'] || mainSection['Color'] || spoolData.color;
-                        spoolData.diameter = mainSection.diameter || mainSection['Filament Diameter (mm)'] || spoolData.diameter;
-
-                        const w = mainSection.weight || mainSection['Nominal Weight (g)'] || mainSection['net_weight'];
-                        if (w) {
-                            spoolData.weightRemaining = typeof w === 'number' ? w : parseFloat(w);
-                            spoolData.weightTotal = spoolData.weightRemaining;
+                    if (mainSection && typeof mainSection === 'object') {
+                        // OpenPrintTag numeric keys (CBOR format)
+                        // Key 11 = brand_name
+                        const brandName = mainSection[11] || mainSection['11'];
+                        if (brandName && typeof brandName === 'string') {
+                            spoolData.brand = brandName;
+                            console.log("[NFC] Brand from key 11:", brandName);
                         }
+
+                        // Key 10 = material_name (e.g., "PLA Galaxy Black")
+                        const materialName = mainSection[10] || mainSection['10'];
+                        if (materialName && typeof materialName === 'string') {
+                            // Material name often contains the type + color, try to extract
+                            spoolData.type = materialName;
+                            console.log("[NFC] Material name from key 10:", materialName);
+                        }
+
+                        // Key 9 = material_type (enum according to OpenPrintTag spec)
+                        const materialType = mainSection[9] || mainSection['9'];
+                        if (materialType !== undefined) {
+                            // Map material type enums according to OpenPrintTag specification
+                            const materialTypeMap: Record<number, string> = {
+                                0: 'PLA', 1: 'PETG', 2: 'TPU', 3: 'ABS', 4: 'ASA',
+                                5: 'PC', 6: 'PCTG', 7: 'PP', 8: 'PA6', 9: 'PA11',
+                                10: 'PA12', 11: 'PA66', 12: 'CPE', 13: 'TPE', 14: 'HIPS',
+                                15: 'PHA', 16: 'PET', 17: 'PEI', 18: 'PBT', 19: 'PVB',
+                                20: 'PVA', 21: 'PEKK', 22: 'PEEK', 23: 'BVOH', 24: 'TPC',
+                                25: 'PPS', 26: 'PPSU', 27: 'PVC', 28: 'PEBA', 29: 'PVDF',
+                                30: 'PPA', 31: 'PCL', 32: 'PES', 33: 'PMMA', 34: 'POM',
+                                35: 'PPE', 36: 'PS', 37: 'PSU', 38: 'TPI', 39: 'SBS',
+                                40: 'OBC', 41: 'EVA'
+                            };
+                            if (typeof materialType === 'number' && materialTypeMap[materialType]) {
+                                spoolData.type = materialTypeMap[materialType];
+                                console.log("[NFC] Material type from key 9:", spoolData.type);
+                            } else if (typeof materialType === 'string') {
+                                spoolData.type = materialType;
+                            }
+                        }
+
+                        // Key 19 = primary_color (RGBA bytes array)
+                        const primaryColor = mainSection[19] || mainSection['19'];
+                        if (primaryColor) {
+                            if (Array.isArray(primaryColor) || primaryColor instanceof Uint8Array) {
+                                // Convert RGBA bytes to hex color
+                                const r = primaryColor[0] ?? 0;
+                                const g = primaryColor[1] ?? 0;
+                                const b = primaryColor[2] ?? 0;
+                                const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+                                spoolData.color = hexColor.toUpperCase();
+                                console.log("[NFC] Color from key 19:", spoolData.color);
+                            } else if (typeof primaryColor === 'string') {
+                                spoolData.color = primaryColor;
+                            }
+                        }
+
+                        // Key 16 = nominal_netto_full_weight (grams)
+                        const weight = mainSection[16] || mainSection['16'];
+                        if (weight && typeof weight === 'number') {
+                            spoolData.weightRemaining = weight;
+                            spoolData.weightTotal = weight;
+                            console.log("[NFC] Weight from key 16:", weight);
+                        }
+
+                        // Key 30 = filament_diameter (mm)
+                        const diameter = mainSection[30] || mainSection['30'];
+                        if (diameter && typeof diameter === 'number') {
+                            spoolData.diameter = diameter;
+                            console.log("[NFC] Diameter from key 30:", diameter);
+                        }
+
+                        // Fallback: Check for string keys (older/alternative formats)
+                        if (spoolData.brand === 'Unknown Brand') {
+                            spoolData.brand = mainSection.brand || mainSection.brand_name || mainSection['Brand Name'] || mainSection['Brand'] || spoolData.brand;
+                        }
+                        if (spoolData.type === 'PLA') {
+                            spoolData.type = mainSection.type || mainSection.material_name || mainSection.material_type || mainSection['Material Name'] || mainSection['Material Type'] || spoolData.type;
+                        }
+                        if (spoolData.color === 'Unknown Color') {
+                            spoolData.color = mainSection.color || mainSection.primary_color || mainSection['Primary Color'] || mainSection['Color'] || spoolData.color;
+                        }
+                        if (spoolData.diameter === 1.75) {
+                            spoolData.diameter = mainSection.diameter || mainSection.filament_diameter || mainSection['Filament Diameter (mm)'] || spoolData.diameter;
+                        }
+                        if (spoolData.weightRemaining === 1000) {
+                            const w = mainSection.weight || mainSection.nominal_netto_full_weight || mainSection['Nominal Weight (g)'] || mainSection['net_weight'];
+                            if (w) {
+                                spoolData.weightRemaining = typeof w === 'number' ? w : parseFloat(w);
+                                spoolData.weightTotal = spoolData.weightRemaining;
+                            }
+                        }
+
+                        console.log("[NFC] Final parsed spool data:", JSON.stringify(spoolData, null, 2));
                     }
                 }
 

@@ -8,6 +8,9 @@ import { defineConfig, devices } from '@playwright/test';
  * - Inventory management
  * - API endpoints
  * - Scanner functionality
+ * 
+ * Note: If Docker containers are available, tests use port 3001 (user management disabled).
+ * Otherwise, Playwright starts a local dev server.
  */
 export default defineConfig({
     testDir: './e2e',
@@ -32,8 +35,8 @@ export default defineConfig({
 
     /* Shared settings for all the projects below */
     use: {
-        /* Base URL to use in actions like `await page.goto('/')` */
-        baseURL: 'http://localhost:3000',
+        /* Base URL - uses port 3001 for Docker or 3000 for local dev */
+        baseURL: process.env.TEST_BASE_URL || 'http://localhost:3000',
 
         /* Collect trace when retrying the failed test */
         trace: 'on-first-retry',
@@ -53,11 +56,11 @@ export default defineConfig({
         },
     ],
 
-    /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'npm run dev',
+    /* Start local dev server if TEST_BASE_URL is not set */
+    webServer: process.env.TEST_BASE_URL ? undefined : {
+        command: 'npx cross-env ENABLE_USER_MANAGEMENT=false npm run dev',
         url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: true,
         timeout: 120 * 1000,
     },
 });
